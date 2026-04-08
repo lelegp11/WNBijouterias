@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WN Bijouterias</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WN Bijouterias</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -13,7 +13,7 @@
 
   <!-- BARRA LARANJA -->
   <aside class="leftbar">
-    
+
     <div class="top-logo">
       <img src="assets/logo_venda_suite.svg" class="icon-img">
     </div>
@@ -30,44 +30,38 @@
 
   </aside>
 
-
   <!-- BARRA CINZA -->
   <div class="rail">
 
-    <!-- MOSTRUÁRIO -->
     <div class="menu-slot ring nav-btn" data-target="mostruario">
       <button class="icon-btn">
         <img src="assets/icone_anel.svg" class="icon-img">
       </button>
-      <div class="slide-label label-ring">MOSTRUÁRIO</div>
+      <div class="slide-label">MOSTRUÁRIO</div>
     </div>
 
-    <!-- VENDEDORAS -->
     <div class="menu-slot seller nav-btn" data-target="vendedoras">
       <button class="icon-btn">
         <img src="assets/icone_vendedora.svg" class="icon-img">
       </button>
-      <div class="slide-label label-seller">VENDEDORAS</div>
+      <div class="slide-label">VENDEDORAS</div>
     </div>
 
-    <!-- ACERTO -->
     <div class="menu-slot report nav-btn" data-target="acerto">
       <button class="icon-btn">
         <img src="assets/icone_acerto.svg" class="icon-img">
       </button>
-      <div class="slide-label label-report">ACERTO</div>
+      <div class="slide-label">ACERTO</div>
     </div>
 
-    <!-- CADASTRO -->
     <div class="menu-slot box nav-btn" data-target="estoque">
       <button class="icon-btn">
         <img src="assets/icone_cadastro_produto.svg" class="icon-img">
       </button>
-      <div class="slide-label label-box">CADASTRO PRODUTO</div>
+      <div class="slide-label">CADASTRO PRODUTO</div>
     </div>
 
   </div>
-
 
   <!-- CONTEÚDO -->
   <main class="content">
@@ -79,16 +73,12 @@
     <!-- HOME -->
     <section id="home" class="screen active">
       <div class="hero">
-
         <div class="card">
           <h1>MAPA DE TELAS<br>WN BIJOUTERIAS</h1>
-          <p>
-            Dashboard com navegação lateral interativa conforme layout enviado.
-          </p>
+          <p>Dashboard com navegação lateral interativa.</p>
 
           <div class="actions">
-            <button class="btn primary nav-btn" data-target="login">Abrir login</button>
-            <button class="btn light nav-btn" data-target="mostruario">Mostruário</button>
+            <button class="btn primary nav-btn" data-target="mostruario">Ir para Mostruário</button>
           </div>
         </div>
 
@@ -96,93 +86,95 @@
           <h2>Fluxo</h2>
           <p>Login → Módulos → Ações</p>
         </div>
-
       </div>
     </section>
 
+    <!-- MOSTRUÁRIO COM FLUXO -->
+    <section id="mostruario" class="screen">
 
-    <!-- LOGIN -->
-    <section id="login" class="screen">
-      <div class="login-wrap">
-
-        <div class="login-card">
-          <h2>LOGIN</h2>
-
-          <div class="login-field">
-            <input placeholder="USERNAME">
-          </div>
-
-          <div class="login-field">
-            <input type="password" placeholder="SENHA">
-          </div>
-
-          <button class="btn primary nav-btn" data-target="home">
-            ENTRAR
-          </button>
+      <div class="card">
+        <div class="toolbar">
+          <h2>MOSTRUÁRIO</h2>
+          <button class="btn blue">NOVO MOSTRUÁRIO</button>
         </div>
 
+        <div class="mostruario-flow">
+
+          <div class="flow-card start">
+            <h3>Tela Mostruário</h3>
+            <p>Busca, colunas e visualização principal.</p>
+          </div>
+
+          <div class="flow-arrow">↓</div>
+
+          <div class="flow-row">
+
+            <!-- RAMO 1 -->
+            <div class="flow-branch">
+              <div class="flow-card">
+                <h3>Lista de Mostruários</h3>
+                <p>Exibe registros cadastrados.</p>
+              </div>
+
+              <div class="flow-arrow">↓</div>
+
+              <div class="flow-card danger-flow">
+                <h3>Excluir</h3>
+                <p>Confirmação SIM / NÃO</p>
+              </div>
+            </div>
+
+            <div class="flow-connector">OU</div>
+
+            <!-- RAMO 2 -->
+            <div class="flow-branch">
+              <div class="flow-card">
+                <h3>Incluir Mostruário</h3>
+                <p>Cadastro completo.</p>
+              </div>
+
+              <div class="flow-arrow">↓</div>
+
+              <div class="flow-card">
+                <h3>Lista de Produtos</h3>
+                <p>Adição de itens ao mostruário.</p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
       </div>
+
     </section>
 
-
-    <!-- MOSTRUÁRIO -->
-    <section id="mostruario" class="screen">
-      <div class="card">
-        <h2>Mostruário</h2>
-        <p>Lista de peças e controle.</p>
-      </div>
-    </section>
-
-
-    <!-- VENDEDORAS -->
+    <!-- OUTRAS TELAS -->
     <section id="vendedoras" class="screen">
-      <div class="card">
-        <h2>Vendedoras</h2>
-        <p>Cadastro e gestão.</p>
-      </div>
+      <div class="card"><h2>Vendedoras</h2></div>
     </section>
 
-
-    <!-- ACERTO -->
     <section id="acerto" class="screen">
-      <div class="card">
-        <h2>Acerto</h2>
-        <p>Relatórios financeiros.</p>
-      </div>
+      <div class="card"><h2>Acerto</h2></div>
     </section>
 
-
-    <!-- ESTOQUE -->
     <section id="estoque" class="screen">
-      <div class="card">
-        <h2>Cadastro Produto</h2>
-        <p>Gerenciamento de estoque.</p>
-      </div>
+      <div class="card"><h2>Cadastro Produto</h2></div>
     </section>
 
-
-    <!-- CONFIG -->
     <section id="configuracoes" class="screen">
-      <div class="card">
-        <h2>Configurações</h2>
-      </div>
+      <div class="card"><h2>Configurações</h2></div>
     </section>
 
-
-    <!-- SAIR -->
     <section id="logout" class="screen">
       <div class="card">
         <h2>Sair</h2>
-        <button class="btn primary nav-btn" data-target="home">
-          Voltar
-        </button>
+        <button class="btn primary nav-btn" data-target="home">Voltar</button>
       </div>
     </section>
 
   </main>
 
 </div>
-
 
 <script>
 const screens = document.querySelectorAll('.screen');
