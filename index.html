@@ -9,26 +9,23 @@
       --bg:#ececec;
       --orange:#efb56c;
       --orange-dark:#f0a23f;
-      --rail:#dcdcdc;
-
-      --blue-ring:#5d8ff0;
-      --blue-seller:#69c8e6;
-      --yellow-report:#f4c343;
-      --pink-box:#d61a88;
-
-      --text:#161616;
-      --muted:#6d6d6d;
-      --card:#f4f4f4;
-      --shadow:0 10px 25px rgba(0,0,0,.10);
-      --radius:22px;
+      --rail:#d9d9d9;
+      --text:#141414;
+      --muted:#666;
+      --card:#f3f3f3;
+      --shadow:0 10px 24px rgba(0,0,0,.10);
+      --radius:26px;
     }
 
     *{box-sizing:border-box}
-    body{
+
+    html,body{
       margin:0;
+      padding:0;
       font-family:Arial, Helvetica, sans-serif;
       background:var(--bg);
       color:var(--text);
+      min-height:100vh;
       overflow:hidden;
     }
 
@@ -42,24 +39,25 @@
       background:var(--orange);
       display:flex;
       flex-direction:column;
-      align-items:center;
       justify-content:space-between;
-      padding:16px 0 12px;
+      align-items:center;
+      padding:14px 0 12px;
       position:relative;
       z-index:5;
     }
 
     .top-logo{
-      width:56px;
-      height:56px;
+      width:58px;
+      height:58px;
       display:flex;
       align-items:center;
       justify-content:center;
     }
 
-    .top-logo svg{
-      width:52px;
-      height:52px;
+    .top-logo img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
       display:block;
     }
 
@@ -68,6 +66,7 @@
       flex-direction:column;
       gap:18px;
       align-items:center;
+      width:100%;
     }
 
     .rail{
@@ -79,7 +78,7 @@
     .menu-slot{
       position:absolute;
       left:0;
-      width:320px;
+      width:340px;
       height:82px;
       display:flex;
       align-items:center;
@@ -90,52 +89,61 @@
     .menu-slot.report{top:286px;}
     .menu-slot.box{top:370px;}
 
-    .menu-slot.logout{
-      bottom:86px;
-    }
-
-    .menu-slot.settings{
-      bottom:0;
-    }
-
     .icon-btn{
-      width:72px;
-      height:82px;
       border:0;
       background:transparent;
+      cursor:pointer;
+      padding:0;
       display:flex;
       align-items:center;
       justify-content:center;
-      cursor:pointer;
-      padding:0;
-      position:relative;
-      z-index:3;
+      flex:0 0 auto;
     }
 
     .leftbar .icon-btn{
       width:80px;
+      height:82px;
     }
 
-    .icon-svg{
+    .rail .icon-btn{
+      width:72px;
+      height:82px;
+    }
+
+    .icon-img{
       width:48px;
       height:48px;
+      object-fit:contain;
+      object-position:center;
       display:block;
+      flex-shrink:0;
+    }
+
+    .top-logo .icon-img{
+      width:54px;
+      height:54px;
+    }
+
+    .leftbar .bottom-actions .icon-img{
+      width:46px;
+      height:46px;
     }
 
     .slide-label{
+      min-width:275px;
       height:82px;
-      min-width:260px;
       display:flex;
       align-items:center;
       padding:0 28px;
-      margin-left:0;
-      font-size:23px;
+      font-size:22px;
+      font-weight:500;
       color:#111;
       text-transform:uppercase;
       box-shadow:var(--shadow);
       transform:translateX(-102%);
       transition:transform .28s ease;
       pointer-events:none;
+      user-select:none;
     }
 
     .menu-slot:hover .slide-label,
@@ -143,11 +151,10 @@
       transform:translateX(0);
     }
 
-    .label-ring{background:rgba(117,161,237,.65);}
-    .label-seller{background:rgba(126,212,233,.70);}
-    .label-report{background:rgba(242,219,152,.82);}
-    .label-box{background:rgba(228,140,191,.82);}
-    .label-orange{background:rgba(240,168,84,.86);}
+    .label-ring{background:rgba(125,167,234,.72);}
+    .label-seller{background:rgba(126,212,233,.76);}
+    .label-report{background:rgba(243,220,155,.88);}
+    .label-box{background:rgba(228,145,193,.84);}
 
     .content{
       position:relative;
@@ -162,12 +169,14 @@
       align-items:center;
       justify-content:center;
       pointer-events:none;
-      opacity:.16;
+      opacity:.18;
     }
 
-    .watermark svg{
+    .watermark img{
       width:min(520px,52vw);
+      max-width:80%;
       height:auto;
+      object-fit:contain;
       display:block;
     }
 
@@ -201,7 +210,7 @@
 
     h1{
       font-size:50px;
-      line-height:0.95;
+      line-height:.95;
       margin:0 0 20px;
     }
 
@@ -554,8 +563,8 @@
       text-align:center;
     }
 
-    @media (max-width: 1100px){
-      body{overflow:auto}
+    @media (max-width:1100px){
+      html,body{overflow:auto}
       .app{min-width:980px}
       .hero,.grid-2,.login-wrap{grid-template-columns:1fr}
     }
@@ -565,39 +574,16 @@
   <div class="app">
     <aside class="leftbar">
       <div class="top-logo" title="Venda Suite">
-        <!-- logo_venda_suite -->
-        <svg viewBox="0 0 64 64" aria-hidden="true">
-          <polygon points="31,4 43,11 31,18 19,11" fill="#f4c33d"/>
-          <polygon points="31,18 43,11 43,25 31,32" fill="#f6a83a"/>
-          <polygon points="31,18 31,32 19,25 19,11" fill="#f0d38f"/>
-          <polygon points="43,25 56,32 56,46 43,39" fill="#e74c3c"/>
-          <polygon points="43,25 43,39 31,32 31,18" fill="#f58e39"/>
-          <polygon points="31,32 43,39 31,46 19,39" fill="#5ab8e8"/>
-          <polygon points="19,25 31,32 19,39 7,32" fill="#5d8ff0"/>
-          <polygon points="19,39 31,46 31,60 19,53" fill="#7dc5ee"/>
-          <polygon points="43,39 56,46 43,53 31,46" fill="#d61a88"/>
-          <polygon points="56,32 56,46 43,53 43,39" fill="#b75d79"/>
-          <polygon points="19,25 19,39 7,32 7,18" fill="#6d6d6d"/>
-          <polygon points="31,4 31,18 19,11 19,25 7,18 19,11" fill="#747474" opacity=".92"/>
-          <polygon points="31,4 43,11 43,25 56,32 56,46 43,39 43,25 31,18" fill="#595959" opacity=".72"/>
-        </svg>
+        <img src="logo_venda_suite.svg" alt="Logo Venda Suite" class="icon-img">
       </div>
 
       <div class="bottom-actions">
         <button class="icon-btn nav-btn" data-target="logout" title="Sair">
-          <svg class="icon-svg" viewBox="0 0 64 64" aria-hidden="true">
-            <path d="M10 10h24v8H18v28h16v8H10z" fill="none" stroke="#f0a23f" stroke-width="4" stroke-linejoin="round"/>
-            <path d="M30 32h22" stroke="#f0a23f" stroke-width="4" stroke-linecap="round"/>
-            <path d="M44 20l12 12-12 12" fill="none" stroke="#f0a23f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <img src="icone_sair.svg" alt="Sair" class="icon-img">
         </button>
 
         <button class="icon-btn nav-btn" data-target="configuracoes" title="Configurações">
-          <svg class="icon-svg" viewBox="0 0 64 64" aria-hidden="true">
-            <circle cx="32" cy="32" r="10" fill="#f0a23f"/>
-            <path d="M32 6l5 4 6-1 3 6 6 2v7l5 4-2 6 2 6-5 4v7l-6 2-3 6-6-1-5 4-5-4-6 1-3-6-6-2v-7l-5-4 2-6-2-6 5-4v-7l6-2 3-6 6 1z"
-                  fill="none" stroke="#f0a23f" stroke-width="4" stroke-linejoin="round"/>
-          </svg>
+          <img src="icone_configuracoes.svg" alt="Configurações" class="icon-img">
         </button>
       </div>
     </aside>
@@ -605,47 +591,28 @@
     <div class="rail">
       <div class="menu-slot ring">
         <button class="icon-btn nav-btn" data-target="mostruario" aria-label="Mostruário">
-          <svg class="icon-svg" viewBox="0 0 64 64" aria-hidden="true">
-            <circle cx="32" cy="37" r="18" fill="none" stroke="var(--blue-ring)" stroke-width="4"/>
-            <circle cx="32" cy="37" r="11" fill="none" stroke="var(--blue-ring)" stroke-width="4"/>
-            <path d="M25 8h14l-7 8z" fill="none" stroke="var(--blue-ring)" stroke-width="4" stroke-linejoin="round"/>
-          </svg>
+          <img src="icone_anel.svg" alt="Mostruário" class="icon-img">
         </button>
         <div class="slide-label label-ring">MOSTRUÁRIO</div>
       </div>
 
       <div class="menu-slot seller">
         <button class="icon-btn nav-btn" data-target="vendedoras" aria-label="Vendedoras">
-          <svg class="icon-svg" viewBox="0 0 64 64" aria-hidden="true">
-            <circle cx="32" cy="18" r="12" fill="var(--blue-seller)"/>
-            <path d="M12 58c0-12 8-21 20-21s20 9 20 21" fill="var(--blue-seller)"/>
-          </svg>
+          <img src="icone_vendedora.svg" alt="Vendedoras" class="icon-img">
         </button>
         <div class="slide-label label-seller">VENDEDORAS</div>
       </div>
 
       <div class="menu-slot report">
         <button class="icon-btn nav-btn" data-target="acerto" aria-label="Acerto">
-          <svg class="icon-svg" viewBox="0 0 64 64" aria-hidden="true">
-            <circle cx="16" cy="18" r="11" fill="var(--yellow-report)"/>
-            <path d="M11 18h10M16 13v10" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-            <path d="M22 10h28v44H18c-4 0-7-3-7-7V18" fill="none" stroke="var(--yellow-report)" stroke-width="4" stroke-linejoin="round"/>
-            <path d="M28 24h14M28 32h16M28 40h12" stroke="var(--yellow-report)" stroke-width="4" stroke-linecap="round"/>
-          </svg>
+          <img src="icone_acerto.svg" alt="Acerto" class="icon-img">
         </button>
         <div class="slide-label label-report">ACERTO</div>
       </div>
 
       <div class="menu-slot box">
         <button class="icon-btn nav-btn" data-target="estoque" aria-label="Cadastro Produto">
-          <svg class="icon-svg" viewBox="0 0 64 64" aria-hidden="true">
-            <path d="M10 20l22-10 22 10-22 10z" fill="var(--pink-box)"/>
-            <path d="M10 20v22l22 12V30z" fill="var(--pink-box)"/>
-            <path d="M54 20v22L32 54V30z" fill="var(--pink-box)" opacity=".92"/>
-            <path d="M20 39h7M20 46h7" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-            <circle cx="50" cy="48" r="10" fill="var(--pink-box)"/>
-            <path d="M46 48l3 3 5-6" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <img src="icone_cadastro_produto.svg" alt="Cadastro Produto" class="icon-img">
         </button>
         <div class="slide-label label-box">CADASTRO PRODUTO</div>
       </div>
@@ -653,19 +620,7 @@
 
     <main class="content">
       <div class="watermark" aria-hidden="true">
-        <!-- icone_wnbijouterias -->
-        <svg viewBox="0 0 500 420">
-          <defs>
-            <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#efe2a2"/>
-              <stop offset="50%" stop-color="#d9bf62"/>
-              <stop offset="100%" stop-color="#f4ebbd"/>
-            </linearGradient>
-          </defs>
-          <text x="120" y="220" font-size="220" font-family="Georgia, serif" fill="url(#goldGrad)">W</text>
-          <text x="225" y="255" font-size="220" font-family="Georgia, serif" fill="url(#goldGrad)">N</text>
-          <text x="120" y="340" font-size="72" font-family="Georgia, serif" fill="url(#goldGrad)">BIJOUTERIAS</text>
-        </svg>
+        <img src="icone_wnbijouterias.svg" alt="WN Bijouterias">
       </div>
 
       <section id="home" class="screen active">
