@@ -28,7 +28,7 @@ html,body{
   min-height:100vh;
 }
 
-/* ===== BARRA LARANJA ===== */
+/* BARRA LARANJA */
 .leftbar{
   background:var(--orange);
   display:flex;
@@ -36,6 +36,7 @@ html,body{
   justify-content:space-between;
   align-items:center;
   padding:10px 0;
+  position:relative;
   z-index:30;
 }
 
@@ -58,7 +59,7 @@ html,body{
   height:60px;
 }
 
-/* ===== BARRA CINZA ===== */
+/* BARRA CINZA */
 .rail{
   background:var(--rail);
   position:relative;
@@ -66,15 +67,17 @@ html,body{
   overflow:visible;
 }
 
-/* ===== ITENS MENU ===== */
+/* ITENS DO MENU */
 .menu-slot{
   position:absolute;
   left:0;
-  width:300px;
+  width:270px;
   height:64px;
   display:flex;
   align-items:center;
   z-index:45;
+  overflow:visible;
+  transition:background-color .22s ease, box-shadow .22s ease;
 }
 
 .menu-slot.ring{top:90px;}
@@ -82,20 +85,32 @@ html,body{
 .menu-slot.report{top:220px;}
 .menu-slot.box{top:285px;}
 
-/* ===== ÍCONE ===== */
-.rail .icon-btn{
-  width:66px;
-  height:64px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:transparent;
-  border:none;
-  cursor:pointer;
-  z-index:3;
-  flex-shrink:0;
+/* CORES DO BLOCO TODO */
+.menu-slot.ring:hover,
+.menu-slot.ring.active{
+  background:rgba(125,167,234,.80);
+  box-shadow:var(--shadow);
 }
 
+.menu-slot.seller:hover,
+.menu-slot.seller.active{
+  background:rgba(126,212,233,.85);
+  box-shadow:var(--shadow);
+}
+
+.menu-slot.report:hover,
+.menu-slot.report.active{
+  background:rgba(243,220,155,.92);
+  box-shadow:var(--shadow);
+}
+
+.menu-slot.box:hover,
+.menu-slot.box.active{
+  background:rgba(228,145,193,.90);
+  box-shadow:var(--shadow);
+}
+
+/* BOTÕES */
 .icon-btn{
   border:none;
   background:transparent;
@@ -103,58 +118,61 @@ html,body{
   display:flex;
   align-items:center;
   justify-content:center;
+  padding:0;
+  flex-shrink:0;
 }
 
+.rail .icon-btn{
+  width:66px;
+  height:64px;
+  position:relative;
+  z-index:3;
+}
+
+/* ÍCONES */
 .icon-img{
   width:28px;
   height:28px;
   max-width:28px;
   max-height:28px;
   object-fit:contain;
+  object-position:center;
+  display:block;
 }
 
 .top-logo .icon-img{
   width:44px;
   height:44px;
+  max-width:44px;
+  max-height:44px;
 }
 
-/* ===== LABEL COLORIDO (AGORA PEGA ÍCONE + TEXTO) ===== */
+/* TEXTO */
 .slide-label{
-  position:absolute;
-  left:0;
-  top:0;
   height:64px;
-  min-width:250px;
   display:flex;
   align-items:center;
-  padding:0 18px 0 86px;
+  padding:0 18px 0 16px;
   font-size:18px;
   font-weight:500;
   color:#111;
   text-transform:uppercase;
   white-space:nowrap;
-  box-shadow:var(--shadow);
-  z-index:2;
-
   opacity:0;
-  transform:translateX(-10px);
-  transition:all .25s ease;
+  transform:translateX(-6px);
+  transition:opacity .22s ease, transform .22s ease;
+  pointer-events:none;
+  position:relative;
+  z-index:2;
 }
 
-/* ===== HOVER ===== */
 .menu-slot:hover .slide-label,
 .menu-slot.active .slide-label{
   opacity:1;
   transform:translateX(0);
 }
 
-/* ===== CORES ===== */
-.label-ring{background:rgba(125,167,234,.8);}
-.label-seller{background:rgba(126,212,233,.85);}
-.label-report{background:rgba(243,220,155,.92);}
-.label-box{background:rgba(228,145,193,.9);}
-
-/* ===== CONTEÚDO ===== */
+/* CONTEÚDO */
 .content{
   position:relative;
   overflow:auto;
@@ -162,7 +180,6 @@ html,body{
   z-index:1;
 }
 
-/* ===== FUNDO LOGO ===== */
 .watermark{
   position:absolute;
   inset:0;
@@ -175,24 +192,28 @@ html,body{
 
 .watermark img{
   width:500px;
+  max-width:82%;
+  height:auto;
+  object-fit:contain;
 }
 
-/* ===== TELAS ===== */
 .screen{
   display:none;
   max-width:1100px;
   margin:0 auto;
+  position:relative;
+  z-index:2;
 }
 
 .screen.active{
   display:block;
 }
 
-/* ===== HOME ===== */
 .hero{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:20px;
+  align-items:start;
 }
 
 .card{
@@ -205,6 +226,7 @@ html,body{
 h1{
   font-size:46px;
   margin-bottom:16px;
+  line-height:.95;
 }
 
 h2{
@@ -217,7 +239,6 @@ p{
   margin-bottom:18px;
 }
 
-/* ===== BOTÕES ===== */
 .actions{
   display:flex;
   gap:10px;
@@ -238,7 +259,6 @@ p{
 .btn.warn{background:#f1d38e;}
 .btn.pink{background:#e7a2c8;}
 
-/* ===== RESPONSIVO ===== */
 @media (max-width:1000px){
   html,body{
     overflow:auto;
