@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WN Bijouterias - Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo-mini" aria-label="Logo do sistema">
+        <img src="assets/icone_logo_fundo.svg" alt="Logo WN Bijouterias" />
+      </div>
+
+      <div class="sidebar-nav" aria-label="atalhos principais">
+        <button class="icon-btn active" data-target="home" title="Tela inicial">
+          <span class="icon"><img src="assets/icone_anel.svg" alt="Ícone mostruário" /></span>
+        </button>
+        <button class="icon-btn" data-target="vendedoras" title="Vendedoras">
+          <span class="icon"><img src="assets/icone_vendedora.svg" alt="Ícone vendedoras" /></span>
+        </button>
+        <button class="icon-btn" data-target="acerto" title="Acerto">
+          <span class="icon"><img src="assets/icone_acerto.svg" alt="Ícone acerto" /></span>
+        </button>
+        <button class="icon-btn" data-target="estoque" title="Cadastro produto">
+          <span class="icon"><img src="assets/icone_cadastro_produto.svg" alt="Ícone cadastro produto" /></span>
+        </button>
+      </div>
+
+      <div class="sidebar-bottom">
+        <button class="icon-btn" data-target="logout" title="Sair">
+          <span class="icon"><img src="assets/icone_sair.svg" alt="Ícone sair" /></span>
+        </button>
+        <button class="icon-btn" data-target="configuracoes" title="Configurações">
+          <span class="icon"><img src="assets/icone_configuracoes.svg" alt="Ícone configurações" /></span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="rail" aria-hidden="true">
+      <div class="nav-hitbox" data-id="mostruario">
+        <button class="icon-btn" data-target="mostruario" aria-label="Mostruário">
+          <span class="icon"><img src="assets/icone_anel.svg" alt="" /></span>
+        </button>
+        <div class="slide-label mostruario">MOSTRUÁRIO</div>
+      </div>
+      <div class="nav-hitbox" data-id="vendedoras">
+        <button class="icon-btn" data-target="vendedoras" aria-label="Vendedoras">
+          <span class="icon"><img src="assets/icone_vendedora.svg" alt="" /></span>
+        </button>
+        <div class="slide-label vendedoras">VENDEDORAS</div>
+      </div>
+      <div class="nav-hitbox" data-id="acerto">
+        <button class="icon-btn" data-target="acerto" aria-label="Acerto">
+          <span class="icon"><img src="assets/icone_acerto.svg" alt="" /></span>
+        </button>
+        <div class="slide-label acerto">ACERTO</div>
+      </div>
+      <div class="nav-hitbox" data-id="estoque">
+        <button class="icon-btn" data-target="estoque" aria-label="Cadastro Produto">
+          <span class="icon"><img src="assets/icone_cadastro_produto.svg" alt="" /></span>
+        </button>
+        <div class="slide-label estoque">CADASTRO PRODUTO</div>
+      </div>
+      <div class="nav-hitbox" data-id="sair">
+        <button class="icon-btn" data-target="logout" aria-label="Sair">
+          <span class="icon"><img src="assets/icone_sair.svg" alt="" /></span>
+        </button>
+        <div class="slide-label sair">SAIR</div>
+      </div>
+      <div class="nav-hitbox" data-id="configuracoes">
+        <button class="icon-btn" data-target="configuracoes" aria-label="Configurações">
+          <span class="icon"><img src="assets/icone_configuracoes.svg" alt="" /></span>
+        </button>
+        <div class="slide-label configuracoes">CONFIGURAÇÕES</div>
+      </div>
+    </div>
+
+    <main class="content">
+      <div class="watermark">
+        <div class="watermark-inner">
+          <div class="wn">WN</div>
+          <div class="brand">BIJOUTERIAS</div>
+        </div>
+      </div>
+
+      <section id="home" class="screen">
+        <div class="hero">
+          <div class="hero-card">
+            <h1>MAPA DE TELAS<br>WN BIJOUTERIAS</h1>
+            <p>
+              Dashboard em HTML inspirado no arquivo enviado, com navegação funcional,
+              menu lateral com efeito de deslize no hover e um fluxo visual das telas principais.
+            </p>
+            <div class="chips">
+              <span class="chip">Tela Inicial</span>
+              <span class="chip">Mostruário</span>
+              <span class="chip">Vendedoras</span>
+              <span class="chip">Cadastro Produto</span>
+              <span class="chip">Acerto</span>
+              <span class="chip">Sair</span>
+              <span class="chip">Configurações</span>
+            </div>
+            <div class="actions-row">
+              <button class="btn primary nav-action" data-target="login">Abrir login</button>
+              <button class="btn secondary nav-action" data-target="mostruario">Ver mostruário</button>
+              <button class="btn secondary nav-action" data-target="estoque">Ver cadastro produto</button>
+            </div>
+          </div>
+
+          <div class="hero-card">
+            <h2 class="subtitle">Fluxograma principal</h2>
+            <div class="flowchart">
+              <div class="flow-node">
+                <strong>Tela Inicial</strong>
+                <small>Mapa com ícones laterais e interação por hover.</small>
+              </div>
+              <div class="flow-node">
+                <strong>Login</strong>
+                <small>Acesso ao sistema Venda Suite / WN Bijouterias.</small>
+              </div>
+              <div class="flow-node">
+                <strong>Módulos</strong>
+                <small>Mostruário, Vendedoras, Acerto e Cadastro Produto.</small>
+              </div>
+              <div class="flow-node">
+                <strong>Ações auxiliares</strong>
+                <small>Configurações, impressão, salvar, excluir e sair.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="login" class="screen hidden">
+        <div class="login-wrap">
+          <div class="product-visual">
+            <div class="brand-visual">
+              <img class="venda-suite-logo" src="assets/logo_venda_suite.svg" alt="Logo Venda Suite" />
+              <div class="jewel-box" aria-hidden="true">
+                <div class="cloth"></div>
+                <div class="lid"></div>
+                <div class="inside"></div>
+                <div class="base"></div>
+                <div class="chain one"></div>
+                <div class="chain two"></div>
+                <div class="pendant"></div>
+              </div>
+            </div>
+          </div>
+          <div class="login-card">
+            <h2>LOGIN</h2>
+            <div class="login-field"><input type="text" placeholder="USERNAME" /></div>
+            <div class="login-field"><input type="password" placeholder="SENHA" /></div>
+            <a href="#" class="forgot nav-action" data-target="configuracoes">ESQUECI A SENHA</a>
+            <button class="btn secondary nav-action full-btn" data-target="home">ENTRAR</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="mostruario" class="screen hidden">
+        <div class="toolbar">
+          <h2 class="section-title">MOSTRUÁRIO</h2>
+          <div class="toolbar-actions">
+            <div class="search"><input placeholder="Pesquisar mostruário" /></div>
+            <button class="btn primary">NOVO MOSTRUÁRIO</button>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="data-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mostruário</th>
+                  <th>Vendedora</th>
+                  <th>Qtd. de Peças</th>
+                  <th>Data Acertos</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>01</td><td>Vendedora 01</td><td>120</td><td>10/04/26</td></tr>
+                <tr><td>02</td><td>Vendedora 02</td><td>98</td><td>12/04/26</td></tr>
+                <tr><td>03</td><td>Vendedora 03</td><td>145</td><td>15/04/26</td></tr>
+                <tr><td>04</td><td>Vendedora 04</td><td>111</td><td>18/04/26</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="data-card">
+            <div class="grid-3">
+              <div class="kpi"><strong>4</strong><span>Mostruários ativos</span></div>
+              <div class="kpi"><strong>474</strong><span>Peças em circulação</span></div>
+              <div class="kpi"><strong>2</strong><span>Acertos pendentes</span></div>
+            </div>
+            <div class="notice mt-16">
+              A tela segue a lógica mostrada no PDF: lista, busca, novo cadastro e ações futuras como salvar, imprimir e exclusão.
+            </div>
+            <div class="actions-row mt-18">
+              <button class="btn secondary">Salvar</button>
+              <button class="btn secondary">Imprimir</button>
+              <button class="btn danger">Excluir</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="vendedoras" class="screen hidden">
+        <div class="toolbar">
+          <h2 class="section-title">VENDEDORAS</h2>
+          <button class="btn primary">NOVA VENDEDORA</button>
+        </div>
+        <div class="grid-2">
+          <div class="data-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Telefone</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Ana Souza</td><td>(11) 99999-1111</td><td>Ativa</td></tr>
+                <tr><td>Bruna Lima</td><td>(11) 98888-2222</td><td>Ativa</td></tr>
+                <tr><td>Camila Rocha</td><td>(11) 97777-3333</td><td>Pausada</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="data-card">
+            <div class="form-grid">
+              <div class="field"><label>Nome completo</label><input placeholder="Digite o nome" /></div>
+              <div class="field"><label>Telefone</label><input placeholder="(00) 00000-0000" /></div>
+              <div class="field"><label>Cidade</label><input placeholder="Cidade" /></div>
+              <div class="field"><label>Status</label><select><option>Ativa</option><option>Pausada</option></select></div>
+              <div class="field full"><label>Observações</label><textarea rows="4" placeholder="Anotações da vendedora"></textarea></div>
+            </div>
+            <div class="actions-row mt-18">
+              <button class="btn primary">Salvar cadastro</button>
+              <button class="btn secondary">Imprimir lista</button>
+              <button class="btn danger">Excluir</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="acerto" class="screen hidden">
+        <div class="toolbar">
+          <h2 class="section-title">ACERTO</h2>
+          <button class="btn warn">GERAR RELATÓRIO</button>
+        </div>
+        <div class="grid-2">
+          <div class="data-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Vendedora</th>
+                  <th>Período</th>
+                  <th>Entrada</th>
+                  <th>Saída</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Ana Souza</td><td>01/04 a 15/04</td><td>R$ 4.250,00</td><td>R$ 1.180,00</td></tr>
+                <tr><td>Bruna Lima</td><td>01/04 a 15/04</td><td>R$ 3.870,00</td><td>R$ 980,00</td></tr>
+                <tr><td>Camila Rocha</td><td>01/04 a 15/04</td><td>R$ 2.640,00</td><td>R$ 650,00</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="data-card">
+            <div class="grid-3">
+              <div class="kpi"><strong>R$ 10.760</strong><span>Total vendido</span></div>
+              <div class="kpi"><strong>R$ 2.810</strong><span>Saídas</span></div>
+              <div class="kpi"><strong>R$ 7.950</strong><span>Saldo</span></div>
+            </div>
+            <div class="notice mt-16">
+              Área pronta para ser ligada ao banco depois. Hoje ela demonstra o fluxo do módulo de acerto e impressão de lista visto no mapa de telas.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="estoque" class="screen hidden">
+        <div class="toolbar">
+          <h2 class="section-title">CADASTRO PRODUTO</h2>
+          <div class="toolbar-actions">
+            <button class="btn primary">NOVO PRODUTO</button>
+            <button class="btn secondary">ALTERAR PREÇO</button>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="data-card">
+            <div class="form-grid">
+              <div class="field"><label>Código</label><input placeholder="AA000" /></div>
+              <div class="field"><label>Categoria</label><select><option>Anel</option><option>Brinco</option><option>Colar</option></select></div>
+              <div class="field full"><label>Descrição do produto</label><input placeholder="Nome do produto" /></div>
+              <div class="field"><label>Preço Ouro</label><input placeholder="R$ 0,00" /></div>
+              <div class="field"><label>Preço Prata</label><input placeholder="R$ 0,00" /></div>
+              <div class="field"><label>Qtd.</label><input placeholder="00000" /></div>
+              <div class="field"><label>Status</label><select><option>Ativo</option><option>Inativo</option></select></div>
+            </div>
+            <div class="actions-row mt-18">
+              <button class="btn primary">Salvar</button>
+              <button class="btn secondary">Imprimir lista</button>
+              <button class="btn danger">Excluir</button>
+            </div>
+          </div>
+          <div class="data-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cód.</th>
+                  <th>Produto</th>
+                  <th>Qtd.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>AA001</td><td>Brinco Argola</td><td>48</td></tr>
+                <tr><td>AA002</td><td>Colar Coração</td><td>32</td></tr>
+                <tr><td>AA003</td><td>Anel Cravejado</td><td>27</td></tr>
+                <tr><td>AA004</td><td>Pulseira Elo</td><td>61</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="configuracoes" class="screen hidden">
+        <div class="toolbar">
+          <h2 class="section-title">CONFIGURAÇÕES</h2>
+        </div>
+        <div class="grid-2">
+          <div class="data-card">
+            <div class="form-grid">
+              <div class="field"><label>Nome da empresa</label><input value="WN Bijouterias" /></div>
+              <div class="field"><label>Tema</label><select><option>Claro</option><option>Dourado suave</option></select></div>
+              <div class="field"><label>Usuário admin</label><input value="admin" /></div>
+              <div class="field"><label>E-mail</label><input value="contato@wnbijouterias.com" /></div>
+              <div class="field full"><label>Observações</label><textarea rows="4">Espaço para futuras preferências do sistema.</textarea></div>
+            </div>
+            <div class="actions-row mt-18">
+              <button class="btn primary">Salvar alterações</button>
+              <button class="btn secondary nav-action" data-target="home">Voltar ao mapa</button>
+            </div>
+          </div>
+          <div class="data-card">
+            <h2 class="subtitle">Resumo do fluxo</h2>
+            <div class="flowchart">
+              <div class="flow-node"><strong>Home</strong><small>Mapa visual com menu hover.</small></div>
+              <div class="flow-node"><strong>Login</strong><small>Acesso inicial do usuário.</small></div>
+              <div class="flow-node"><strong>Módulos do sistema</strong><small>Navegação funcional entre as telas desenhadas no PDF.</small></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="logout" class="screen hidden screen-transparent">
+        <div class="logout-card">
+          <h2 class="logout-title">SAIR</h2>
+          <p class="muted">Você saiu da visualização do sistema. Clique abaixo para voltar ao mapa de telas.</p>
+          <div class="actions-row center mt-18">
+            <button class="btn primary nav-action" data-target="home">Voltar ao início</button>
+            <button class="btn secondary nav-action" data-target="login">Ir para login</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer-note">Protótipo HTML navegável • Hover lateral com slide • WN Bijouterias</div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
