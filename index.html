@@ -1,409 +1,203 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WN Bijouterias - Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WN Bijouterias</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="app">
-    <aside class="leftbar">
-      <div class="top-logo" title="Venda Suite">
-        <img src="assets/logo_venda_suite.svg" alt="Logo Venda Suite" class="icon-img">
-      </div>
 
-      <div class="bottom-actions">
-        <button class="icon-btn nav-btn" data-target="logout" title="Sair">
-          <img src="assets/icone_sair.svg" alt="Sair" class="icon-img">
-        </button>
+<div class="app">
 
-        <button class="icon-btn nav-btn" data-target="configuracoes" title="Configurações">
-          <img src="assets/icone_configuracoes.svg" alt="Configurações" class="icon-img">
-        </button>
-      </div>
-    </aside>
-
-    <div class="rail">
-      <div class="menu-slot ring">
-        <button class="icon-btn nav-btn" data-target="mostruario" aria-label="Mostruário">
-          <img src="assets/icone_anel.svg" alt="Mostruário" class="icon-img">
-        </button>
-        <div class="slide-label label-ring">MOSTRUÁRIO</div>
-      </div>
-
-      <div class="menu-slot seller">
-        <button class="icon-btn nav-btn" data-target="vendedoras" aria-label="Vendedoras">
-          <img src="assets/icone_vendedora.svg" alt="Vendedoras" class="icon-img">
-        </button>
-        <div class="slide-label label-seller">VENDEDORAS</div>
-      </div>
-
-      <div class="menu-slot report">
-        <button class="icon-btn nav-btn" data-target="acerto" aria-label="Acerto">
-          <img src="assets/icone_acerto.svg" alt="Acerto" class="icon-img">
-        </button>
-        <div class="slide-label label-report">ACERTO</div>
-      </div>
-
-      <div class="menu-slot box">
-        <button class="icon-btn nav-btn" data-target="estoque" aria-label="Cadastro Produto">
-          <img src="assets/icone_cadastro_produto.svg" alt="Cadastro Produto" class="icon-img">
-        </button>
-        <div class="slide-label label-box">CADASTRO PRODUTO</div>
-      </div>
+  <!-- BARRA LARANJA -->
+  <aside class="leftbar">
+    
+    <div class="top-logo">
+      <img src="assets/logo_venda_suite.svg" class="icon-img">
     </div>
 
-    <main class="content">
-      <div class="watermark" aria-hidden="true">
-        <img src="assets/icone_wnbijouterias.svg" alt="WN Bijouterias">
-      </div>
+    <div class="bottom-actions">
+      <button class="icon-btn nav-btn" data-target="logout">
+        <img src="assets/icone_sair.svg" class="icon-img">
+      </button>
 
-      <section id="home" class="screen active">
-        <div class="hero">
-          <div class="card">
-            <h1>MAPA DE TELAS<br>WN BIJOUTERIAS</h1>
-            <p>
-              Dashboard em HTML inspirado no arquivo enviado, com navegação
-              funcional, menu lateral com efeito de deslize e estrutura baseada nas telas
-              do mapa.
-            </p>
+      <button class="icon-btn nav-btn" data-target="configuracoes">
+        <img src="assets/icone_configuracoes.svg" class="icon-img">
+      </button>
+    </div>
 
-            <div class="chips">
-              <div class="chip">Tela Inicial</div>
-              <div class="chip">Mostruário</div>
-              <div class="chip">Vendedoras</div>
-              <div class="chip">Cadastro Produto</div>
-              <div class="chip">Acerto</div>
-              <div class="chip">Configurações</div>
-              <div class="chip">Sair</div>
-            </div>
+  </aside>
 
-            <div class="actions">
-              <button class="btn primary nav-btn" data-target="login">Abrir login</button>
-              <button class="btn light nav-btn" data-target="mostruario">Ver mostruário</button>
-              <button class="btn light nav-btn" data-target="estoque">Ver cadastro produto</button>
-            </div>
-          </div>
 
-          <div class="card">
-            <h2>Fluxograma principal</h2>
-            <div class="flow">
-              <div class="flow-item">
-                <strong>Tela Inicial</strong>
-                <span>Mapa visual com ícones laterais e interação por hover.</span>
-              </div>
-              <div class="flow-item">
-                <strong>Login</strong>
-                <span>Acesso ao sistema Venda Suite / WN Bijouterias.</span>
-              </div>
-              <div class="flow-item">
-                <strong>Módulos</strong>
-                <span>Mostruário, Vendedoras, Acerto e Cadastro Produto.</span>
-              </div>
-              <div class="flow-item">
-                <strong>Ações auxiliares</strong>
-                <span>Configurações e saída do sistema.</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+  <!-- BARRA CINZA -->
+  <div class="rail">
 
-      <section id="login" class="screen">
-        <div class="login-wrap">
-          <div class="login-visual">
-            <div class="jewel-box">
-              <div class="cloth"></div>
-              <div class="lid"></div>
-              <div class="inside"></div>
-              <div class="base"></div>
-              <div class="chain1"></div>
-              <div class="chain2"></div>
-              <div class="pendant"></div>
-            </div>
-          </div>
+    <!-- MOSTRUÁRIO -->
+    <div class="menu-slot ring nav-btn" data-target="mostruario">
+      <button class="icon-btn">
+        <img src="assets/icone_anel.svg" class="icon-img">
+      </button>
+      <div class="slide-label label-ring">MOSTRUÁRIO</div>
+    </div>
 
-          <div class="login-card">
-            <h2>LOGIN</h2>
-            <div class="login-field"><input type="text" placeholder="USERNAME"></div>
-            <div class="login-field"><input type="password" placeholder="SENHA"></div>
-            <a href="#" class="forgot">ESQUECI A SENHA</a>
-            <button class="btn light nav-btn" data-target="home" style="width:100%">ENTRAR</button>
-          </div>
-        </div>
-      </section>
+    <!-- VENDEDORAS -->
+    <div class="menu-slot seller nav-btn" data-target="vendedoras">
+      <button class="icon-btn">
+        <img src="assets/icone_vendedora.svg" class="icon-img">
+      </button>
+      <div class="slide-label label-seller">VENDEDORAS</div>
+    </div>
 
-      <section id="mostruario" class="screen">
-        <div class="panel">
-          <div class="toolbar">
-            <h2 style="margin:0">MOSTRUÁRIO</h2>
-            <div style="display:flex;gap:12px;flex-wrap:wrap">
-              <div class="search"><input placeholder="Pesquisar mostruário"></div>
-              <button class="btn blue">NOVO MOSTRUÁRIO</button>
-            </div>
-          </div>
+    <!-- ACERTO -->
+    <div class="menu-slot report nav-btn" data-target="acerto">
+      <button class="icon-btn">
+        <img src="assets/icone_acerto.svg" class="icon-img">
+      </button>
+      <div class="slide-label label-report">ACERTO</div>
+    </div>
 
-          <div class="grid-2">
-            <div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Mostruário</th>
-                    <th>Vendedora</th>
-                    <th>Qtd. de Peças</th>
-                    <th>Data Acertos</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>01</td><td>Vendedora 01</td><td>120</td><td>10/04/26</td></tr>
-                  <tr><td>02</td><td>Vendedora 02</td><td>98</td><td>12/04/26</td></tr>
-                  <tr><td>03</td><td>Vendedora 03</td><td>145</td><td>15/04/26</td></tr>
-                  <tr><td>04</td><td>Vendedora 04</td><td>111</td><td>18/04/26</td></tr>
-                </tbody>
-              </table>
-            </div>
+    <!-- CADASTRO -->
+    <div class="menu-slot box nav-btn" data-target="estoque">
+      <button class="icon-btn">
+        <img src="assets/icone_cadastro_produto.svg" class="icon-img">
+      </button>
+      <div class="slide-label label-box">CADASTRO PRODUTO</div>
+    </div>
 
-            <div>
-              <div class="kpis">
-                <div class="kpi"><strong>4</strong><span>Mostruários ativos</span></div>
-                <div class="kpi"><strong>474</strong><span>Peças em circulação</span></div>
-                <div class="kpi"><strong>2</strong><span>Acertos pendentes</span></div>
-              </div>
-
-              <div class="notice">
-                Tela com busca, lista e botão de novo mostruário, seguindo a estrutura do mapa enviado.
-              </div>
-
-              <div class="actions" style="margin-top:16px">
-                <button class="btn light">Salvar</button>
-                <button class="btn light">Imprimir</button>
-                <button class="btn pink">Excluir</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="vendedoras" class="screen">
-        <div class="panel">
-          <div class="toolbar">
-            <h2 style="margin:0">VENDEDORAS</h2>
-            <button class="btn blue">NOVA VENDEDORA</button>
-          </div>
-
-          <div class="grid-2">
-            <div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Nome</th>
-                    <th>Telefone</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>Ana Souza</td><td>(11) 99999-1111</td><td>Ativa</td></tr>
-                  <tr><td>Bruna Lima</td><td>(11) 98888-2222</td><td>Ativa</td></tr>
-                  <tr><td>Camila Rocha</td><td>(11) 97777-3333</td><td>Pausada</td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="form-grid">
-              <div class="field">
-                <label>Nome completo</label>
-                <input placeholder="Digite o nome">
-              </div>
-              <div class="field">
-                <label>Telefone</label>
-                <input placeholder="(00) 00000-0000">
-              </div>
-              <div class="field">
-                <label>Cidade</label>
-                <input placeholder="Cidade">
-              </div>
-              <div class="field">
-                <label>Status</label>
-                <select><option>Ativa</option><option>Pausada</option></select>
-              </div>
-              <div class="field full">
-                <label>Observações</label>
-                <textarea rows="4" placeholder="Anotações da vendedora"></textarea>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="acerto" class="screen">
-        <div class="panel">
-          <div class="toolbar">
-            <h2 style="margin:0">ACERTO</h2>
-            <button class="btn warn">GERAR RELATÓRIO</button>
-          </div>
-
-          <div class="grid-2">
-            <div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Vendedora</th>
-                    <th>Período</th>
-                    <th>Entrada</th>
-                    <th>Saída</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>Ana Souza</td><td>01/04 a 15/04</td><td>R$ 4.250,00</td><td>R$ 1.180,00</td></tr>
-                  <tr><td>Bruna Lima</td><td>01/04 a 15/04</td><td>R$ 3.870,00</td><td>R$ 980,00</td></tr>
-                  <tr><td>Camila Rocha</td><td>01/04 a 15/04</td><td>R$ 2.640,00</td><td>R$ 650,00</td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div>
-              <div class="kpis">
-                <div class="kpi"><strong>R$ 10.760</strong><span>Total vendido</span></div>
-                <div class="kpi"><strong>R$ 2.810</strong><span>Saídas</span></div>
-                <div class="kpi"><strong>R$ 7.950</strong><span>Saldo</span></div>
-              </div>
-
-              <div class="notice">
-                Área pronta para representar o fluxo do módulo de acerto e impressão de lista.
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="estoque" class="screen">
-        <div class="panel">
-          <div class="toolbar">
-            <h2 style="margin:0">CADASTRO PRODUTO</h2>
-            <div style="display:flex;gap:12px;flex-wrap:wrap">
-              <button class="btn blue">NOVO PRODUTO</button>
-              <button class="btn light">ALTERAR PREÇO</button>
-            </div>
-          </div>
-
-          <div class="grid-2">
-            <div class="form-grid">
-              <div class="field">
-                <label>Código</label>
-                <input placeholder="AA000">
-              </div>
-              <div class="field">
-                <label>Categoria</label>
-                <select><option>Anel</option><option>Brinco</option><option>Colar</option></select>
-              </div>
-              <div class="field full">
-                <label>Descrição do produto</label>
-                <input placeholder="Nome do produto">
-              </div>
-              <div class="field">
-                <label>Preço Ouro</label>
-                <input placeholder="R$ 0,00">
-              </div>
-              <div class="field">
-                <label>Preço Prata</label>
-                <input placeholder="R$ 0,00">
-              </div>
-              <div class="field">
-                <label>Qtd.</label>
-                <input placeholder="00000">
-              </div>
-              <div class="field">
-                <label>Status</label>
-                <select><option>Ativo</option><option>Inativo</option></select>
-              </div>
-            </div>
-
-            <div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Cód.</th>
-                    <th>Produto</th>
-                    <th>Qtd.</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr><td>AA001</td><td>Brinco Argola</td><td>48</td></tr>
-                  <tr><td>AA002</td><td>Colar Coração</td><td>32</td></tr>
-                  <tr><td>AA003</td><td>Anel Cravejado</td><td>27</td></tr>
-                  <tr><td>AA004</td><td>Pulseira Elo</td><td>61</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="configuracoes" class="screen">
-        <div class="panel">
-          <div class="toolbar">
-            <h2 style="margin:0">CONFIGURAÇÕES</h2>
-          </div>
-
-          <div class="grid-2">
-            <div class="form-grid">
-              <div class="field">
-                <label>Nome da empresa</label>
-                <input value="WN Bijouterias">
-              </div>
-              <div class="field">
-                <label>Tema</label>
-                <select><option>Claro</option><option>Dourado suave</option></select>
-              </div>
-              <div class="field">
-                <label>Usuário admin</label>
-                <input value="admin">
-              </div>
-              <div class="field">
-                <label>E-mail</label>
-                <input value="contato@wnbijouterias.com">
-              </div>
-              <div class="field full">
-                <label>Observações</label>
-                <textarea rows="4">Espaço para futuras preferências do sistema.</textarea>
-              </div>
-            </div>
-
-            <div class="card" style="padding:18px">
-              <h2 style="font-size:28px">Resumo do fluxo</h2>
-              <div class="flow">
-                <div class="flow-item">
-                  <strong>Home</strong>
-                  <span>Mapa visual com menu hover.</span>
-                </div>
-                <div class="flow-item">
-                  <strong>Login</strong>
-                  <span>Acesso inicial do usuário.</span>
-                </div>
-                <div class="flow-item">
-                  <strong>Módulos do sistema</strong>
-                  <span>Navegação funcional entre as telas do mapa.</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="logout" class="screen">
-        <div class="logout-card">
-          <h2>SAIR</h2>
-          <p>Você saiu da visualização do sistema. Clique abaixo para voltar ao início.</p>
-          <div class="actions" style="justify-content:center">
-            <button class="btn primary nav-btn" data-target="home">Voltar ao início</button>
-            <button class="btn light nav-btn" data-target="login">Ir para login</button>
-          </div>
-        </div>
-      </section>
-    </main>
   </div>
 
-  <script src="script.js"></script>
+
+  <!-- CONTEÚDO -->
+  <main class="content">
+
+    <div class="watermark">
+      <img src="assets/icone_wnbijouterias.svg">
+    </div>
+
+    <!-- HOME -->
+    <section id="home" class="screen active">
+      <div class="hero">
+
+        <div class="card">
+          <h1>MAPA DE TELAS<br>WN BIJOUTERIAS</h1>
+          <p>
+            Dashboard com navegação lateral interativa conforme layout enviado.
+          </p>
+
+          <div class="actions">
+            <button class="btn primary nav-btn" data-target="login">Abrir login</button>
+            <button class="btn light nav-btn" data-target="mostruario">Mostruário</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Fluxo</h2>
+          <p>Login → Módulos → Ações</p>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- LOGIN -->
+    <section id="login" class="screen">
+      <div class="login-wrap">
+
+        <div class="login-card">
+          <h2>LOGIN</h2>
+
+          <div class="login-field">
+            <input placeholder="USERNAME">
+          </div>
+
+          <div class="login-field">
+            <input type="password" placeholder="SENHA">
+          </div>
+
+          <button class="btn primary nav-btn" data-target="home">
+            ENTRAR
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- MOSTRUÁRIO -->
+    <section id="mostruario" class="screen">
+      <div class="card">
+        <h2>Mostruário</h2>
+        <p>Lista de peças e controle.</p>
+      </div>
+    </section>
+
+
+    <!-- VENDEDORAS -->
+    <section id="vendedoras" class="screen">
+      <div class="card">
+        <h2>Vendedoras</h2>
+        <p>Cadastro e gestão.</p>
+      </div>
+    </section>
+
+
+    <!-- ACERTO -->
+    <section id="acerto" class="screen">
+      <div class="card">
+        <h2>Acerto</h2>
+        <p>Relatórios financeiros.</p>
+      </div>
+    </section>
+
+
+    <!-- ESTOQUE -->
+    <section id="estoque" class="screen">
+      <div class="card">
+        <h2>Cadastro Produto</h2>
+        <p>Gerenciamento de estoque.</p>
+      </div>
+    </section>
+
+
+    <!-- CONFIG -->
+    <section id="configuracoes" class="screen">
+      <div class="card">
+        <h2>Configurações</h2>
+      </div>
+    </section>
+
+
+    <!-- SAIR -->
+    <section id="logout" class="screen">
+      <div class="card">
+        <h2>Sair</h2>
+        <button class="btn primary nav-btn" data-target="home">
+          Voltar
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+
+<script>
+const screens = document.querySelectorAll('.screen');
+const buttons = document.querySelectorAll('.nav-btn');
+
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.target;
+    if(!target) return;
+
+    screens.forEach(s => s.classList.remove('active'));
+    document.getElementById(target).classList.add('active');
+  });
+});
+</script>
+
 </body>
 </html>
