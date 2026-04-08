@@ -1,195 +1,49 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WN Bijouterias</title>
-<link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-
-<div class="app">
-
-  <!-- BARRA LARANJA -->
-  <aside class="leftbar">
-
-    <div class="top-logo">
-      <img src="assets/logo_venda_suite.svg" class="icon-img">
+<section id="mostruario" class="screen">
+  <div class="panel">
+    <div class="toolbar">
+      <h2 style="margin:0">MOSTRUÁRIO</h2>
+      <button class="btn blue">NOVO MOSTRUÁRIO</button>
     </div>
 
-    <div class="bottom-actions">
-      <button class="icon-btn nav-btn" data-target="logout">
-        <img src="assets/icone_sair.svg" class="icon-img">
-      </button>
-
-      <button class="icon-btn nav-btn" data-target="configuracoes">
-        <img src="assets/icone_configuracoes.svg" class="icon-img">
-      </button>
-    </div>
-
-  </aside>
-
-  <!-- BARRA CINZA -->
-  <div class="rail">
-
-    <div class="menu-slot ring nav-btn" data-target="mostruario">
-      <button class="icon-btn">
-        <img src="assets/icone_anel.svg" class="icon-img">
-      </button>
-      <div class="slide-label">MOSTRUÁRIO</div>
-    </div>
-
-    <div class="menu-slot seller nav-btn" data-target="vendedoras">
-      <button class="icon-btn">
-        <img src="assets/icone_vendedora.svg" class="icon-img">
-      </button>
-      <div class="slide-label">VENDEDORAS</div>
-    </div>
-
-    <div class="menu-slot report nav-btn" data-target="acerto">
-      <button class="icon-btn">
-        <img src="assets/icone_acerto.svg" class="icon-img">
-      </button>
-      <div class="slide-label">ACERTO</div>
-    </div>
-
-    <div class="menu-slot box nav-btn" data-target="estoque">
-      <button class="icon-btn">
-        <img src="assets/icone_cadastro_produto.svg" class="icon-img">
-      </button>
-      <div class="slide-label">CADASTRO PRODUTO</div>
-    </div>
-
-  </div>
-
-  <!-- CONTEÚDO -->
-  <main class="content">
-
-    <div class="watermark">
-      <img src="assets/icone_wnbijouterias.svg">
-    </div>
-
-    <!-- HOME -->
-    <section id="home" class="screen active">
-      <div class="hero">
-        <div class="card">
-          <h1>MAPA DE TELAS<br>WN BIJOUTERIAS</h1>
-          <p>Dashboard com navegação lateral interativa.</p>
-
-          <div class="actions">
-            <button class="btn primary nav-btn" data-target="mostruario">Ir para Mostruário</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Fluxo</h2>
-          <p>Login → Módulos → Ações</p>
-        </div>
+    <div class="mostruario-flow">
+      <div class="flow-card start">
+        <h3>Tela Mostruário</h3>
+        <p>Busca, colunas e visualização principal.</p>
       </div>
-    </section>
 
-    <!-- MOSTRUÁRIO COM FLUXO -->
-    <section id="mostruario" class="screen">
+      <div class="flow-arrow">↓</div>
 
-      <div class="card">
-        <div class="toolbar">
-          <h2>MOSTRUÁRIO</h2>
-          <button class="btn blue">NOVO MOSTRUÁRIO</button>
-        </div>
-
-        <div class="mostruario-flow">
-
-          <div class="flow-card start">
-            <h3>Tela Mostruário</h3>
-            <p>Busca, colunas e visualização principal.</p>
+      <div class="flow-row">
+        <div class="flow-branch">
+          <div class="flow-card">
+            <h3>Lista de Mostruários</h3>
+            <p>Exibe mostruários cadastrados, vendedora, quantidade e data de acerto.</p>
           </div>
 
           <div class="flow-arrow">↓</div>
 
-          <div class="flow-row">
+          <div class="flow-card danger-flow">
+            <h3>Excluir Mostruário</h3>
+            <p>Popup de confirmação: <strong>Deseja excluir?</strong> com opções SIM e NÃO.</p>
+          </div>
+        </div>
 
-            <!-- RAMO 1 -->
-            <div class="flow-branch">
-              <div class="flow-card">
-                <h3>Lista de Mostruários</h3>
-                <p>Exibe registros cadastrados.</p>
-              </div>
+        <div class="flow-connector">ou</div>
 
-              <div class="flow-arrow">↓</div>
-
-              <div class="flow-card danger-flow">
-                <h3>Excluir</h3>
-                <p>Confirmação SIM / NÃO</p>
-              </div>
-            </div>
-
-            <div class="flow-connector">OU</div>
-
-            <!-- RAMO 2 -->
-            <div class="flow-branch">
-              <div class="flow-card">
-                <h3>Incluir Mostruário</h3>
-                <p>Cadastro completo.</p>
-              </div>
-
-              <div class="flow-arrow">↓</div>
-
-              <div class="flow-card">
-                <h3>Lista de Produtos</h3>
-                <p>Adição de itens ao mostruário.</p>
-              </div>
-            </div>
-
+        <div class="flow-branch">
+          <div class="flow-card">
+            <h3>Incluir Mostruário</h3>
+            <p>Cadastro com número, vendedora, data, descrição e quantidade.</p>
           </div>
 
+          <div class="flow-arrow">↓</div>
+
+          <div class="flow-card">
+            <h3>Inclusão Lista</h3>
+            <p>Adiciona vários produtos ao mostruário com código, descrição e quantidade.</p>
+          </div>
         </div>
       </div>
-
-    </section>
-
-    <!-- OUTRAS TELAS -->
-    <section id="vendedoras" class="screen">
-      <div class="card"><h2>Vendedoras</h2></div>
-    </section>
-
-    <section id="acerto" class="screen">
-      <div class="card"><h2>Acerto</h2></div>
-    </section>
-
-    <section id="estoque" class="screen">
-      <div class="card"><h2>Cadastro Produto</h2></div>
-    </section>
-
-    <section id="configuracoes" class="screen">
-      <div class="card"><h2>Configurações</h2></div>
-    </section>
-
-    <section id="logout" class="screen">
-      <div class="card">
-        <h2>Sair</h2>
-        <button class="btn primary nav-btn" data-target="home">Voltar</button>
-      </div>
-    </section>
-
-  </main>
-
-</div>
-
-<script>
-const screens = document.querySelectorAll('.screen');
-const buttons = document.querySelectorAll('.nav-btn');
-
-buttons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const target = btn.dataset.target;
-    if(!target) return;
-
-    screens.forEach(s => s.classList.remove('active'));
-    document.getElementById(target).classList.add('active');
-  });
-});
-</script>
-
-</body>
-</html>
+    </div>
+  </div>
+</section>
