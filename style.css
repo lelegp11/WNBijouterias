@@ -26,7 +26,6 @@ html,body{
   display:grid;
   grid-template-columns:76px 66px 1fr;
   min-height:100vh;
-  position:relative;
 }
 
 /* ===== BARRA LARANJA ===== */
@@ -37,7 +36,6 @@ html,body{
   justify-content:space-between;
   align-items:center;
   padding:10px 0;
-  position:relative;
   z-index:30;
 }
 
@@ -53,7 +51,6 @@ html,body{
   display:flex;
   flex-direction:column;
   gap:12px;
-  align-items:center;
 }
 
 .leftbar .icon-btn{
@@ -69,12 +66,14 @@ html,body{
   overflow:visible;
 }
 
-/* ===== POSIÇÃO DOS ITENS ===== */
+/* ===== ITENS MENU ===== */
 .menu-slot{
   position:absolute;
   left:0;
   width:300px;
   height:64px;
+  display:flex;
+  align-items:center;
   z-index:45;
 }
 
@@ -83,24 +82,22 @@ html,body{
 .menu-slot.report{top:220px;}
 .menu-slot.box{top:285px;}
 
-/* ===== BOTÃO ÍCONE ===== */
+/* ===== ÍCONE ===== */
 .rail .icon-btn{
-  position:absolute;
-  left:0;
-  top:0;
   width:66px;
   height:64px;
-  border:0;
-  background:transparent;
-  cursor:pointer;
   display:flex;
   align-items:center;
   justify-content:center;
+  background:transparent;
+  border:none;
+  cursor:pointer;
   z-index:3;
+  flex-shrink:0;
 }
 
 .icon-btn{
-  border:0;
+  border:none;
   background:transparent;
   cursor:pointer;
   display:flex;
@@ -108,14 +105,12 @@ html,body{
   justify-content:center;
 }
 
-/* ===== TAMANHO DOS ÍCONES ===== */
 .icon-img{
   width:28px;
   height:28px;
   max-width:28px;
   max-height:28px;
   object-fit:contain;
-  object-position:center;
 }
 
 .top-logo .icon-img{
@@ -123,16 +118,16 @@ html,body{
   height:44px;
 }
 
-/* ===== LABEL DESLIZANTE (CORRIGIDO) ===== */
+/* ===== LABEL COLORIDO (AGORA PEGA ÍCONE + TEXTO) ===== */
 .slide-label{
   position:absolute;
-  left:66px;
+  left:0;
   top:0;
   height:64px;
-  min-width:220px;
+  min-width:250px;
   display:flex;
   align-items:center;
-  padding:0 18px;
+  padding:0 18px 0 86px;
   font-size:18px;
   font-weight:500;
   color:#111;
@@ -167,7 +162,7 @@ html,body{
   z-index:1;
 }
 
-/* ===== LOGO FUNDO ===== */
+/* ===== FUNDO LOGO ===== */
 .watermark{
   position:absolute;
   inset:0;
