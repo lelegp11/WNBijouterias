@@ -24,7 +24,7 @@ html,body{
 
 .app{
   display:grid;
-  grid-template-columns:80px 68px 1fr;
+  grid-template-columns:76px 66px 1fr;
   min-height:100vh;
 }
 
@@ -34,14 +34,15 @@ html,body{
   flex-direction:column;
   justify-content:space-between;
   align-items:center;
-  padding:12px 0 10px;
+  padding:10px 0 10px;
   position:relative;
   z-index:5;
+  overflow:hidden;
 }
 
 .top-logo{
-  width:60px;
-  height:60px;
+  width:52px;
+  height:52px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -51,7 +52,7 @@ html,body{
 .bottom-actions{
   display:flex;
   flex-direction:column;
-  gap:18px;
+  gap:12px;
   align-items:center;
   width:100%;
   padding-bottom:2px;
@@ -61,21 +62,22 @@ html,body{
   background:var(--rail);
   position:relative;
   z-index:4;
+  overflow:hidden;
 }
 
 .menu-slot{
   position:absolute;
   left:0;
-  width:360px;
-  height:84px;
+  width:330px;
+  height:76px;
   display:flex;
   align-items:center;
 }
 
-.menu-slot.ring{top:94px;}
-.menu-slot.seller{top:178px;}
-.menu-slot.report{top:262px;}
-.menu-slot.box{top:346px;}
+.menu-slot.ring{top:96px;}
+.menu-slot.seller{top:172px;}
+.menu-slot.report{top:248px;}
+.menu-slot.box{top:324px;}
 
 .icon-btn{
   border:0;
@@ -86,21 +88,24 @@ html,body{
   align-items:center;
   justify-content:center;
   flex:0 0 auto;
+  overflow:hidden;
 }
 
 .leftbar .icon-btn{
-  width:80px;
-  height:82px;
+  width:76px;
+  height:76px;
 }
 
 .rail .icon-btn{
-  width:68px;
-  height:84px;
+  width:66px;
+  height:76px;
 }
 
 .icon-img{
-  width:56px;
-  height:56px;
+  width:38px;
+  height:38px;
+  max-width:38px;
+  max-height:38px;
   object-fit:contain;
   object-position:center;
   display:block;
@@ -108,22 +113,26 @@ html,body{
 }
 
 .top-logo .icon-img{
-  width:58px;
-  height:58px;
+  width:46px;
+  height:46px;
+  max-width:46px;
+  max-height:46px;
 }
 
 .leftbar .bottom-actions .icon-img{
-  width:48px;
-  height:48px;
+  width:34px;
+  height:34px;
+  max-width:34px;
+  max-height:34px;
 }
 
 .slide-label{
-  min-width:285px;
-  height:84px;
+  min-width:264px;
+  height:76px;
   display:flex;
   align-items:center;
-  padding:0 28px;
-  font-size:21px;
+  padding:0 24px;
+  font-size:20px;
   font-weight:500;
   color:#111;
   text-transform:uppercase;
