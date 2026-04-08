@@ -66,18 +66,14 @@ html,body{
 }
 
 .menu-slot{
-  position:absolute;
-  left:0;
-  width:330px;
-  height:76px;
-  display:flex;
-  align-items:center;
+ menu-slot{
+  height:64px;
 }
 
-.menu-slot.ring{top:96px;}
-.menu-slot.seller{top:172px;}
-.menu-slot.report{top:248px;}
-.menu-slot.box{top:324px;}
+.menu-slot.ring{top:90px;}
+.menu-slot.seller{top:155px;}
+.menu-slot.report{top:220px;}
+.menu-slot.box{top:285px;}
 
 .icon-btn{
   border:0;
@@ -92,24 +88,23 @@ html,body{
 }
 
 .leftbar .icon-btn{
-  width:76px;
-  height:76px;
+  width:60px;
+  height:60px;
 }
 
 .rail .icon-btn{
-  width:66px;
-  height:76px;
+  width:60px;
+  height:60px;
 }
 
 .icon-img{
-  width:38px;
-  height:38px;
-  max-width:38px;
-  max-height:38px;
+  width:28px;
+  height:28px;
+  max-width:28px;
+  max-height:28px;
   object-fit:contain;
   object-position:center;
   display:block;
-  flex-shrink:0;
 }
 
 .top-logo .icon-img{
