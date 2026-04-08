@@ -15,113 +15,83 @@
     <!-- BARRA LARANJA -->
     <aside class="leftbar">
       <div class="top-logo">
-        <img src="assets/logo_venda_suite.svg" alt="Venda Suite" class="icon-img">
+        <img src="assets/logo_venda_suite.svg" class="icon-img">
       </div>
 
       <div class="bottom-actions">
-        <button class="icon-btn nav-btn" data-target="logout" title="Sair">
-          <img src="assets/icone_sair.svg" alt="Sair" class="icon-img">
+        <button class="icon-btn nav-btn" data-target="logout">
+          <img src="assets/icone_sair.svg" class="icon-img">
         </button>
 
-        <button class="icon-btn nav-btn" data-target="configuracoes" title="Configurações">
-          <img src="assets/icone_configuracoes.svg" alt="Configurações" class="icon-img">
+        <button class="icon-btn nav-btn" data-target="configuracoes">
+          <img src="assets/icone_configuracoes.svg" class="icon-img">
         </button>
       </div>
     </aside>
 
     <!-- BARRA CINZA -->
     <div class="rail">
-      <div class="menu-slot ring nav-btn" data-target="mostruario" title="Mostruário">
-        <button class="icon-btn" type="button" tabindex="-1">
-          <img src="assets/icone_anel.svg" alt="Mostruário" class="icon-img">
+
+      <div class="menu-slot ring nav-btn" data-target="mostruario">
+        <button class="icon-btn">
+          <img src="assets/icone_anel.svg" class="icon-img">
         </button>
         <div class="slide-label">MOSTRUÁRIO</div>
       </div>
 
-      <div class="menu-slot seller nav-btn" data-target="vendedoras" title="Vendedoras">
-        <button class="icon-btn" type="button" tabindex="-1">
-          <img src="assets/icone_vendedora.svg" alt="Vendedoras" class="icon-img">
+      <div class="menu-slot seller nav-btn" data-target="vendedoras">
+        <button class="icon-btn">
+          <img src="assets/icone_vendedora.svg" class="icon-img">
         </button>
         <div class="slide-label">VENDEDORAS</div>
       </div>
 
-      <div class="menu-slot report nav-btn" data-target="acerto" title="Acerto">
-        <button class="icon-btn" type="button" tabindex="-1">
-          <img src="assets/icone_acerto.svg" alt="Acerto" class="icon-img">
+      <div class="menu-slot report nav-btn" data-target="acerto">
+        <button class="icon-btn">
+          <img src="assets/icone_acerto.svg" class="icon-img">
         </button>
         <div class="slide-label">ACERTO</div>
       </div>
 
-      <div class="menu-slot box nav-btn" data-target="estoque" title="Cadastro Produto">
-        <button class="icon-btn" type="button" tabindex="-1">
-          <img src="assets/icone_cadastro_produto.svg" alt="Cadastro Produto" class="icon-img">
+      <div class="menu-slot box nav-btn" data-target="estoque">
+        <button class="icon-btn">
+          <img src="assets/icone_cadastro_produto.svg" class="icon-img">
         </button>
         <div class="slide-label">CADASTRO PRODUTO</div>
       </div>
+
     </div>
 
     <!-- CONTEÚDO -->
     <main class="content">
 
       <div class="watermark">
-        <img src="assets/icone_wnbijouterias.svg" alt="WN Bijouterias">
+        <img src="assets/icone_wnbijouterias.svg">
       </div>
 
       <!-- HOME -->
       <section id="home" class="screen">
-        <div class="hero">
-          <div class="card">
-            <h1>MAPA DE TELAS<br>WN BIJOUTERIAS</h1>
-            <p>
-              Dashboard com navegação lateral interativa, mantendo a estrutura visual do mapa de telas.
-            </p>
-
-            <div class="chips">
-              <div class="chip">Tela Inicial</div>
-              <div class="chip">Mostruário</div>
-              <div class="chip">Vendedoras</div>
-              <div class="chip">Acerto</div>
-              <div class="chip">Cadastro Produto</div>
-              <div class="chip">Configurações</div>
-              <div class="chip">Sair</div>
-            </div>
-
-            <div class="actions">
-              <button class="btn primary nav-btn" data-target="mostruario">Ir para Mostruário</button>
-              <button class="btn light nav-btn" data-target="vendedoras">Ver Vendedoras</button>
-            </div>
-          </div>
-
-          <div class="card">
-            <h2>Fluxo Geral</h2>
-            <div class="flow">
-              <div class="flow-item">
-                <strong>Tela Inicial</strong>
-                <span>Ponto de entrada do sistema.</span>
-              </div>
-              <div class="flow-item">
-                <strong>Login</strong>
-                <span>Acesso ao sistema.</span>
-              </div>
-              <div class="flow-item">
-                <strong>Módulos</strong>
-                <span>Mostruário, Vendedoras, Acerto e Cadastro Produto.</span>
-              </div>
-            </div>
-          </div>
+        <div class="card">
+          <h1>WN BIJOUTERIAS</h1>
+          <p>Selecione um módulo no menu lateral.</p>
         </div>
       </section>
 
       <!-- MOSTRUÁRIO -->
       <section id="mostruario" class="screen active">
+
         <div class="panel">
           <div class="toolbar">
-            <h2 style="margin:0">MOSTRUÁRIO</h2>
+            <h2>MOSTRUÁRIO</h2>
+
             <div class="toolbar-actions">
               <div class="search">
-                <input type="text" placeholder="Pesquisar mostruário">
+                <input placeholder="Pesquisar">
               </div>
-              <button class="btn blue" type="button">NOVO MOSTRUÁRIO</button>
+
+              <button class="btn blue nav-btn" data-target="mostruario-incluir">
+                NOVO MOSTRUÁRIO
+              </button>
             </div>
           </div>
 
@@ -131,48 +101,30 @@
                 <tr>
                   <th>Mostruário</th>
                   <th>Vendedora</th>
-                  <th>Qtd. de Peças</th>
-                  <th>Data Acertos</th>
-                  <th class="col-acoes">Ações</th>
+                  <th>Qtd.</th>
+                  <th>Data</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
+
               <tbody>
                 <tr>
                   <td>01</td>
                   <td>Vendedora</td>
-                  <td>000</td>
+                  <td>100</td>
                   <td>00/00/00</td>
-                  <td class="acoes-cell">
+                  <td>
                     <button class="mini-btn">Ver</button>
                     <button class="mini-btn danger">Excluir</button>
                   </td>
                 </tr>
+
                 <tr>
                   <td>02</td>
                   <td>Vendedora</td>
-                  <td>000</td>
+                  <td>150</td>
                   <td>00/00/00</td>
-                  <td class="acoes-cell">
-                    <button class="mini-btn">Ver</button>
-                    <button class="mini-btn danger">Excluir</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>03</td>
-                  <td>Vendedora</td>
-                  <td>000</td>
-                  <td>00/00/00</td>
-                  <td class="acoes-cell">
-                    <button class="mini-btn">Ver</button>
-                    <button class="mini-btn danger">Excluir</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>04</td>
-                  <td>Vendedora</td>
-                  <td>000</td>
-                  <td>00/00/00</td>
-                  <td class="acoes-cell">
+                  <td>
                     <button class="mini-btn">Ver</button>
                     <button class="mini-btn danger">Excluir</button>
                   </td>
@@ -181,73 +133,129 @@
             </table>
           </div>
 
+          <!-- FLUXO -->
           <div class="mostruario-grid">
             <div class="flow-card start">
               <h3>Tela Mostruário</h3>
-              <p>Busca, listagem principal e botão de novo mostruário.</p>
             </div>
 
             <div class="flow-card">
-              <h3>Lista de Mostruários</h3>
-              <p>Exibe número do mostruário, vendedora, quantidade de peças e data de acerto.</p>
+              <h3>Lista</h3>
             </div>
 
             <div class="flow-card danger-flow">
-              <h3>Excluir Mostruário</h3>
-              <p>Popup de confirmação com opções <strong>SIM</strong> e <strong>NÃO</strong>.</p>
+              <h3>Excluir</h3>
             </div>
 
             <div class="flow-card">
-              <h3>Incluir Mostruário</h3>
-              <p>Cadastro com número, data, data do acerto, nome da vendedora e produtos.</p>
+              <h3>Incluir</h3>
             </div>
 
             <div class="flow-card">
-              <h3>Inclusão de Lista</h3>
-              <p>Adição de vários produtos com código, descrição e quantidade.</p>
+              <h3>Lista Produtos</h3>
             </div>
           </div>
+
         </div>
       </section>
 
-      <!-- VENDEDORAS -->
+      <!-- INCLUIR MOSTRUÁRIO -->
+      <section id="mostruario-incluir" class="screen">
+
+        <div class="panel">
+
+          <div class="toolbar">
+            <h2>MOSTRUÁRIO</h2>
+
+            <div class="toolbar-actions">
+              <button class="btn light nav-btn" data-target="mostruario">VOLTAR</button>
+              <button class="btn primary">SALVAR</button>
+            </div>
+          </div>
+
+          <div class="form-grid-4">
+
+            <div class="field">
+              <label>Número</label>
+              <input>
+            </div>
+
+            <div class="field">
+              <label>Data</label>
+              <input>
+            </div>
+
+            <div class="field">
+              <label>Acerto</label>
+              <input>
+            </div>
+
+            <div class="field">
+              <label>Vendedora</label>
+              <input>
+            </div>
+
+          </div>
+
+          <div class="produtos-box">
+
+            <h3>Produtos</h3>
+
+            <div class="produto-form-row">
+
+              <div class="field">
+                <label>Código</label>
+                <input>
+              </div>
+
+              <div class="field">
+                <label>Qtd</label>
+                <input>
+              </div>
+
+              <div class="field field-wide">
+                <label>Descrição</label>
+                <input>
+              </div>
+
+              <button class="btn blue">Adicionar</button>
+
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- OUTRAS TELAS -->
       <section id="vendedoras" class="screen">
         <div class="card">
-          <h2>VENDEDORAS</h2>
-          <p>Tela reservada para cadastro e gerenciamento de vendedoras.</p>
+          <h2>Vendedoras</h2>
         </div>
       </section>
 
-      <!-- ACERTO -->
       <section id="acerto" class="screen">
         <div class="card">
-          <h2>ACERTO</h2>
-          <p>Tela reservada para relatórios e conferência de acertos.</p>
+          <h2>Acerto</h2>
         </div>
       </section>
 
-      <!-- ESTOQUE -->
       <section id="estoque" class="screen">
         <div class="card">
-          <h2>CADASTRO PRODUTO</h2>
-          <p>Tela reservada para cadastro e gestão de produtos.</p>
+          <h2>Cadastro Produto</h2>
         </div>
       </section>
 
-      <!-- CONFIGURAÇÕES -->
       <section id="configuracoes" class="screen">
         <div class="card">
-          <h2>CONFIGURAÇÕES</h2>
-          <p>Tela reservada para preferências do sistema.</p>
+          <h2>Configurações</h2>
         </div>
       </section>
 
-      <!-- SAIR -->
       <section id="logout" class="screen">
-        <div class="card small-card">
-          <h2>SAIR</h2>
-          <p>Você saiu da visualização atual.</p>
-          <button class="btn primary nav-btn" data-target="home">Voltar para início</button>
+        <div class="card">
+          <h2>Sair</h2>
+          <button class="btn primary nav-btn" data-target="home">Voltar</button>
         </div>
       </section>
 
@@ -256,24 +264,15 @@
 
   <script>
     const screens = document.querySelectorAll('.screen');
-    const navButtons = document.querySelectorAll('.nav-btn');
-    const menuSlots = document.querySelectorAll('.menu-slot');
+    const buttons = document.querySelectorAll('.nav-btn');
 
-    function showScreen(targetId) {
-      screens.forEach(screen => {
-        screen.classList.toggle('active', screen.id === targetId);
-      });
-
-      menuSlots.forEach(slot => {
-        slot.classList.remove('active');
-      });
-    }
-
-    navButtons.forEach(btn => {
+    buttons.forEach(btn => {
       btn.addEventListener('click', () => {
         const target = btn.dataset.target;
         if (!target) return;
-        showScreen(target);
+
+        screens.forEach(s => s.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
       });
     });
   </script>
