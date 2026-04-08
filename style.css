@@ -416,3 +416,144 @@ p{
     padding:6px 0;
   }
 }
+
+.toolbar-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.panel{
+  background:var(--card);
+  border-radius:24px;
+  padding:24px;
+  box-shadow:var(--shadow);
+}
+
+.search{
+  background:#fff;
+  border:1px solid rgba(0,0,0,.10);
+  border-radius:14px;
+  padding:10px 14px;
+  min-width:260px;
+}
+
+.search input{
+  border:0;
+  outline:none;
+  background:transparent;
+  width:100%;
+  font-size:15px;
+}
+
+.mostruario-table-wrap{
+  margin-top:18px;
+  background:#fff;
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 6px 14px rgba(0,0,0,.05);
+}
+
+.mostruario-table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.mostruario-table th,
+.mostruario-table td{
+  padding:16px 18px;
+  text-align:left;
+  border-bottom:1px solid rgba(0,0,0,.06);
+  font-size:15px;
+}
+
+.mostruario-table th{
+  background:#f6f6f6;
+  font-weight:700;
+  color:#333;
+}
+
+.mostruario-table tbody tr:last-child td{
+  border-bottom:none;
+}
+
+.col-acoes{
+  width:180px;
+}
+
+.acoes-cell{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.mini-btn{
+  border:none;
+  background:#e8eefc;
+  color:#233;
+  padding:8px 12px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.mini-btn.danger{
+  background:#fdeaea;
+  color:#9a3131;
+}
+
+.mostruario-grid{
+  margin-top:24px;
+  display:grid;
+  grid-template-columns:repeat(2, 1fr);
+  gap:16px;
+}
+
+.flow-card{
+  width:100%;
+  min-height:120px;
+  background:#f7f7f7;
+  border-radius:22px;
+  padding:22px;
+  box-shadow:var(--shadow);
+  border:1px solid rgba(0,0,0,.06);
+}
+
+.flow-card h3{
+  margin:0 0 10px;
+  font-size:22px;
+}
+
+.flow-card p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.5;
+  font-size:15px;
+}
+
+.flow-card.start{
+  background:#eef4ff;
+}
+
+.flow-card.danger-flow{
+  background:#fff4f1;
+  border:1px solid rgba(210,80,80,.15);
+}
+
+@media (max-width: 1000px){
+  .mostruario-grid{
+    grid-template-columns:1fr;
+  }
+
+  .toolbar-actions{
+    width:100%;
+    align-items:stretch;
+  }
+
+  .search{
+    min-width:unset;
+    width:100%;
+  }
+}
