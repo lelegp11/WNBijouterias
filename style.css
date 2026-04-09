@@ -379,6 +379,12 @@ p{
   border-bottom:none;
 }
 
+.empty-table{
+  text-align:center;
+  color:#777;
+  padding:24px !important;
+}
+
 .acoes-cell{
   display:flex;
   gap:8px;
@@ -473,6 +479,7 @@ p{
   padding:12px 14px;
   font-size:18px;
   color:#555;
+  box-shadow:none;
 }
 
 .field.small{
@@ -509,6 +516,14 @@ p{
   color:#111;
 }
 
+.lista-vazia{
+  background:#f6f6f6;
+  border-radius:8px;
+  padding:16px;
+  color:#666;
+  font-size:16px;
+}
+
 .lista-item{
   display:grid;
   grid-template-columns:160px 1fr 160px 52px;
@@ -542,6 +557,10 @@ p{
   align-items:center;
   justify-content:center;
   padding:0;
+}
+
+.lista-acoes{
+  margin-top:16px;
 }
 
 @media (max-width: 1200px){
