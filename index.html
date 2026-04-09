@@ -206,14 +206,16 @@
           </div>
 
           <div class="lista-produtos">
-            <h3>Lista de Produtos:</h3>
+            <div class="lista-header">
+              <h3>Lista de Produtos:</h3>
+
+              <div class="lista-acoes">
+                <button class="btn blue" type="button" id="btnAdicionarProduto">Adicionar Produto</button>
+              </div>
+            </div>
 
             <div id="listaProdutosContainer">
               <div class="lista-vazia">Nenhum produto adicionado.</div>
-            </div>
-
-            <div class="lista-acoes">
-              <button class="btn blue" type="button" id="btnAdicionarProduto">Adicionar Produto</button>
             </div>
           </div>
         </div>
@@ -335,6 +337,36 @@
     codigoProduto.focus();
   }
 
+  function adicionarProduto() {
+    sincronizarDraftCampos();
+
+    const codigo = codigoProduto.value.trim();
+    const descricao = descricaoProduto.value.trim();
+    const qtd = qtdProduto.value.trim();
+
+    if (!state.draft.numero) {
+      alert('Digite primeiro o número do mostruário.');
+      numeroMostruario.focus();
+      return;
+    }
+
+    if (!codigo || !descricao || !qtd) {
+      alert('Preencha código, descrição e quantidade do produto.');
+      return;
+    }
+
+    state.draft.produtos.push({ codigo, descricao, qtd });
+    renderListaProdutos();
+    limparCamposProduto();
+  }
+
+  qtdProduto.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      adicionarProduto();
+    }
+  });
+
   function renderListaProdutos() {
     if (!state.draft.produtos.length) {
       listaProdutosContainer.innerHTML = `<div class="lista-vazia">Nenhum produto adicionado.</div>`;
@@ -346,15 +378,39 @@
         <span class="produto-cod">${produto.codigo}</span>
         <span class="produto-desc">${produto.descricao}</span>
         <span class="produto-qtd">${produto.qtd}</span>
-        <button class="remove" type="button" data-index="${index}">−</button>
+        <div class="produto-acoes">
+          <button class="mini-btn" type="button" data-editar="${index}">Editar qtd</button>
+          <button class="mini-btn danger" type="button" data-excluir-item="${index}">Excluir</button>
+          <button class="mini-btn" type="button" data-incluir="${index}">Incluir</button>
+        </div>
       </div>
     `).join('');
 
-    document.querySelectorAll('.remove').forEach(btn => {
+    document.querySelectorAll('[data-excluir-item]').forEach(btn => {
       btn.addEventListener('click', () => {
-        const index = Number(btn.dataset.index);
+        const index = Number(btn.dataset.excluirItem);
         state.draft.produtos.splice(index, 1);
         renderListaProdutos();
+      });
+    });
+
+    document.querySelectorAll('[data-editar]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.dataset.editar);
+        const atual = state.draft.produtos[index];
+        const novaQtd = prompt('Digite a nova quantidade:', atual.qtd);
+
+        if (novaQtd === null) return;
+        if (!novaQtd.trim()) return;
+
+        state.draft.produtos[index].qtd = novaQtd.trim();
+        renderListaProdutos();
+      });
+    });
+
+    document.querySelectorAll('[data-incluir]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        codigoProduto.focus();
       });
     });
   }
@@ -446,28 +502,7 @@
     showScreen('mostruario-incluir');
   });
 
-  btnAdicionarProduto.addEventListener('click', () => {
-    sincronizarDraftCampos();
-
-    const codigo = codigoProduto.value.trim();
-    const descricao = descricaoProduto.value.trim();
-    const qtd = qtdProduto.value.trim();
-
-    if (!state.draft.numero) {
-      alert('Digite primeiro o número do mostruário.');
-      numeroMostruario.focus();
-      return;
-    }
-
-    if (!codigo || !descricao || !qtd) {
-      alert('Preencha código, descrição e quantidade do produto.');
-      return;
-    }
-
-    state.draft.produtos.push({ codigo, descricao, qtd });
-    renderListaProdutos();
-    limparCamposProduto();
-  });
+  btnAdicionarProduto.addEventListener('click', adicionarProduto);
 
   btnSalvarMostruario.addEventListener('click', () => {
     sincronizarDraftCampos();
