@@ -123,7 +123,7 @@
               <input type="text" placeholder="Pesquisar mostruário">
             </div>
 
-            <button class="btn blue nav-btn" type="button" data-target="mostruario-incluir">
+            <button class="btn blue" type="button" id="btnNovoMostruario">
               NOVO MOSTRUÁRIO
             </button>
           </div>
@@ -141,27 +141,9 @@
               </tr>
             </thead>
 
-            <tbody>
+            <tbody id="mostruarioTabelaBody">
               <tr>
-                <td>01</td>
-                <td>Vendedora</td>
-                <td>100</td>
-                <td>00/00/00</td>
-                <td class="acoes-cell">
-                  <button class="mini-btn" type="button">Ver</button>
-                  <button class="mini-btn danger" type="button">Excluir</button>
-                </td>
-              </tr>
-
-              <tr>
-                <td>02</td>
-                <td>Vendedora</td>
-                <td>150</td>
-                <td>00/00/00</td>
-                <td class="acoes-cell">
-                  <button class="mini-btn" type="button">Ver</button>
-                  <button class="mini-btn danger" type="button">Excluir</button>
-                </td>
+                <td colspan="5" class="empty-table">Nenhum mostruário cadastrado</td>
               </tr>
             </tbody>
           </table>
@@ -180,7 +162,7 @@
             <div class="voltar nav-btn" data-target="mostruario">⟵ VOLTAR</div>
 
             <div class="top-actions">
-              <button class="btn primary" type="button">Salvar</button>
+              <button class="btn primary" type="button" id="btnSalvarMostruario">Salvar</button>
               <button class="btn light" type="button">Imprimir</button>
             </div>
           </div>
@@ -188,37 +170,37 @@
           <div class="include-grid">
             <div class="field small">
               <label>Número Mostruário:</label>
-              <input type="text" value="00">
+              <input type="text" id="numeroMostruario" placeholder="00">
             </div>
 
             <div class="field wide">
               <label>Nome Vendedora:</label>
-              <input type="text" placeholder="Nome completo">
+              <input type="text" id="nomeVendedora" placeholder="Nome completo">
             </div>
 
             <div class="field small">
               <label>Data:</label>
-              <input type="text" placeholder="00/00/00">
+              <input type="text" id="dataMostruario" placeholder="DD/MM/AAAA" maxlength="10">
             </div>
 
             <div class="field small">
               <label>Data do acerto:</label>
-              <input type="text" placeholder="00/00/00">
+              <input type="text" id="dataAcerto" placeholder="DD/MM/AAAA" maxlength="10">
             </div>
 
             <div class="field small">
               <label>Cód. do Produto:</label>
-              <input type="text" value="AA000">
+              <input type="text" id="codigoProduto" placeholder="AA000">
             </div>
 
             <div class="field wide">
               <label>Descrição do Produto:</label>
-              <input type="text" placeholder="Nome do produto">
+              <input type="text" id="descricaoProduto" placeholder="Nome do produto">
             </div>
 
             <div class="field qty-field">
               <label>Qtd.:</label>
-              <input type="text" placeholder="00000">
+              <input type="text" id="qtdProduto" placeholder="00000">
               <span class="unit-inline">PEÇAS</span>
             </div>
           </div>
@@ -226,32 +208,12 @@
           <div class="lista-produtos">
             <h3>Lista de Produtos:</h3>
 
-            <div class="lista-item">
-              <span class="produto-cod">AA000</span>
-              <span class="produto-desc">Nome do produto</span>
-              <span class="produto-qtd">00000</span>
-              <button class="remove" type="button">−</button>
+            <div id="listaProdutosContainer">
+              <div class="lista-vazia">Nenhum produto adicionado.</div>
             </div>
 
-            <div class="lista-item">
-              <span class="produto-cod">AA000</span>
-              <span class="produto-desc">Nome do produto</span>
-              <span class="produto-qtd">00000</span>
-              <button class="remove" type="button">−</button>
-            </div>
-
-            <div class="lista-item">
-              <span class="produto-cod">AA000</span>
-              <span class="produto-desc">Nome do produto</span>
-              <span class="produto-qtd">00000</span>
-              <button class="remove" type="button">−</button>
-            </div>
-
-            <div class="lista-item">
-              <span class="produto-cod">AA000</span>
-              <span class="produto-desc">Nome do produto</span>
-              <span class="produto-qtd">00000</span>
-              <button class="remove" type="button">−</button>
+            <div class="lista-acoes">
+              <button class="btn blue" type="button" id="btnAdicionarProduto">Adicionar Produto</button>
             </div>
           </div>
         </div>
@@ -300,6 +262,32 @@
   const screens = document.querySelectorAll('.screen');
   const navButtons = document.querySelectorAll('.nav-btn');
 
+  const numeroMostruario = document.getElementById('numeroMostruario');
+  const nomeVendedora = document.getElementById('nomeVendedora');
+  const dataMostruario = document.getElementById('dataMostruario');
+  const dataAcerto = document.getElementById('dataAcerto');
+  const codigoProduto = document.getElementById('codigoProduto');
+  const descricaoProduto = document.getElementById('descricaoProduto');
+  const qtdProduto = document.getElementById('qtdProduto');
+
+  const btnAdicionarProduto = document.getElementById('btnAdicionarProduto');
+  const btnSalvarMostruario = document.getElementById('btnSalvarMostruario');
+  const btnNovoMostruario = document.getElementById('btnNovoMostruario');
+
+  const listaProdutosContainer = document.getElementById('listaProdutosContainer');
+  const mostruarioTabelaBody = document.getElementById('mostruarioTabelaBody');
+
+  const state = {
+    cadastros: [],
+    draft: {
+      numero: '',
+      vendedora: '',
+      data: '',
+      acerto: '',
+      produtos: []
+    }
+  };
+
   function showScreen(targetId) {
     screens.forEach(screen => {
       screen.classList.toggle('active', screen.id === targetId);
@@ -313,6 +301,211 @@
       showScreen(target);
     });
   });
+
+  function aplicarMascaraData(input) {
+    input.addEventListener('input', (e) => {
+      let value = e.target.value.replace(/\D/g, '').slice(0, 8);
+
+      if (value.length > 2) value = value.slice(0, 2) + '/' + value.slice(2);
+      if (value.length > 5) value = value.slice(0, 5) + '/' + value.slice(5);
+
+      e.target.value = value;
+      sincronizarDraftCampos();
+    });
+  }
+
+  aplicarMascaraData(dataMostruario);
+  aplicarMascaraData(dataAcerto);
+
+  function sincronizarDraftCampos() {
+    state.draft.numero = numeroMostruario.value.trim();
+    state.draft.vendedora = nomeVendedora.value.trim();
+    state.draft.data = dataMostruario.value.trim();
+    state.draft.acerto = dataAcerto.value.trim();
+  }
+
+  [numeroMostruario, nomeVendedora].forEach(input => {
+    input.addEventListener('input', sincronizarDraftCampos);
+  });
+
+  function limparCamposProduto() {
+    codigoProduto.value = '';
+    descricaoProduto.value = '';
+    qtdProduto.value = '';
+    codigoProduto.focus();
+  }
+
+  function renderListaProdutos() {
+    if (!state.draft.produtos.length) {
+      listaProdutosContainer.innerHTML = `<div class="lista-vazia">Nenhum produto adicionado.</div>`;
+      return;
+    }
+
+    listaProdutosContainer.innerHTML = state.draft.produtos.map((produto, index) => `
+      <div class="lista-item">
+        <span class="produto-cod">${produto.codigo}</span>
+        <span class="produto-desc">${produto.descricao}</span>
+        <span class="produto-qtd">${produto.qtd}</span>
+        <button class="remove" type="button" data-index="${index}">−</button>
+      </div>
+    `).join('');
+
+    document.querySelectorAll('.remove').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.dataset.index);
+        state.draft.produtos.splice(index, 1);
+        renderListaProdutos();
+      });
+    });
+  }
+
+  function renderTabelaMostruarios() {
+    if (!state.cadastros.length) {
+      mostruarioTabelaBody.innerHTML = `
+        <tr>
+          <td colspan="5" class="empty-table">Nenhum mostruário cadastrado</td>
+        </tr>
+      `;
+      return;
+    }
+
+    mostruarioTabelaBody.innerHTML = state.cadastros.map((item, index) => `
+      <tr>
+        <td>${item.numero || '--'}</td>
+        <td>${item.vendedora || '--'}</td>
+        <td>${item.produtos.length}</td>
+        <td>${item.data || '--'}</td>
+        <td class="acoes-cell">
+          <button class="mini-btn" type="button" data-ver="${index}">Ver</button>
+          <button class="mini-btn danger" type="button" data-excluir="${index}">Excluir</button>
+        </td>
+      </tr>
+    `).join('');
+
+    document.querySelectorAll('[data-ver]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.dataset.ver);
+        const item = state.cadastros[index];
+
+        state.draft = {
+          numero: item.numero,
+          vendedora: item.vendedora,
+          data: item.data,
+          acerto: item.acerto,
+          produtos: [...item.produtos]
+        };
+
+        preencherFormulario();
+        renderListaProdutos();
+        showScreen('mostruario-incluir');
+      });
+    });
+
+    document.querySelectorAll('[data-excluir]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.dataset.excluir);
+        const confirmar = confirm('Deseja excluir este mostruário?');
+        if (!confirmar) return;
+
+        state.cadastros.splice(index, 1);
+        renderTabelaMostruarios();
+      });
+    });
+  }
+
+  function preencherFormulario() {
+    numeroMostruario.value = state.draft.numero;
+    nomeVendedora.value = state.draft.vendedora;
+    dataMostruario.value = state.draft.data;
+    dataAcerto.value = state.draft.acerto;
+  }
+
+  function resetDraft() {
+    state.draft = {
+      numero: '',
+      vendedora: '',
+      data: '',
+      acerto: '',
+      produtos: []
+    };
+
+    preencherFormulario();
+    limparCamposProduto();
+    renderListaProdutos();
+  }
+
+  btnNovoMostruario.addEventListener('click', () => {
+    const temConteudo = state.draft.numero || state.draft.vendedora || state.draft.data || state.draft.acerto || state.draft.produtos.length;
+
+    if (temConteudo) {
+      const confirmar = confirm('Criar um novo mostruário e limpar a lista atual?');
+      if (!confirmar) return;
+    }
+
+    resetDraft();
+    showScreen('mostruario-incluir');
+  });
+
+  btnAdicionarProduto.addEventListener('click', () => {
+    sincronizarDraftCampos();
+
+    const codigo = codigoProduto.value.trim();
+    const descricao = descricaoProduto.value.trim();
+    const qtd = qtdProduto.value.trim();
+
+    if (!state.draft.numero) {
+      alert('Digite primeiro o número do mostruário.');
+      numeroMostruario.focus();
+      return;
+    }
+
+    if (!codigo || !descricao || !qtd) {
+      alert('Preencha código, descrição e quantidade do produto.');
+      return;
+    }
+
+    state.draft.produtos.push({ codigo, descricao, qtd });
+    renderListaProdutos();
+    limparCamposProduto();
+  });
+
+  btnSalvarMostruario.addEventListener('click', () => {
+    sincronizarDraftCampos();
+
+    if (!state.draft.numero) {
+      alert('Informe o número do mostruário.');
+      numeroMostruario.focus();
+      return;
+    }
+
+    if (!state.draft.vendedora) {
+      alert('Informe o nome da vendedora.');
+      nomeVendedora.focus();
+      return;
+    }
+
+    const cadastro = {
+      numero: state.draft.numero,
+      vendedora: state.draft.vendedora,
+      data: state.draft.data,
+      acerto: state.draft.acerto,
+      produtos: [...state.draft.produtos]
+    };
+
+    const indexExistente = state.cadastros.findIndex(item => item.numero === cadastro.numero);
+
+    if (indexExistente >= 0) {
+      state.cadastros[indexExistente] = cadastro;
+    } else {
+      state.cadastros.push(cadastro);
+    }
+
+    renderTabelaMostruarios();
+    showScreen('mostruario');
+  });
+
+  renderListaProdutos();
+  renderTabelaMostruarios();
 </script>
 
 </body>
