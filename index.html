@@ -125,6 +125,7 @@
               <select id="filtroMostruario" class="search-select">
                 <option value="todos">Todos</option>
                 <option value="numero">Nº Mostruário</option>
+                <option value="codigoVendedora">Cód. Vendedora</option>
                 <option value="vendedora">Vendedora</option>
                 <option value="data">Data</option>
                 <option value="acerto">Data do acerto</option>
@@ -156,6 +157,7 @@
             <thead>
               <tr>
                 <th>Mostruário</th>
+                <th>Cód. Vendedora</th>
                 <th>Vendedora</th>
                 <th>Qtd.</th>
                 <th>Data</th>
@@ -166,7 +168,7 @@
 
             <tbody id="mostruarioTabelaBody">
               <tr>
-                <td colspan="6" class="empty-table">Nenhum mostruário cadastrado</td>
+                <td colspan="7" class="empty-table">Nenhum mostruário cadastrado</td>
               </tr>
             </tbody>
           </table>
@@ -197,9 +199,14 @@
               <input type="text" id="numeroMostruario" placeholder="00">
             </div>
 
+            <div class="field small">
+              <label>Código da Vendedora:</label>
+              <input type="text" id="codigoVendedoraMostruario" placeholder="001">
+            </div>
+
             <div class="field wide">
               <label>Nome Vendedora:</label>
-              <input type="text" id="nomeVendedora" placeholder="Nome completo">
+              <input type="text" id="nomeVendedora" placeholder="Nome completo" readonly>
             </div>
 
             <div class="field small">
@@ -277,7 +284,7 @@
               </button>
             </div>
 
-            <button class="btn blue" type="button">
+            <button class="btn blue nav-btn" type="button" data-target="vendedora-cadastro">
               NOVA VENDEDORA
             </button>
           </div>
@@ -301,6 +308,67 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- CADASTRO VENDEDORA -->
+    <section id="vendedora-cadastro" class="screen">
+      <div class="vendedora-page">
+        <div class="top-bar">
+          VENDEDORA
+        </div>
+
+        <div class="include-wrap">
+          <div class="include-top">
+            <div class="voltar nav-btn" data-target="vendedoras">⟵ VOLTAR</div>
+
+            <div class="top-actions">
+              <button class="btn primary" type="button" id="btnSalvarVendedora">Salvar</button>
+            </div>
+          </div>
+
+          <div class="vendedora-grid">
+            <div class="field small">
+              <label>Código da vendedora:</label>
+              <input type="text" id="vendedoraCodigo" placeholder="001">
+            </div>
+
+            <div class="field wide-2">
+              <label>Nome completo:</label>
+              <input type="text" id="vendedoraNome" placeholder="Nome completo">
+            </div>
+
+            <div class="field small">
+              <label>CPF:</label>
+              <input type="text" id="vendedoraCpf" placeholder="000.000.000-00" maxlength="14">
+            </div>
+
+            <div class="field wide-2">
+              <label>Endereço completo:</label>
+              <input type="text" id="vendedoraEndereco" placeholder="Rua, avenida, etc.">
+            </div>
+
+            <div class="field small">
+              <label>Número:</label>
+              <input type="text" id="vendedoraNumero" placeholder="123">
+            </div>
+
+            <div class="field small">
+              <label>Complemento:</label>
+              <input type="text" id="vendedoraComplemento" placeholder="Apto, casa, bloco">
+            </div>
+
+            <div class="field wide">
+              <label>Bairro:</label>
+              <input type="text" id="vendedoraBairro" placeholder="Bairro">
+            </div>
+
+            <div class="field wide">
+              <label>Celular:</label>
+              <input type="text" id="vendedoraCelular" placeholder="(00) 00000-0000" maxlength="15">
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -342,6 +410,7 @@
   const navButtons = document.querySelectorAll('.nav-btn');
 
   const numeroMostruario = document.getElementById('numeroMostruario');
+  const codigoVendedoraMostruario = document.getElementById('codigoVendedoraMostruario');
   const nomeVendedora = document.getElementById('nomeVendedora');
   const dataMostruario = document.getElementById('dataMostruario');
   const dataAcerto = document.getElementById('dataAcerto');
@@ -365,10 +434,21 @@
   const btnPesquisarVendedora = document.getElementById('btnPesquisarVendedora');
   const vendedoraTabelaBody = document.getElementById('vendedoraTabelaBody');
 
+  const vendedoraCodigo = document.getElementById('vendedoraCodigo');
+  const vendedoraNome = document.getElementById('vendedoraNome');
+  const vendedoraCpf = document.getElementById('vendedoraCpf');
+  const vendedoraEndereco = document.getElementById('vendedoraEndereco');
+  const vendedoraNumero = document.getElementById('vendedoraNumero');
+  const vendedoraComplemento = document.getElementById('vendedoraComplemento');
+  const vendedoraBairro = document.getElementById('vendedoraBairro');
+  const vendedoraCelular = document.getElementById('vendedoraCelular');
+  const btnSalvarVendedora = document.getElementById('btnSalvarVendedora');
+
   const state = {
     cadastros: [],
     draft: {
       numero: '',
+      codigoVendedora: '',
       vendedora: '',
       data: '',
       acerto: '',
@@ -382,7 +462,13 @@
         codigo: '001',
         nome: 'Maria Silva',
         ultimo: '10/03/2026',
-        proximo: '10/04/2026'
+        proximo: '10/04/2026',
+        cpf: '',
+        endereco: '',
+        numero: '',
+        complemento: '',
+        bairro: '',
+        celular: ''
       }
     ]
   };
@@ -413,18 +499,64 @@
     });
   }
 
+  function aplicarMascaraCpf(input) {
+    input.addEventListener('input', (e) => {
+      let value = e.target.value.replace(/\D/g, '').slice(0, 11);
+      if (value.length > 3) value = value.slice(0, 3) + '.' + value.slice(3);
+      if (value.length > 7) value = value.slice(0, 7) + '.' + value.slice(7);
+      if (value.length > 11) value = value.slice(0, 11) + '-' + value.slice(11);
+      if (value.length > 14) value = value.slice(0, 14);
+      e.target.value = value;
+    });
+  }
+
+  function aplicarMascaraCelular(input) {
+    input.addEventListener('input', (e) => {
+      let value = e.target.value.replace(/\D/g, '').slice(0, 11);
+      if (value.length > 0) value = '(' + value;
+      if (value.length > 3) value = value.slice(0, 3) + ') ' + value.slice(3);
+      if (value.length > 10) value = value.slice(0, 10) + '-' + value.slice(10);
+      e.target.value = value;
+    });
+  }
+
   aplicarMascaraData(dataMostruario);
   aplicarMascaraData(dataAcerto);
+  aplicarMascaraCpf(vendedoraCpf);
+  aplicarMascaraCelular(vendedoraCelular);
+
+  function buscarVendedoraPorCodigo(codigo) {
+    return vendedorasState.lista.find(v => v.codigo.toLowerCase() === codigo.toLowerCase());
+  }
+
+  function preencherNomeVendedoraPorCodigo() {
+    const codigo = codigoVendedoraMostruario.value.trim();
+    const vendedora = buscarVendedoraPorCodigo(codigo);
+
+    if (vendedora) {
+      nomeVendedora.value = vendedora.nome;
+      state.draft.codigoVendedora = vendedora.codigo;
+      state.draft.vendedora = vendedora.nome;
+    } else {
+      nomeVendedora.value = '';
+      state.draft.codigoVendedora = codigo;
+      state.draft.vendedora = '';
+    }
+  }
 
   function sincronizarDraftCampos() {
     state.draft.numero = numeroMostruario.value.trim();
+    state.draft.codigoVendedora = codigoVendedoraMostruario.value.trim();
     state.draft.vendedora = nomeVendedora.value.trim();
     state.draft.data = dataMostruario.value.trim();
     state.draft.acerto = dataAcerto.value.trim();
   }
 
-  [numeroMostruario, nomeVendedora].forEach(input => {
-    input.addEventListener('input', sincronizarDraftCampos);
+  [numeroMostruario, codigoVendedoraMostruario].forEach(input => {
+    input.addEventListener('input', () => {
+      preencherNomeVendedoraPorCodigo();
+      sincronizarDraftCampos();
+    });
   });
 
   function limparCamposProduto() {
@@ -444,6 +576,12 @@
     if (!state.draft.numero) {
       alert('Digite primeiro o número do mostruário.');
       numeroMostruario.focus();
+      return;
+    }
+
+    if (!state.draft.codigoVendedora || !state.draft.vendedora) {
+      alert('Digite um código de vendedora válido.');
+      codigoVendedoraMostruario.focus();
       return;
     }
 
@@ -520,17 +658,20 @@
 
     return state.cadastros.filter(item => {
       const numero = (item.numero || '').toLowerCase();
+      const codigoVend = (item.codigoVendedora || '').toLowerCase();
       const vendedora = (item.vendedora || '').toLowerCase();
       const data = (item.data || '').toLowerCase();
       const acerto = (item.acerto || '').toLowerCase();
 
       if (filtro === 'numero') return numero.includes(termo);
+      if (filtro === 'codigoVendedora') return codigoVend.includes(termo);
       if (filtro === 'vendedora') return vendedora.includes(termo);
       if (filtro === 'data') return data.includes(termo);
       if (filtro === 'acerto') return acerto.includes(termo);
 
       return (
         numero.includes(termo) ||
+        codigoVend.includes(termo) ||
         vendedora.includes(termo) ||
         data.includes(termo) ||
         acerto.includes(termo)
@@ -544,7 +685,7 @@
     if (!cadastrosFiltrados.length) {
       mostruarioTabelaBody.innerHTML = `
         <tr>
-          <td colspan="6" class="empty-table">Nenhum mostruário encontrado</td>
+          <td colspan="7" class="empty-table">Nenhum mostruário encontrado</td>
         </tr>
       `;
       return;
@@ -553,6 +694,7 @@
     mostruarioTabelaBody.innerHTML = cadastrosFiltrados.map((item) => {
       const indexReal = state.cadastros.findIndex(cadastro =>
         cadastro.numero === item.numero &&
+        cadastro.codigoVendedora === item.codigoVendedora &&
         cadastro.vendedora === item.vendedora &&
         cadastro.data === item.data &&
         cadastro.acerto === item.acerto
@@ -561,6 +703,7 @@
       return `
         <tr>
           <td>${item.numero || '--'}</td>
+          <td>${item.codigoVendedora || '--'}</td>
           <td>${item.vendedora || '--'}</td>
           <td>${item.produtos.length}</td>
           <td>${item.data || '--'}</td>
@@ -580,6 +723,7 @@
 
         state.draft = {
           numero: item.numero,
+          codigoVendedora: item.codigoVendedora,
           vendedora: item.vendedora,
           data: item.data,
           acerto: item.acerto,
@@ -657,6 +801,7 @@
 
   function preencherFormulario() {
     numeroMostruario.value = state.draft.numero;
+    codigoVendedoraMostruario.value = state.draft.codigoVendedora;
     nomeVendedora.value = state.draft.vendedora;
     dataMostruario.value = state.draft.data;
     dataAcerto.value = state.draft.acerto;
@@ -665,6 +810,7 @@
   function resetDraft() {
     state.draft = {
       numero: '',
+      codigoVendedora: '',
       vendedora: '',
       data: '',
       acerto: '',
@@ -676,8 +822,25 @@
     renderListaProdutos();
   }
 
+  function limparFormularioVendedora() {
+    vendedoraCodigo.value = '';
+    vendedoraNome.value = '';
+    vendedoraCpf.value = '';
+    vendedoraEndereco.value = '';
+    vendedoraNumero.value = '';
+    vendedoraComplemento.value = '';
+    vendedoraBairro.value = '';
+    vendedoraCelular.value = '';
+  }
+
   btnNovoMostruario.addEventListener('click', () => {
-    const temConteudo = state.draft.numero || state.draft.vendedora || state.draft.data || state.draft.acerto || state.draft.produtos.length;
+    const temConteudo =
+      state.draft.numero ||
+      state.draft.codigoVendedora ||
+      state.draft.vendedora ||
+      state.draft.data ||
+      state.draft.acerto ||
+      state.draft.produtos.length;
 
     if (temConteudo) {
       const confirmar = confirm('Criar um novo mostruário e limpar a lista atual?');
@@ -706,14 +869,15 @@
       return;
     }
 
-    if (!state.draft.vendedora) {
-      alert('Informe o nome da vendedora.');
-      nomeVendedora.focus();
+    if (!state.draft.codigoVendedora || !state.draft.vendedora) {
+      alert('Informe um código de vendedora válido.');
+      codigoVendedoraMostruario.focus();
       return;
     }
 
     const cadastro = {
       numero: state.draft.numero,
+      codigoVendedora: state.draft.codigoVendedora,
       vendedora: state.draft.vendedora,
       data: state.draft.data,
       acerto: state.draft.acerto,
@@ -730,6 +894,57 @@
 
     renderTabelaMostruarios();
     showScreen('mostruario');
+  });
+
+  btnSalvarVendedora.addEventListener('click', () => {
+    const codigo = vendedoraCodigo.value.trim();
+    const nome = vendedoraNome.value.trim();
+    const cpf = vendedoraCpf.value.trim();
+    const endereco = vendedoraEndereco.value.trim();
+    const numero = vendedoraNumero.value.trim();
+    const complemento = vendedoraComplemento.value.trim();
+    const bairro = vendedoraBairro.value.trim();
+    const celular = vendedoraCelular.value.trim();
+
+    if (!codigo) {
+      alert('Informe o código da vendedora.');
+      vendedoraCodigo.focus();
+      return;
+    }
+
+    if (!nome) {
+      alert('Informe o nome completo.');
+      vendedoraNome.focus();
+      return;
+    }
+
+    const novaVendedora = {
+      codigo,
+      nome,
+      ultimo: '--/--/----',
+      proximo: '--/--/----',
+      cpf,
+      endereco,
+      numero,
+      complemento,
+      bairro,
+      celular
+    };
+
+    const indexExistente = vendedorasState.lista.findIndex(v => v.codigo === codigo);
+
+    if (indexExistente >= 0) {
+      vendedorasState.lista[indexExistente] = {
+        ...vendedorasState.lista[indexExistente],
+        ...novaVendedora
+      };
+    } else {
+      vendedorasState.lista.push(novaVendedora);
+    }
+
+    renderTabelaVendedoras();
+    limparFormularioVendedora();
+    showScreen('vendedoras');
   });
 
   renderListaProdutos();
