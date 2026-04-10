@@ -622,6 +622,14 @@ p{
   align-items:end;
 }
 
+.acerto-grid{
+  display:grid;
+  grid-template-columns:180px 1fr 180px 1fr 180px 180px;
+  gap:18px 26px;
+  align-items:end;
+  margin-bottom:24px;
+}
+
 .field{
   display:flex;
   flex-direction:column;
@@ -714,10 +722,19 @@ p{
   margin-bottom:10px;
 }
 
+.acerto-item{
+  display:grid;
+  grid-template-columns:120px 1fr 120px 120px 120px 160px;
+  gap:14px;
+  align-items:center;
+  margin-bottom:10px;
+}
+
 .produto-cod,
 .produto-desc,
 .produto-preco,
-.produto-qtd{
+.produto-qtd,
+.acerto-col{
   background:#ededed;
   border-radius:6px;
   padding:12px 14px;
@@ -765,10 +782,41 @@ p{
   padding:10px 16px;
 }
 
+.acerto-lista{
+  margin-top:10px;
+}
+
+.acerto-resumo{
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-top:22px;
+}
+
+.resumo-card{
+  background:#efefef;
+  border-radius:16px;
+  padding:16px 20px;
+  min-width:220px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.resumo-card span{
+  color:#666;
+  font-size:14px;
+}
+
+.resumo-card strong{
+  font-size:28px;
+}
+
 @media (max-width: 1200px){
   .include-grid-mostruario,
   .vendedora-grid,
-  .produto-grid{
+  .produto-grid,
+  .acerto-grid{
     grid-template-columns:1fr 1fr;
   }
 
@@ -776,7 +824,8 @@ p{
     grid-column:span 2;
   }
 
-  .lista-item{
+  .lista-item,
+  .acerto-item{
     grid-template-columns:1fr;
   }
 
