@@ -7,7 +7,9 @@ const dataUltimoAcertoMostruario = document.getElementById('dataUltimoAcertoMost
 const dataProximoAcertoMostruario = document.getElementById('dataProximoAcertoMostruario');
 const codigoProduto = document.getElementById('codigoProduto');
 const descricaoProduto = document.getElementById('descricaoProduto');
+const precoProdutoMostruario = document.getElementById('precoProdutoMostruario');
 const qtdProduto = document.getElementById('qtdProduto');
+const totalMostruarioValor = document.getElementById('totalMostruarioValor');
 
 const btnAdicionarProduto = document.getElementById('btnAdicionarProduto');
 const btnSalvarMostruario = document.getElementById('btnSalvarMostruario');
@@ -84,13 +86,23 @@ function dataHojeBr() {
 }
 
 function normalizarPreco(valor) {
-  return valor.replace(/\./g, '').replace(',', '.');
+  return String(valor || '').replace(/\./g, '').replace(',', '.');
 }
 
 function formatarPreco(valor) {
   const numero = Number(valor);
   if (Number.isNaN(numero)) return '0,00';
   return numero.toFixed(2).replace('.', ',');
+}
+
+function formatarMoedaBR(numero) {
+  const n = Number(numero || 0);
+  return `R$ ${n.toFixed(2).replace('.', ',')}`;
+}
+
+function converterPrecoParaNumero(valor) {
+  const n = Number(normalizarPreco(valor));
+  return Number.isNaN(n) ? 0 : n;
 }
 
 const state = {
@@ -144,10 +156,15 @@ const produtosState = {
   editandoCodigoOriginal: null
 };
 
-const metaisState = carregarStorage(STORAGE_KEYS.metais, {
+const metaisSalvos = carregarStorage(STORAGE_KEYS.metais, {
   ouro: '0,00',
   prata: '0,00'
 });
+
+const metaisState = {
+  ouro: metaisSalvos.ouro || '0,00',
+  prata: metaisSalvos.prata || '0,00'
+};
 
 function persistirMostruarios() {
   salvarStorage(STORAGE_KEYS.mostruarios, state.cadastros);
@@ -252,6 +269,18 @@ aplicarMascaraPreco(produtoPreco);
 aplicarMascaraPreco(valorOuro);
 aplicarMascaraPreco(valorPrata);
 
+function calcularTotalMostruario(produtos) {
+  return produtos.reduce((total, item) => {
+    const qtd = Number(String(item.qtd || 0).replace(/\D/g, '')) || 0;
+    const preco = converterPrecoParaNumero(item.preco || '0,00');
+    return total + (qtd * preco);
+  }, 0);
+}
+
+function atualizarTotalMostruarioNaTela() {
+  totalMostruarioValor.textContent = formatarMoedaBR(calcularTotalMostruario(state.draft.produtos));
+}
+
 function buscarVendedoraPorCodigo(codigo) {
   return vendedorasState.lista.find(v => v.codigo.toLowerCase() === codigo.toLowerCase());
 }
@@ -287,14 +316,16 @@ function preencherNomeVendedoraPorCodigo() {
   sincronizarDraftCampos();
 }
 
-function preencherDescricaoProdutoPorCodigo() {
+function preencherDadosProdutoPorCodigo() {
   const codigo = codigoProduto.value.trim();
   const produto = buscarProdutoPorCodigo(codigo);
 
   if (produto) {
     descricaoProduto.value = produto.descricao;
+    precoProdutoMostruario.value = produto.preco;
   } else {
     descricaoProduto.value = '';
+    precoProdutoMostruario.value = '';
   }
 }
 
@@ -310,7 +341,7 @@ function sincronizarDraftCampos() {
   input.addEventListener('input', preencherNomeVendedoraPorCodigo);
 });
 
-codigoProduto.addEventListener('input', preencherDescricaoProdutoPorCodigo);
+codigoProduto.addEventListener('input', preencherDadosProdutoPorCodigo);
 
 vendedoraCodigo.addEventListener('input', () => {
   const codigo = vendedoraCodigo.value.trim();
@@ -328,6 +359,7 @@ vendedoraCodigo.addEventListener('input', () => {
 function limparCamposProdutoMostruario() {
   codigoProduto.value = '';
   descricaoProduto.value = '';
+  precoProdutoMostruario.value = '';
   qtdProduto.value = '';
   codigoProduto.focus();
 }
@@ -337,6 +369,7 @@ function adicionarProdutoMostruario() {
 
   const codigo = codigoProduto.value.trim();
   const descricao = descricaoProduto.value.trim();
+  const preco = precoProdutoMostruario.value.trim();
   const qtd = qtdProduto.value.trim();
 
   if (!state.draft.numero) {
@@ -363,13 +396,19 @@ function adicionarProdutoMostruario() {
     return;
   }
 
+  if (!preco) {
+    alert('Preço do produto não encontrado.');
+    codigoProduto.focus();
+    return;
+  }
+
   if (!qtd) {
     alert('Preencha a quantidade.');
     qtdProduto.focus();
     return;
   }
 
-  state.draft.produtos.push({ codigo, descricao, qtd });
+  state.draft.produtos.push({ codigo, descricao, preco, qtd });
   renderListaProdutosMostruario();
   limparCamposProdutoMostruario();
 }
@@ -384,6 +423,7 @@ qtdProduto.addEventListener('keydown', (e) => {
 function renderListaProdutosMostruario() {
   if (!state.draft.produtos.length) {
     listaProdutosContainer.innerHTML = `<div class="lista-vazia">Nenhum produto adicionado.</div>`;
+    atualizarTotalMostruarioNaTela();
     return;
   }
 
@@ -391,6 +431,7 @@ function renderListaProdutosMostruario() {
     <div class="lista-item">
       <span class="produto-cod">${produto.codigo}</span>
       <span class="produto-desc">${produto.descricao}</span>
+      <span class="produto-preco">${formatarMoedaBR(converterPrecoParaNumero(produto.preco))}</span>
       <span class="produto-qtd">${produto.qtd}</span>
       <div class="produto-acoes">
         <button class="mini-btn" type="button" data-editar-produto-mostruario="${index}">Editar qtd</button>
@@ -420,6 +461,8 @@ function renderListaProdutosMostruario() {
       renderListaProdutosMostruario();
     });
   });
+
+  atualizarTotalMostruarioNaTela();
 }
 
 function filtrarCadastros() {
@@ -468,7 +511,7 @@ function renderTabelaMostruarios() {
       <td>${item.numero || '--'}</td>
       <td>${item.codigoVendedora || '--'}</td>
       <td>${item.vendedora || '--'}</td>
-      <td>${item.produtos.length}</td>
+      <td>${formatarMoedaBR(item.total || 0)}</td>
       <td>${item.ultimoAcerto || '--'}</td>
       <td>${item.proximoAcerto || '--'}</td>
       <td class="acoes-cell">
@@ -693,7 +736,7 @@ function renderTabelaProdutos() {
       <td>${produto.codigo || '--'}</td>
       <td>${produto.descricao || '--'}</td>
       <td>${produto.tipo ? produto.tipo.charAt(0).toUpperCase() + produto.tipo.slice(1) : '--'}</td>
-      <td>R$ ${produto.preco || '--'}</td>
+      <td>${formatarMoedaBR(converterPrecoParaNumero(produto.preco))}</td>
       <td>${produto.dataInclusao || '--'}</td>
       <td class="acoes-cell">
         <button class="mini-btn" type="button" data-editar-produto="${produto.codigo}">Editar</button>
@@ -942,13 +985,16 @@ btnSalvarMostruario.addEventListener('click', () => {
     return;
   }
 
+  const total = calcularTotalMostruario(state.draft.produtos);
+
   const cadastro = {
     numero: state.draft.numero,
     codigoVendedora: state.draft.codigoVendedora,
     vendedora: state.draft.vendedora,
     ultimoAcerto: state.draft.ultimoAcerto,
     proximoAcerto: state.draft.proximoAcerto,
-    produtos: state.draft.produtos.map(prod => ({ ...prod }))
+    produtos: state.draft.produtos.map(prod => ({ ...prod })),
+    total
   };
 
   const numeroDuplicado = state.cadastros.some(item =>
