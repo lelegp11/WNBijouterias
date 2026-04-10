@@ -624,10 +624,17 @@ p{
 
 .acerto-grid{
   display:grid;
-  grid-template-columns:180px 1fr 180px 1fr 180px 180px;
   gap:18px 26px;
   align-items:end;
-  margin-bottom:24px;
+  margin-bottom:18px;
+}
+
+.acerto-grid-topo{
+  grid-template-columns:220px 1fr;
+}
+
+.acerto-grid-baixo{
+  grid-template-columns:180px 1fr 220px 220px;
 }
 
 .field{
@@ -816,7 +823,8 @@ p{
   .include-grid-mostruario,
   .vendedora-grid,
   .produto-grid,
-  .acerto-grid{
+  .acerto-grid-topo,
+  .acerto-grid-baixo{
     grid-template-columns:1fr 1fr;
   }
 
