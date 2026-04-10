@@ -57,6 +57,16 @@ const valorOuro = document.getElementById('valorOuro');
 const valorPrata = document.getElementById('valorPrata');
 const btnSalvarValoresMetais = document.getElementById('btnSalvarValoresMetais');
 
+const acertoCodigoVendedora = document.getElementById('acertoCodigoVendedora');
+const acertoNomeVendedora = document.getElementById('acertoNomeVendedora');
+const acertoCodigoProduto = document.getElementById('acertoCodigoProduto');
+const acertoDescricaoProduto = document.getElementById('acertoDescricaoProduto');
+const acertoQtdRetirada = document.getElementById('acertoQtdRetirada');
+const acertoQtdDevolvida = document.getElementById('acertoQtdDevolvida');
+const acertoListaContainer = document.getElementById('acertoListaContainer');
+const acertoTotalPecas = document.getElementById('acertoTotalPecas');
+const acertoTotalValor = document.getElementById('acertoTotalValor');
+
 const STORAGE_KEYS = {
   mostruarios: 'wn_mostruarios',
   vendedoras: 'wn_vendedoras',
@@ -166,6 +176,10 @@ const metaisState = {
   prata: metaisSalvos.prata || '0,00'
 };
 
+const acertoState = {
+  itens: []
+};
+
 function persistirMostruarios() {
   salvarStorage(STORAGE_KEYS.mostruarios, state.cadastros);
 }
@@ -189,6 +203,10 @@ function activate(targetId) {
   sections.forEach(section => {
     section.classList.toggle('active', section.id === targetId);
   });
+
+  if (targetId === 'acerto') {
+    limparAcerto();
+  }
 
   if (history.replaceState) {
     history.replaceState(null, '', `#${targetId}`);
@@ -287,6 +305,25 @@ function buscarVendedoraPorCodigo(codigo) {
 
 function buscarProdutoPorCodigo(codigo) {
   return produtosState.lista.find(p => p.codigo.toLowerCase() === codigo.toLowerCase());
+}
+
+function buscarMostruariosDaVendedora(codigoVendedora) {
+  return state.cadastros.filter(m => m.codigoVendedora === codigoVendedora);
+}
+
+function quantidadeRetiradaProdutoVendedora(codigoVendedora, codigoProdutoBuscado) {
+  const mostruarios = buscarMostruariosDaVendedora(codigoVendedora);
+  let total = 0;
+
+  mostruarios.forEach(mostruario => {
+    mostruario.produtos.forEach(produto => {
+      if (produto.codigo === codigoProdutoBuscado) {
+        total += Number(String(produto.qtd || 0).replace(/\D/g, '')) || 0;
+      }
+    });
+  });
+
+  return total;
 }
 
 function preencherNomeVendedoraPorCodigo() {
@@ -850,6 +887,135 @@ function atualizarProdutosPorMetal(tipo, novoValor) {
   renderTabelaProdutos();
 }
 
+function limparAcertoCamposProduto() {
+  acertoCodigoProduto.value = '';
+  acertoDescricaoProduto.value = '';
+  acertoQtdRetirada.value = '';
+  acertoQtdDevolvida.value = '';
+}
+
+function limparAcerto() {
+  acertoCodigoVendedora.value = '';
+  acertoNomeVendedora.value = '';
+  limparAcertoCamposProduto();
+  acertoState.itens = [];
+  renderListaAcerto();
+}
+
+function preencherVendedoraAcerto() {
+  const codigo = acertoCodigoVendedora.value.trim();
+  const vendedora = buscarVendedoraPorCodigo(codigo);
+
+  if (vendedora) {
+    acertoNomeVendedora.value = vendedora.nome;
+  } else {
+    acertoNomeVendedora.value = '';
+  }
+
+  limparAcertoCamposProduto();
+}
+
+function preencherProdutoAcerto() {
+  const codigoVendedora = acertoCodigoVendedora.value.trim();
+  const codigoProd = acertoCodigoProduto.value.trim();
+  const produto = buscarProdutoPorCodigo(codigoProd);
+
+  if (produto) {
+    acertoDescricaoProduto.value = produto.descricao;
+  } else {
+    acertoDescricaoProduto.value = '';
+    acertoQtdRetirada.value = '';
+    return;
+  }
+
+  const retirada = quantidadeRetiradaProdutoVendedora(codigoVendedora, codigoProd);
+  acertoQtdRetirada.value = retirada ? String(retirada) : '0';
+}
+
+function renderListaAcerto() {
+  if (!acertoState.itens.length) {
+    acertoListaContainer.innerHTML = `<div class="lista-vazia">Nenhum item lançado no acerto.</div>`;
+    acertoTotalPecas.textContent = '0';
+    acertoTotalValor.textContent = 'R$ 0,00';
+    return;
+  }
+
+  acertoListaContainer.innerHTML = acertoState.itens.map((item, index) => `
+    <div class="acerto-item">
+      <span class="acerto-col">${item.codigo}</span>
+      <span class="acerto-col">${item.descricao}</span>
+      <span class="acerto-col">${item.retirada}</span>
+      <span class="acerto-col">${item.devolvida}</span>
+      <span class="acerto-col">${item.vendida}</span>
+      <span class="acerto-col">${formatarMoedaBR(item.valor)}</span>
+    </div>
+  `).join('');
+
+  const totalPecas = acertoState.itens.reduce((acc, item) => acc + item.vendida, 0);
+  const totalValor = acertoState.itens.reduce((acc, item) => acc + item.valor, 0);
+
+  acertoTotalPecas.textContent = String(totalPecas);
+  acertoTotalValor.textContent = formatarMoedaBR(totalValor);
+}
+
+acertoCodigoVendedora?.addEventListener('input', preencherVendedoraAcerto);
+acertoCodigoProduto?.addEventListener('input', preencherProdutoAcerto);
+
+acertoQtdDevolvida?.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+
+  e.preventDefault();
+
+  const codigoVendedora = acertoCodigoVendedora.value.trim();
+  const nomeVendedora = acertoNomeVendedora.value.trim();
+  const codigo = acertoCodigoProduto.value.trim();
+  const descricao = acertoDescricaoProduto.value.trim();
+  const retirada = Number(acertoQtdRetirada.value || 0);
+  const devolvida = Number(acertoQtdDevolvida.value || 0);
+  const produto = buscarProdutoPorCodigo(codigo);
+
+  if (!codigoVendedora || !nomeVendedora) {
+    alert('Informe um código de vendedora válido.');
+    acertoCodigoVendedora.focus();
+    return;
+  }
+
+  if (!codigo || !descricao || !produto) {
+    alert('Informe um código de produto válido.');
+    acertoCodigoProduto.focus();
+    return;
+  }
+
+  if (retirada <= 0) {
+    alert('Esse produto não foi retirado para essa vendedora.');
+    acertoCodigoProduto.focus();
+    return;
+  }
+
+  if (devolvida < 0 || devolvida > retirada) {
+    alert('A quantidade devolvida deve estar entre 0 e a quantidade retirada.');
+    acertoQtdDevolvida.focus();
+    return;
+  }
+
+  const vendida = retirada - devolvida;
+  const preco = converterPrecoParaNumero(produto.preco);
+  const valor = vendida * preco;
+
+  acertoState.itens.push({
+    codigo,
+    descricao,
+    retirada,
+    devolvida,
+    vendida,
+    valor
+  });
+
+  renderListaAcerto();
+  limparAcertoCamposProduto();
+  acertoCodigoProduto.focus();
+});
+
 btnNovaVendedora?.addEventListener('click', limparFormularioVendedora);
 
 btnNovoMostruario.addEventListener('click', () => {
@@ -1120,5 +1286,6 @@ renderListaProdutosMostruario();
 renderTabelaMostruarios();
 renderTabelaVendedoras();
 renderTabelaProdutos();
+renderListaAcerto();
 persistirProdutos();
 persistirMetais();
