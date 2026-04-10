@@ -28,7 +28,6 @@ html,body{
   min-height:100vh;
 }
 
-/* BARRA LARANJA */
 .leftbar{
   background:var(--orange);
   display:flex;
@@ -67,7 +66,6 @@ html,body{
   height:64px;
 }
 
-/* BARRA CINZA */
 .rail{
   background:var(--rail);
   position:relative;
@@ -75,7 +73,6 @@ html,body{
   overflow:visible;
 }
 
-/* MENU */
 .menu-slot{
   position:absolute;
   left:0;
@@ -115,7 +112,6 @@ html,body{
   box-shadow:var(--shadow);
 }
 
-/* BOTÕES */
 .icon-btn{
   border:none;
   background:transparent;
@@ -135,7 +131,6 @@ html,body{
   pointer-events:none;
 }
 
-/* ÍCONES */
 .icon-img{
   width:54px;
   height:54px;
@@ -153,7 +148,6 @@ html,body{
   max-height:58px;
 }
 
-/* TEXTO MENU */
 .slide-label{
   position:absolute;
   left:96px;
@@ -199,7 +193,6 @@ html,body{
   background:rgba(228,145,193,.90);
 }
 
-/* CONTEÚDO */
 .content{
   position:relative;
   overflow:auto;
@@ -224,7 +217,6 @@ html,body{
   object-fit:contain;
 }
 
-/* TELAS */
 .screen{
   display:none;
   max-width:1180px;
@@ -340,7 +332,6 @@ p{
   font-size:15px;
 }
 
-/* TOOLBAR */
 .toolbar{
   display:flex;
   justify-content:space-between;
@@ -369,7 +360,8 @@ p{
   flex-wrap:wrap;
 }
 
-.search-select{
+.search-select,
+.field-select{
   height:44px;
   padding:0 12px;
   border:1px solid rgba(0,0,0,.12);
@@ -410,7 +402,6 @@ p{
   margin-bottom:24px;
 }
 
-/* TABELAS */
 .table-wrap{
   margin-top:18px;
   border-radius:20px;
@@ -499,19 +490,22 @@ p{
 #vendedoras .data-table td:nth-child(5){ width:16%; }
 
 #estoque .data-table th:nth-child(1),
-#estoque .data-table td:nth-child(1){ width:18%; }
+#estoque .data-table td:nth-child(1){ width:15%; }
 
 #estoque .data-table th:nth-child(2),
-#estoque .data-table td:nth-child(2){ width:36%; }
+#estoque .data-table td:nth-child(2){ width:27%; }
 
 #estoque .data-table th:nth-child(3),
-#estoque .data-table td:nth-child(3){ width:16%; }
+#estoque .data-table td:nth-child(3){ width:12%; }
 
 #estoque .data-table th:nth-child(4),
-#estoque .data-table td:nth-child(4){ width:18%; }
+#estoque .data-table td:nth-child(4){ width:14%; }
 
 #estoque .data-table th:nth-child(5),
-#estoque .data-table td:nth-child(5){ width:12%; }
+#estoque .data-table td:nth-child(5){ width:20%; }
+
+#estoque .data-table th:nth-child(6),
+#estoque .data-table td:nth-child(6){ width:12%; }
 
 .empty-table{
   text-align:center;
@@ -545,7 +539,8 @@ p{
 }
 
 .mostruario-page,
-.vendedora-page{
+.vendedora-page,
+.produto-page{
   width:100%;
 }
 
@@ -613,6 +608,13 @@ p{
 .vendedora-grid{
   display:grid;
   grid-template-columns:160px 1fr 220px;
+  gap:18px 26px;
+  align-items:end;
+}
+
+.produto-grid{
+  display:grid;
+  grid-template-columns:180px 1fr 180px 180px 220px;
   gap:18px 26px;
   align-items:end;
 }
@@ -730,12 +732,23 @@ p{
   margin-left:auto;
 }
 
-@media (max-width: 1200px){
-  .include-grid{
-    grid-template-columns:1fr 1fr;
-  }
+.price-settings{
+  display:flex;
+  align-items:end;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-bottom:24px;
+}
 
-  .vendedora-grid{
+.price-settings-actions{
+  display:flex;
+  align-items:end;
+}
+
+@media (max-width: 1200px){
+  .include-grid,
+  .vendedora-grid,
+  .produto-grid{
     grid-template-columns:1fr 1fr;
   }
 
