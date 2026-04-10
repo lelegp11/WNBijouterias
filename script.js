@@ -44,10 +44,22 @@ const btnPesquisarProduto = document.getElementById('btnPesquisarProduto');
 const btnNovoProduto = document.getElementById('btnNovoProduto');
 const produtoTabelaBody = document.getElementById('produtoTabelaBody');
 
+const produtoCodigo = document.getElementById('produtoCodigo');
+const produtoDescricao = document.getElementById('produtoDescricao');
+const produtoTipo = document.getElementById('produtoTipo');
+const produtoPreco = document.getElementById('produtoPreco');
+const produtoData = document.getElementById('produtoData');
+const btnSalvarProduto = document.getElementById('btnSalvarProduto');
+
+const valorOuro = document.getElementById('valorOuro');
+const valorPrata = document.getElementById('valorPrata');
+const btnSalvarValoresMetais = document.getElementById('btnSalvarValoresMetais');
+
 const STORAGE_KEYS = {
   mostruarios: 'wn_mostruarios',
   vendedoras: 'wn_vendedoras',
-  produtos: 'wn_produtos'
+  produtos: 'wn_produtos',
+  metais: 'wn_metais'
 };
 
 function carregarStorage(chave, fallback = []) {
@@ -61,6 +73,24 @@ function carregarStorage(chave, fallback = []) {
 
 function salvarStorage(chave, valor) {
   localStorage.setItem(chave, JSON.stringify(valor));
+}
+
+function dataHojeBr() {
+  const hoje = new Date();
+  const dia = String(hoje.getDate()).padStart(2, '0');
+  const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+  const ano = hoje.getFullYear();
+  return `${dia}/${mes}/${ano}`;
+}
+
+function normalizarPreco(valor) {
+  return valor.replace(/\./g, '').replace(',', '.');
+}
+
+function formatarPreco(valor) {
+  const numero = Number(valor);
+  if (Number.isNaN(numero)) return '0,00';
+  return numero.toFixed(2).replace('.', ',');
 }
 
 const state = {
@@ -99,17 +129,25 @@ const produtosState = {
     {
       codigo: 'P001',
       descricao: 'Anel Coração',
+      tipo: 'ouro',
       preco: '29,90',
       dataInclusao: '10/04/2026'
     },
     {
       codigo: 'P002',
       descricao: 'Brinco Dourado',
+      tipo: 'prata',
       preco: '35,00',
       dataInclusao: '11/04/2026'
     }
-  ])
+  ]),
+  editandoCodigoOriginal: null
 };
+
+const metaisState = carregarStorage(STORAGE_KEYS.metais, {
+  ouro: '0,00',
+  prata: '0,00'
+});
 
 function persistirMostruarios() {
   salvarStorage(STORAGE_KEYS.mostruarios, state.cadastros);
@@ -121,6 +159,10 @@ function persistirVendedoras() {
 
 function persistirProdutos() {
   salvarStorage(STORAGE_KEYS.produtos, produtosState.lista);
+}
+
+function persistirMetais() {
+  salvarStorage(STORAGE_KEYS.metais, metaisState);
 }
 
 function activate(targetId) {
@@ -193,13 +235,29 @@ function aplicarMascaraCelular(input) {
   });
 }
 
+function aplicarMascaraPreco(input) {
+  if (!input) return;
+
+  input.addEventListener('blur', () => {
+    if (!input.value.trim()) return;
+    input.value = formatarPreco(normalizarPreco(input.value));
+  });
+}
+
 aplicarMascaraData(dataUltimoAcertoMostruario);
 aplicarMascaraData(dataProximoAcertoMostruario);
 aplicarMascaraCpf(vendedoraCpf);
 aplicarMascaraCelular(vendedoraCelular);
+aplicarMascaraPreco(produtoPreco);
+aplicarMascaraPreco(valorOuro);
+aplicarMascaraPreco(valorPrata);
 
 function buscarVendedoraPorCodigo(codigo) {
   return vendedorasState.lista.find(v => v.codigo.toLowerCase() === codigo.toLowerCase());
+}
+
+function buscarProdutoPorCodigo(codigo) {
+  return produtosState.lista.find(p => p.codigo.toLowerCase() === codigo.toLowerCase());
 }
 
 function preencherNomeVendedoraPorCodigo() {
@@ -229,6 +287,17 @@ function preencherNomeVendedoraPorCodigo() {
   sincronizarDraftCampos();
 }
 
+function preencherDescricaoProdutoPorCodigo() {
+  const codigo = codigoProduto.value.trim();
+  const produto = buscarProdutoPorCodigo(codigo);
+
+  if (produto) {
+    descricaoProduto.value = produto.descricao;
+  } else {
+    descricaoProduto.value = '';
+  }
+}
+
 function sincronizarDraftCampos() {
   state.draft.numero = numeroMostruario.value.trim();
   state.draft.codigoVendedora = codigoVendedoraMostruario.value.trim();
@@ -240,6 +309,8 @@ function sincronizarDraftCampos() {
 [numeroMostruario, codigoVendedoraMostruario].forEach(input => {
   input.addEventListener('input', preencherNomeVendedoraPorCodigo);
 });
+
+codigoProduto.addEventListener('input', preencherDescricaoProdutoPorCodigo);
 
 vendedoraCodigo.addEventListener('input', () => {
   const codigo = vendedoraCodigo.value.trim();
@@ -280,8 +351,21 @@ function adicionarProdutoMostruario() {
     return;
   }
 
-  if (!codigo || !descricao || !qtd) {
-    alert('Preencha código, descrição e quantidade do produto.');
+  if (!codigo) {
+    alert('Digite o código do produto.');
+    codigoProduto.focus();
+    return;
+  }
+
+  if (!descricao) {
+    alert('Código do produto não encontrado.');
+    codigoProduto.focus();
+    return;
+  }
+
+  if (!qtd) {
+    alert('Preencha a quantidade.');
+    qtdProduto.focus();
     return;
   }
 
@@ -572,17 +656,20 @@ function filtrarProdutos() {
   return produtosState.lista.filter(produto => {
     const codigo = (produto.codigo || '').toLowerCase();
     const descricao = (produto.descricao || '').toLowerCase();
+    const tipo = (produto.tipo || '').toLowerCase();
     const preco = (produto.preco || '').toLowerCase();
     const dataInclusao = (produto.dataInclusao || '').toLowerCase();
 
     if (filtro === 'codigo') return codigo.includes(termo);
     if (filtro === 'descricao') return descricao.includes(termo);
+    if (filtro === 'tipo') return tipo.includes(termo);
     if (filtro === 'preco') return preco.includes(termo);
     if (filtro === 'dataInclusao') return dataInclusao.includes(termo);
 
     return (
       codigo.includes(termo) ||
       descricao.includes(termo) ||
+      tipo.includes(termo) ||
       preco.includes(termo) ||
       dataInclusao.includes(termo)
     );
@@ -595,7 +682,7 @@ function renderTabelaProdutos() {
   if (!lista.length) {
     produtoTabelaBody.innerHTML = `
       <tr>
-        <td colspan="5" class="empty-table">Nenhum produto encontrado</td>
+        <td colspan="6" class="empty-table">Nenhum produto encontrado</td>
       </tr>
     `;
     return;
@@ -605,14 +692,47 @@ function renderTabelaProdutos() {
     <tr>
       <td>${produto.codigo || '--'}</td>
       <td>${produto.descricao || '--'}</td>
+      <td>${produto.tipo ? produto.tipo.charAt(0).toUpperCase() + produto.tipo.slice(1) : '--'}</td>
       <td>R$ ${produto.preco || '--'}</td>
       <td>${produto.dataInclusao || '--'}</td>
       <td class="acoes-cell">
-        <button class="mini-btn" type="button">Editar</button>
-        <button class="mini-btn danger" type="button">Excluir</button>
+        <button class="mini-btn" type="button" data-editar-produto="${produto.codigo}">Editar</button>
+        <button class="mini-btn danger" type="button" data-excluir-produto="${produto.codigo}">Excluir</button>
       </td>
     </tr>
   `).join('');
+
+  document.querySelectorAll('[data-editar-produto]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const codigo = btn.dataset.editarProduto;
+      const produto = produtosState.lista.find(p => p.codigo === codigo);
+      if (!produto) return;
+
+      produtosState.editandoCodigoOriginal = produto.codigo;
+      produtoCodigo.value = produto.codigo;
+      produtoDescricao.value = produto.descricao;
+      produtoTipo.value = produto.tipo;
+      produtoPreco.value = produto.preco;
+      produtoData.value = produto.dataInclusao;
+
+      activate('produto-cadastro');
+    });
+  });
+
+  document.querySelectorAll('[data-excluir-produto]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const codigo = btn.dataset.excluirProduto;
+      const produto = produtosState.lista.find(p => p.codigo === codigo);
+      if (!produto) return;
+
+      const confirmar = confirm(`Deseja excluir o produto "${produto.descricao}"?`);
+      if (!confirmar) return;
+
+      produtosState.lista = produtosState.lista.filter(p => p.codigo !== codigo);
+      persistirProdutos();
+      renderTabelaProdutos();
+    });
+  });
 }
 
 function preencherFormularioMostruario() {
@@ -654,6 +774,39 @@ function limparFormularioVendedora() {
   vendedoraProximoAcerto.value = '--/--/----';
 }
 
+function limparFormularioProduto() {
+  produtosState.editandoCodigoOriginal = null;
+  produtoCodigo.value = '';
+  produtoDescricao.value = '';
+  produtoTipo.value = '';
+  produtoPreco.value = '';
+  produtoData.value = dataHojeBr();
+}
+
+function aplicarPrecoPorTipoSelecionado() {
+  if (produtoTipo.value === 'ouro') {
+    produtoPreco.value = metaisState.ouro || '0,00';
+  } else if (produtoTipo.value === 'prata') {
+    produtoPreco.value = metaisState.prata || '0,00';
+  }
+}
+
+function atualizarProdutosPorMetal(tipo, novoValor) {
+  produtosState.lista = produtosState.lista.map(produto => {
+    if (produto.tipo === tipo) {
+      return {
+        ...produto,
+        preco: novoValor,
+        dataInclusao: dataHojeBr()
+      };
+    }
+    return produto;
+  });
+
+  persistirProdutos();
+  renderTabelaProdutos();
+}
+
 btnNovaVendedora?.addEventListener('click', limparFormularioVendedora);
 
 btnNovoMostruario.addEventListener('click', () => {
@@ -686,8 +839,92 @@ buscaVendedora.addEventListener('input', renderTabelaVendedoras);
 btnPesquisarProduto?.addEventListener('click', renderTabelaProdutos);
 filtroProduto?.addEventListener('change', renderTabelaProdutos);
 buscaProduto?.addEventListener('input', renderTabelaProdutos);
+
 btnNovoProduto?.addEventListener('click', () => {
-  alert('Na próxima etapa vamos criar a tela de cadastro do produto.');
+  limparFormularioProduto();
+  activate('produto-cadastro');
+});
+
+produtoTipo?.addEventListener('change', aplicarPrecoPorTipoSelecionado);
+
+btnSalvarValoresMetais?.addEventListener('click', () => {
+  metaisState.ouro = valorOuro.value.trim() ? formatarPreco(normalizarPreco(valorOuro.value)) : '0,00';
+  metaisState.prata = valorPrata.value.trim() ? formatarPreco(normalizarPreco(valorPrata.value)) : '0,00';
+
+  valorOuro.value = metaisState.ouro;
+  valorPrata.value = metaisState.prata;
+
+  persistirMetais();
+  atualizarProdutosPorMetal('ouro', metaisState.ouro);
+  atualizarProdutosPorMetal('prata', metaisState.prata);
+
+  alert('Valores do ouro e da prata atualizados com sucesso.');
+});
+
+btnSalvarProduto?.addEventListener('click', () => {
+  const codigo = produtoCodigo.value.trim();
+  const descricao = produtoDescricao.value.trim();
+  const tipo = produtoTipo.value;
+  const preco = produtoPreco.value.trim() ? formatarPreco(normalizarPreco(produtoPreco.value)) : '';
+  const data = dataHojeBr();
+
+  if (!codigo) {
+    alert('Informe o código do produto.');
+    produtoCodigo.focus();
+    return;
+  }
+
+  if (!descricao) {
+    alert('Informe a descrição do produto.');
+    produtoDescricao.focus();
+    return;
+  }
+
+  if (!tipo) {
+    alert('Selecione Ouro ou Prata.');
+    produtoTipo.focus();
+    return;
+  }
+
+  if (!preco) {
+    alert('Informe o preço do produto.');
+    produtoPreco.focus();
+    return;
+  }
+
+  const codigoDuplicado = produtosState.lista.some(p =>
+    p.codigo === codigo && p.codigo !== produtosState.editandoCodigoOriginal
+  );
+
+  if (codigoDuplicado) {
+    alert('Já existe um produto com esse código.');
+    produtoCodigo.focus();
+    return;
+  }
+
+  const novoProduto = {
+    codigo,
+    descricao,
+    tipo,
+    preco,
+    dataInclusao: data
+  };
+
+  if (produtosState.editandoCodigoOriginal) {
+    const indexExistente = produtosState.lista.findIndex(
+      p => p.codigo === produtosState.editandoCodigoOriginal
+    );
+    if (indexExistente >= 0) {
+      produtosState.lista[indexExistente] = novoProduto;
+    }
+  } else {
+    produtosState.lista.push(novoProduto);
+  }
+
+  persistirProdutos();
+  renderTabelaProdutos();
+  limparFormularioProduto();
+  activate('estoque');
 });
 
 btnSalvarMostruario.addEventListener('click', () => {
@@ -829,8 +1066,13 @@ btnSalvarVendedora.addEventListener('click', () => {
   activate('vendedoras');
 });
 
+valorOuro.value = metaisState.ouro || '0,00';
+valorPrata.value = metaisState.prata || '0,00';
+produtoData.value = dataHojeBr();
+
 renderListaProdutosMostruario();
 renderTabelaMostruarios();
 renderTabelaVendedoras();
 renderTabelaProdutos();
 persistirProdutos();
+persistirMetais();
