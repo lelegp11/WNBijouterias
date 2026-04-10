@@ -103,31 +103,6 @@ function activate(targetId) {
     section.classList.toggle('active', section.id === targetId);
   });
 
-  document.querySelectorAll('.menu-slot').forEach(slot => {
-    slot.classList.remove('active');
-  });
-
-  const menuMap = {
-    home: null,
-    mostruario: 'mostruario',
-    'mostruario-incluir': 'mostruario',
-    vendedoras: 'vendedoras',
-    'vendedora-cadastro': 'vendedoras',
-    acerto: 'acerto',
-    estoque: 'estoque',
-    configuracoes: null,
-    logout: null
-  };
-
-  const menuAlvo = menuMap[targetId];
-
-  if (menuAlvo) {
-    const menuSlot = document.querySelector(`.menu-slot[data-target="${menuAlvo}"]`);
-    if (menuSlot) {
-      menuSlot.classList.add('active');
-    }
-  }
-
   if (history.replaceState) {
     history.replaceState(null, '', `#${targetId}`);
   }
@@ -217,13 +192,13 @@ function preencherNomeVendedoraPorCodigo() {
       dataProximoAcertoMostruario.value =
         vendedora.proximo && vendedora.proximo !== '--/--/----' ? vendedora.proximo : '';
     }
-
-    sincronizarDraftCampos();
   } else {
     nomeVendedoraMostruario.value = '';
     state.draft.codigoVendedora = codigo;
     state.draft.vendedora = '';
   }
+
+  sincronizarDraftCampos();
 }
 
 function sincronizarDraftCampos() {
@@ -235,10 +210,7 @@ function sincronizarDraftCampos() {
 }
 
 [numeroMostruario, codigoVendedoraMostruario].forEach(input => {
-  input.addEventListener('input', () => {
-    preencherNomeVendedoraPorCodigo();
-    sincronizarDraftCampos();
-  });
+  input.addEventListener('input', preencherNomeVendedoraPorCodigo);
 });
 
 vendedoraCodigo.addEventListener('input', () => {
@@ -311,7 +283,6 @@ function renderListaProdutos() {
       <div class="produto-acoes">
         <button class="mini-btn" type="button" data-editar-produto="${index}">Editar qtd</button>
         <button class="mini-btn danger" type="button" data-excluir-item="${index}">Excluir</button>
-        <button class="mini-btn" type="button" data-incluir="${index}">Incluir</button>
       </div>
     </div>
   `).join('');
@@ -337,12 +308,6 @@ function renderListaProdutos() {
       renderListaProdutos();
     });
   });
-
-  document.querySelectorAll('[data-incluir]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      codigoProduto.focus();
-    });
-  });
 }
 
 function filtrarCadastros() {
@@ -361,8 +326,8 @@ function filtrarCadastros() {
     if (filtro === 'numero') return numero.includes(termo);
     if (filtro === 'codigoVendedora') return codigoVend.includes(termo);
     if (filtro === 'vendedora') return vendedora.includes(termo);
-    if (filtro === 'data') return ultimoAcerto.includes(termo);
-    if (filtro === 'acerto') return proximoAcerto.includes(termo);
+    if (filtro === 'ultimoAcerto') return ultimoAcerto.includes(termo);
+    if (filtro === 'proximoAcerto') return proximoAcerto.includes(termo);
 
     return (
       numero.includes(termo) ||
@@ -372,22 +337,6 @@ function filtrarCadastros() {
       proximoAcerto.includes(termo)
     );
   });
-}
-
-function carregarMostruarioParaEdicao(item) {
-  state.editandoNumeroOriginal = item.numero;
-  state.draft = {
-    numero: item.numero,
-    codigoVendedora: item.codigoVendedora,
-    vendedora: item.vendedora,
-    ultimoAcerto: item.ultimoAcerto || '',
-    proximoAcerto: item.proximoAcerto || '',
-    produtos: item.produtos.map(prod => ({ ...prod }))
-  };
-
-  preencherFormularioMostruario();
-  renderListaProdutos();
-  activate('mostruario-incluir');
 }
 
 function renderTabelaMostruarios() {
@@ -422,7 +371,20 @@ function renderTabelaMostruarios() {
       const numero = btn.dataset.editarMostruario;
       const item = state.cadastros.find(cadastro => cadastro.numero === numero);
       if (!item) return;
-      carregarMostruarioParaEdicao(item);
+
+      state.editandoNumeroOriginal = item.numero;
+      state.draft = {
+        numero: item.numero,
+        codigoVendedora: item.codigoVendedora,
+        vendedora: item.vendedora,
+        ultimoAcerto: item.ultimoAcerto || '',
+        proximoAcerto: item.proximoAcerto || '',
+        produtos: item.produtos.map(prod => ({ ...prod }))
+      };
+
+      preencherFormularioMostruario();
+      renderListaProdutos();
+      activate('mostruario-incluir');
     });
   });
 
@@ -438,20 +400,14 @@ function renderTabelaMostruarios() {
       state.cadastros = state.cadastros.filter(cadastro => cadastro.numero !== numero);
 
       if (item.codigoVendedora) {
-        const outrosMostruarios = state.cadastros.filter(
-          cadastro => cadastro.codigoVendedora === item.codigoVendedora
-        );
         const vendedora = vendedorasState.lista.find(v => v.codigo === item.codigoVendedora);
+        const restante = state.cadastros
+          .filter(c => c.codigoVendedora === item.codigoVendedora)
+          .slice(-1)[0];
 
         if (vendedora) {
-          if (outrosMostruarios.length) {
-            const maisRecente = outrosMostruarios[outrosMostruarios.length - 1];
-            vendedora.ultimo = maisRecente.ultimoAcerto || '--/--/----';
-            vendedora.proximo = maisRecente.proximoAcerto || '--/--/----';
-          } else {
-            vendedora.ultimo = '--/--/----';
-            vendedora.proximo = '--/--/----';
-          }
+          vendedora.ultimo = restante?.ultimoAcerto || '--/--/----';
+          vendedora.proximo = restante?.proximoAcerto || '--/--/----';
         }
       }
 
@@ -464,7 +420,7 @@ function renderTabelaMostruarios() {
 }
 
 function filtrarVendedoras() {
-  const termo = buscaVendedora.value.toLowerCase();
+  const termo = buscaVendedora.value.trim().toLowerCase();
   const filtro = filtroVendedora.value;
 
   return vendedorasState.lista.filter(v => {
@@ -486,27 +442,6 @@ function filtrarVendedoras() {
       proximo.includes(termo)
     );
   });
-}
-
-function carregarVendedoraParaEdicao(v) {
-  vendedorasState.editandoCodigoOriginal = v.codigo;
-
-  vendedoraCodigo.value = v.codigo || '';
-  vendedoraNome.value = v.nome || '';
-  vendedoraCpf.value = v.cpf || '';
-  vendedoraEndereco.value = v.endereco || '';
-  vendedoraNumero.value = v.numero || '';
-  vendedoraComplemento.value = v.complemento || '';
-  vendedoraBairro.value = v.bairro || '';
-  vendedoraCelular.value = v.celular || '';
-  vendedoraUltimoAcerto.value = v.ultimo || '--/--/----';
-  vendedoraProximoAcerto.value = v.proximo || '--/--/----';
-
-  activate('vendedora-cadastro');
-
-  setTimeout(() => {
-    vendedoraCodigo.focus();
-  }, 50);
 }
 
 function renderTabelaVendedoras() {
@@ -539,7 +474,22 @@ function renderTabelaVendedoras() {
       const codigo = btn.dataset.editarVendedora;
       const item = vendedorasState.lista.find(v => v.codigo === codigo);
       if (!item) return;
-      carregarVendedoraParaEdicao(item);
+
+      vendedorasState.editandoCodigoOriginal = item.codigo;
+
+      vendedoraCodigo.value = item.codigo || '';
+      vendedoraNome.value = item.nome || '';
+      vendedoraCpf.value = item.cpf || '';
+      vendedoraEndereco.value = item.endereco || '';
+      vendedoraNumero.value = item.numero || '';
+      vendedoraComplemento.value = item.complemento || '';
+      vendedoraBairro.value = item.bairro || '';
+      vendedoraCelular.value = item.celular || '';
+      vendedoraUltimoAcerto.value = item.ultimo || '--/--/----';
+      vendedoraProximoAcerto.value = item.proximo || '--/--/----';
+
+      activate('vendedora-cadastro');
+      setTimeout(() => vendedoraCodigo.focus(), 50);
     });
   });
 
@@ -624,9 +574,7 @@ function limparFormularioVendedora() {
   vendedoraProximoAcerto.value = '--/--/----';
 }
 
-btnNovaVendedora?.addEventListener('click', () => {
-  limparFormularioVendedora();
-});
+btnNovaVendedora?.addEventListener('click', limparFormularioVendedora);
 
 btnNovoMostruario.addEventListener('click', () => {
   const temConteudo =
