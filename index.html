@@ -59,14 +59,11 @@
         <img src="assets/icone_wnbijouterias.svg" alt="WN Bijouterias">
       </div>
 
-      <!-- HOME -->
       <section id="home" class="screen active">
         <div class="hero">
           <div class="card">
             <h1>MAPA DE TELAS<br>WN BIJOUTERIAS</h1>
-            <p>
-              Dashboard em HTML com navegação funcional e menu lateral interativo.
-            </p>
+            <p>Dashboard em HTML com navegação funcional e menu lateral interativo.</p>
 
             <div class="chips">
               <div class="chip">Tela Inicial</div>
@@ -92,17 +89,14 @@
                 <strong>Tela Inicial</strong>
                 <span>Mapa visual do sistema.</span>
               </div>
-
               <div class="flow-item">
                 <strong>Login</strong>
                 <span>Acesso ao sistema.</span>
               </div>
-
               <div class="flow-item">
                 <strong>Módulos</strong>
                 <span>Mostruário, Vendedoras, Acerto e Cadastro Produto.</span>
               </div>
-
               <div class="flow-item">
                 <strong>Ações</strong>
                 <span>Configurações e saída do sistema.</span>
@@ -112,7 +106,6 @@
         </div>
       </section>
 
-      <!-- MOSTRUÁRIO -->
       <section id="mostruario" class="screen">
         <div class="panel">
           <div class="top-bar top-bar-mostruario top-bar-lista">MOSTRUÁRIO</div>
@@ -131,22 +124,13 @@
 
                 <div class="search-box">
                   <img src="assets/icone_lupa.svg" alt="Pesquisar" class="search-icon">
-                  <input
-                    type="text"
-                    id="buscaMostruario"
-                    placeholder="Pesquisar ou filtrar"
-                    class="search-input"
-                  >
+                  <input type="text" id="buscaMostruario" placeholder="Pesquisar ou filtrar" class="search-input">
                 </div>
 
-                <button class="btn light" type="button" id="btnPesquisarMostruario">
-                  Pesquisar
-                </button>
+                <button class="btn light" type="button" id="btnPesquisarMostruario">Pesquisar</button>
               </div>
 
-              <button class="btn blue" type="button" id="btnNovoMostruario">
-                NOVO MOSTRUÁRIO
-              </button>
+              <button class="btn blue" type="button" id="btnNovoMostruario">NOVO MOSTRUÁRIO</button>
             </div>
           </div>
 
@@ -163,7 +147,6 @@
                   <th>Ações</th>
                 </tr>
               </thead>
-
               <tbody id="mostruarioTabelaBody">
                 <tr>
                   <td colspan="7" class="empty-table">Nenhum mostruário cadastrado</td>
@@ -174,12 +157,9 @@
         </div>
       </section>
 
-      <!-- NOVO MOSTRUÁRIO -->
       <section id="mostruario-incluir" class="screen">
         <div class="mostruario-page">
-          <div class="top-bar top-bar-mostruario">
-            MOSTRUÁRIO
-          </div>
+          <div class="top-bar top-bar-mostruario">MOSTRUÁRIO</div>
 
           <div class="include-wrap">
             <div class="include-top">
@@ -219,12 +199,12 @@
 
               <div class="field small">
                 <label>Cód. do Produto:</label>
-                <input type="text" id="codigoProduto" placeholder="AA000">
+                <input type="text" id="codigoProduto" placeholder="P001">
               </div>
 
               <div class="field wide">
                 <label>Descrição do Produto:</label>
-                <input type="text" id="descricaoProduto" placeholder="Nome do produto">
+                <input type="text" id="descricaoProduto" placeholder="Nome do produto" readonly>
               </div>
 
               <div class="field qty-field">
@@ -237,7 +217,6 @@
             <div class="lista-produtos">
               <div class="lista-header">
                 <h3>Lista de Produtos:</h3>
-
                 <div class="lista-acoes">
                   <button class="btn blue" type="button" id="btnAdicionarProduto">Adicionar Produto</button>
                 </div>
@@ -251,7 +230,6 @@
         </div>
       </section>
 
-      <!-- VENDEDORAS -->
       <section id="vendedoras" class="screen">
         <div class="panel">
           <div class="top-bar top-bar-vendedora top-bar-lista">VENDEDORAS</div>
@@ -269,17 +247,10 @@
 
                 <div class="search-box">
                   <img src="assets/icone_lupa.svg" alt="Pesquisar" class="search-icon">
-                  <input
-                    type="text"
-                    id="buscaVendedora"
-                    placeholder="Pesquisar ou filtrar"
-                    class="search-input"
-                  >
+                  <input type="text" id="buscaVendedora" placeholder="Pesquisar ou filtrar" class="search-input">
                 </div>
 
-                <button class="btn light" type="button" id="btnPesquisarVendedora">
-                  Pesquisar
-                </button>
+                <button class="btn light" type="button" id="btnPesquisarVendedora">Pesquisar</button>
               </div>
 
               <button class="btn blue nav-btn" type="button" data-target="vendedora-cadastro" id="btnNovaVendedora">
@@ -299,7 +270,6 @@
                   <th>Ações</th>
                 </tr>
               </thead>
-
               <tbody id="vendedoraTabelaBody">
                 <tr>
                   <td colspan="5" class="empty-table">Nenhuma vendedora cadastrada</td>
@@ -310,12 +280,9 @@
         </div>
       </section>
 
-      <!-- CADASTRO VENDEDORA -->
       <section id="vendedora-cadastro" class="screen">
         <div class="vendedora-page">
-          <div class="top-bar top-bar-vendedora">
-            VENDEDORA
-          </div>
+          <div class="top-bar top-bar-vendedora">VENDEDORA</div>
 
           <div class="include-wrap">
             <div class="include-top">
@@ -381,10 +348,25 @@
         </div>
       </section>
 
-      <!-- CADASTRO PRODUTO -->
       <section id="estoque" class="screen">
         <div class="panel">
           <div class="top-bar top-bar-estoque top-bar-lista">CADASTRO PRODUTO</div>
+
+          <div class="price-settings">
+            <div class="field small">
+              <label>Valor do Ouro:</label>
+              <input type="text" id="valorOuro" placeholder="0,00">
+            </div>
+
+            <div class="field small">
+              <label>Valor da Prata:</label>
+              <input type="text" id="valorPrata" placeholder="0,00">
+            </div>
+
+            <div class="price-settings-actions">
+              <button class="btn primary" type="button" id="btnSalvarValoresMetais">Salvar Valores</button>
+            </div>
+          </div>
 
           <div class="toolbar">
             <div class="toolbar-actions toolbar-actions-main">
@@ -393,26 +375,20 @@
                   <option value="todos">Todos</option>
                   <option value="codigo">Cód. de Produto</option>
                   <option value="descricao">Descrição</option>
+                  <option value="tipo">Tipo</option>
                   <option value="preco">Preço</option>
-                  <option value="dataInclusao">Data de Inclusão</option>
+                  <option value="dataInclusao">Data de Inclusão/Alteração</option>
                 </select>
 
                 <div class="search-box">
                   <img src="assets/icone_lupa.svg" alt="Pesquisar" class="search-icon">
-                  <input
-                    type="text"
-                    id="buscaProduto"
-                    placeholder="Pesquisar ou filtrar"
-                    class="search-input"
-                  >
+                  <input type="text" id="buscaProduto" placeholder="Pesquisar ou filtrar" class="search-input">
                 </div>
 
-                <button class="btn light" type="button" id="btnPesquisarProduto">
-                  Pesquisar
-                </button>
+                <button class="btn light" type="button" id="btnPesquisarProduto">Pesquisar</button>
               </div>
 
-              <button class="btn blue" type="button" id="btnNovoProduto">
+              <button class="btn blue nav-btn" type="button" data-target="produto-cadastro" id="btnNovoProduto">
                 NOVO PRODUTO
               </button>
             </div>
@@ -424,15 +400,16 @@
                 <tr>
                   <th>Cód. de Produto</th>
                   <th>Descrição</th>
+                  <th>Tipo</th>
                   <th>Preço</th>
-                  <th>Data de Inclusão</th>
+                  <th>Data de Inclusão/Alteração</th>
                   <th>Ações</th>
                 </tr>
               </thead>
 
               <tbody id="produtoTabelaBody">
                 <tr>
-                  <td colspan="5" class="empty-table">Nenhum produto cadastrado</td>
+                  <td colspan="6" class="empty-table">Nenhum produto cadastrado</td>
                 </tr>
               </tbody>
             </table>
@@ -440,7 +417,53 @@
         </div>
       </section>
 
-      <!-- OUTRAS TELAS -->
+      <section id="produto-cadastro" class="screen">
+        <div class="produto-page">
+          <div class="top-bar top-bar-estoque">CADASTRO PRODUTO</div>
+
+          <div class="include-wrap">
+            <div class="include-top">
+              <div class="voltar nav-btn" data-target="estoque">⟵ VOLTAR</div>
+
+              <div class="top-actions">
+                <button class="btn primary" type="button" id="btnSalvarProduto">Salvar</button>
+              </div>
+            </div>
+
+            <div class="produto-grid">
+              <div class="field small">
+                <label>Cód. do Produto:</label>
+                <input type="text" id="produtoCodigo" placeholder="P001" autocomplete="off">
+              </div>
+
+              <div class="field wide-2">
+                <label>Descrição:</label>
+                <input type="text" id="produtoDescricao" placeholder="Descrição do produto" autocomplete="off">
+              </div>
+
+              <div class="field small">
+                <label>Tipo:</label>
+                <select id="produtoTipo" class="field-select">
+                  <option value="">Selecione</option>
+                  <option value="ouro">Ouro</option>
+                  <option value="prata">Prata</option>
+                </select>
+              </div>
+
+              <div class="field small">
+                <label>Preço:</label>
+                <input type="text" id="produtoPreco" placeholder="0,00" autocomplete="off">
+              </div>
+
+              <div class="field small">
+                <label>Data de inclusão/alteração:</label>
+                <input type="text" id="produtoData" placeholder="DD/MM/AAAA" readonly>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="acerto" class="screen">
         <div class="card">
           <div class="top-bar top-bar-acerto">ACERTO</div>
