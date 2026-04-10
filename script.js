@@ -133,13 +133,16 @@ function activate(targetId) {
   }
 }
 
-document.querySelectorAll('.nav-btn').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    const targetId = btn.dataset.target;
-    if (!targetId) return;
-    e.preventDefault();
-    activate(targetId);
-  });
+/* CORREÇÃO DO MENU */
+document.addEventListener('click', (e) => {
+  const nav = e.target.closest('.nav-btn');
+  if (!nav) return;
+
+  const targetId = nav.dataset.target;
+  if (!targetId) return;
+
+  e.preventDefault();
+  activate(targetId);
 });
 
 const initial = location.hash.replace('#', '') || 'home';
@@ -197,13 +200,6 @@ function parseDataBr(dataStr) {
     data.getDate() !== dia
   ) return null;
   return data;
-}
-
-function formatarDataBr(date) {
-  const dia = String(date.getDate()).padStart(2, '0');
-  const mes = String(date.getMonth() + 1).padStart(2, '0');
-  const ano = date.getFullYear();
-  return `${dia}/${mes}/${ano}`;
 }
 
 function calcularDatasAcertoPorVendedora(codigoVendedora) {
