@@ -79,10 +79,11 @@ html,body{
 .menu-slot{
   position:absolute;
   left:0;
-  width:340px;
+  width:96px;
   height:84px;
   display:flex;
   align-items:center;
+  justify-content:flex-start;
   z-index:45;
   overflow:visible;
   transition:background-color .22s ease, box-shadow .22s ease;
@@ -154,27 +155,59 @@ html,body{
 
 /* TEXTO MENU */
 .slide-label{
+  position:absolute;
+  left:96px;
+  top:0;
   height:84px;
+  min-width:244px;
   display:flex;
   align-items:center;
-  padding:0 18px 0 8px;
+  padding:0 18px 0 14px;
   font-size:18px;
   font-weight:600;
   color:#111;
   text-transform:uppercase;
   white-space:nowrap;
   opacity:0;
-  transform:translateX(-6px);
+  transform:translateX(-8px);
   transition:opacity .22s ease, transform .22s ease;
   pointer-events:none;
-  position:relative;
   z-index:2;
 }
 
-.menu-slot:hover .slide-label,
-.menu-slot.active .slide-label{
+.menu-slot.ring:hover .slide-label{
   opacity:1;
   transform:translateX(0);
+  background:rgba(125,167,234,.80);
+}
+
+.menu-slot.seller:hover .slide-label{
+  opacity:1;
+  transform:translateX(0);
+  background:rgba(126,212,233,.85);
+}
+
+.menu-slot.report:hover .slide-label{
+  opacity:1;
+  transform:translateX(0);
+  background:rgba(243,220,155,.92);
+}
+
+.menu-slot.box:hover .slide-label{
+  opacity:1;
+  transform:translateX(0);
+  background:rgba(228,145,193,.90);
+}
+
+/* item ativo continua recolhido */
+.menu-slot.active{
+  background:transparent;
+  box-shadow:none;
+}
+
+.menu-slot.active .slide-label{
+  opacity:0;
+  transform:translateX(-8px);
 }
 
 /* CONTEÚDO */
@@ -687,12 +720,6 @@ p{
 .lista-acoes{
   margin-top:0;
   margin-left:auto;
-}
-
-/* menu recolhido ao entrar, mas com label do item ativo visível */
-.menu-slot.active{
-  background:transparent;
-  box-shadow:none;
 }
 
 @media (max-width: 1200px){
