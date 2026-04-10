@@ -129,17 +129,34 @@ function somenteNumero(valor) {
 /* AUTO NEXT */
 function getFocusableInputs(container) {
   return [...container.querySelectorAll('input, select, textarea')]
-    .filter(el => !el.readOnly && !el.disabled && el.type !== 'hidden' && el.offsetParent !== null);
+    .filter(el => {
+      const isSearch =
+        el.classList.contains('search-input') ||
+        el.closest('.search-box') ||
+        el.closest('.search-filter-wrap');
+
+      return (
+        !el.readOnly &&
+        !el.disabled &&
+        el.type !== 'hidden' &&
+        el.offsetParent !== null &&
+        !isSearch
+      );
+    });
 }
 
 function irParaProximoCampo(current) {
   const screen = current.closest('.screen');
   if (!screen) return;
+
   const focusables = getFocusableInputs(screen);
   const idx = focusables.indexOf(current);
+
   if (idx >= 0 && idx < focusables.length - 1) {
     focusables[idx + 1].focus();
-    focusables[idx + 1].select?.();
+    if (typeof focusables[idx + 1].select === 'function') {
+      focusables[idx + 1].select();
+    }
   }
 }
 
@@ -159,14 +176,12 @@ function setupAutoNext() {
       }
     });
 
-    if (el.maxLength && Number(el.maxLength) > 0) {
-      el.addEventListener('input', () => {
-        const max = Number(el.maxLength);
-        if (el.value.length >= max) {
-          setTimeout(() => irParaProximoCampo(el), 30);
-        }
-      });
-    }
+    el.addEventListener('input', () => {
+      const nextLength = Number(el.dataset.nextLength || 0);
+      if (nextLength > 0 && el.value.length >= nextLength) {
+        setTimeout(() => irParaProximoCampo(el), 30);
+      }
+    });
   });
 }
 
@@ -340,7 +355,9 @@ function buscarProdutoPorCodigo(codigo) {
 }
 
 function buscarMostruarioPorNumero(numero) {
-  return state.cadastros.find(m => String(m.numero).toLowerCase() === String(numero).toLowerCase());
+  return state.cadastros.find(
+    item => String(item.numero).trim().toLowerCase() === String(numero).trim().toLowerCase()
+  );
 }
 
 function calcularTotalMostruario(produtos) {
@@ -1198,7 +1215,7 @@ function quantidadeRetiradaNoMostruario(mostruario, codigoProdutoBuscado) {
   if (!mostruario) return 0;
 
   return mostruario.produtos.reduce((total, produto) => {
-    if (produto.codigo === codigoProdutoBuscado) {
+    if (String(produto.codigo).trim().toLowerCase() === String(codigoProdutoBuscado).trim().toLowerCase()) {
       return total + somenteNumero(produto.qtd);
     }
     return total;
@@ -1215,14 +1232,18 @@ function preencherProdutoAcerto() {
     return;
   }
 
-  const produto = buscarProdutoPorCodigo(codigoProd);
-  if (!produto) {
+  const produtoNoCadastro = buscarProdutoPorCodigo(codigoProd);
+  const produtoNoMostruario = mostruario.produtos.find(
+    p => String(p.codigo).trim().toLowerCase() === String(codigoProd).trim().toLowerCase()
+  );
+
+  if (!produtoNoCadastro || !produtoNoMostruario) {
     acertoDescricaoProduto.value = '';
     acertoQtdRetirada.value = '';
     return;
   }
 
-  acertoDescricaoProduto.value = produto.descricao;
+  acertoDescricaoProduto.value = produtoNoCadastro.descricao;
   acertoQtdRetirada.value = String(quantidadeRetiradaNoMostruario(mostruario, codigoProd));
 }
 
@@ -1296,9 +1317,23 @@ acertoQtdDevolvida?.addEventListener('keydown', (e) => {
   const idxExistente = acertoState.itens.findIndex(item => item.codigo === codigo);
 
   if (idxExistente >= 0) {
-    acertoState.itens[idxExistente] = { codigo, descricao, retirada, devolvida, vendida, valor };
+    acertoState.itens[idxExistente] = {
+      codigo,
+      descricao,
+      retirada,
+      devolvida,
+      vendida,
+      valor
+    };
   } else {
-    acertoState.itens.push({ codigo, descricao, retirada, devolvida, vendida, valor });
+    acertoState.itens.push({
+      codigo,
+      descricao,
+      retirada,
+      devolvida,
+      vendida,
+      valor
+    });
   }
 
   renderListaAcerto();
