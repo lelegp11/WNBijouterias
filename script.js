@@ -1,410 +1,720 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WN Bijouterias</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+const sections = [...document.querySelectorAll('.screen')];
 
-<div class="app">
+const numeroMostruario = document.getElementById('numeroMostruario');
+const codigoVendedoraMostruario = document.getElementById('codigoVendedoraMostruario');
+const nomeVendedoraMostruario = document.getElementById('nomeVendedoraMostruario');
+const dataMostruario = document.getElementById('dataMostruario');
+const dataAcerto = document.getElementById('dataAcerto');
+const codigoProduto = document.getElementById('codigoProduto');
+const descricaoProduto = document.getElementById('descricaoProduto');
+const qtdProduto = document.getElementById('qtdProduto');
 
-  <aside class="leftbar">
-    <div class="top-logo nav-btn" data-target="home" title="Ir para início">
-      <img src="assets/logo_venda_suite.svg" alt="Venda Suite" class="icon-img">
+const btnAdicionarProduto = document.getElementById('btnAdicionarProduto');
+const btnSalvarMostruario = document.getElementById('btnSalvarMostruario');
+const btnNovoMostruario = document.getElementById('btnNovoMostruario');
+
+const listaProdutosContainer = document.getElementById('listaProdutosContainer');
+const mostruarioTabelaBody = document.getElementById('mostruarioTabelaBody');
+
+const filtroMostruario = document.getElementById('filtroMostruario');
+const buscaMostruario = document.getElementById('buscaMostruario');
+const btnPesquisarMostruario = document.getElementById('btnPesquisarMostruario');
+
+const filtroVendedora = document.getElementById('filtroVendedora');
+const buscaVendedora = document.getElementById('buscaVendedora');
+const btnPesquisarVendedora = document.getElementById('btnPesquisarVendedora');
+const vendedoraTabelaBody = document.getElementById('vendedoraTabelaBody');
+
+const vendedoraCodigo = document.getElementById('vendedoraCodigo');
+const vendedoraNome = document.getElementById('vendedoraNome');
+const vendedoraCpf = document.getElementById('vendedoraCpf');
+const vendedoraEndereco = document.getElementById('vendedoraEndereco');
+const vendedoraNumero = document.getElementById('vendedoraNumero');
+const vendedoraComplemento = document.getElementById('vendedoraComplemento');
+const vendedoraBairro = document.getElementById('vendedoraBairro');
+const vendedoraCelular = document.getElementById('vendedoraCelular');
+const btnSalvarVendedora = document.getElementById('btnSalvarVendedora');
+
+const STORAGE_KEYS = {
+  mostruarios: 'wn_mostruarios',
+  vendedoras: 'wn_vendedoras'
+};
+
+function carregarStorage(chave, fallback = []) {
+  try {
+    const salvo = localStorage.getItem(chave);
+    return salvo ? JSON.parse(salvo) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function salvarStorage(chave, valor) {
+  localStorage.setItem(chave, JSON.stringify(valor));
+}
+
+const state = {
+  cadastros: carregarStorage(STORAGE_KEYS.mostruarios, []),
+  draft: {
+    numero: '',
+    codigoVendedora: '',
+    vendedora: '',
+    data: '',
+    acerto: '',
+    produtos: []
+  },
+  editandoNumeroOriginal: null
+};
+
+const vendedorasState = {
+  lista: carregarStorage(STORAGE_KEYS.vendedoras, [
+    {
+      codigo: '001',
+      nome: 'Maria Silva',
+      ultimo: '10/03/2026',
+      proximo: '10/04/2026',
+      cpf: '',
+      endereco: '',
+      numero: '',
+      complemento: '',
+      bairro: '',
+      celular: ''
+    }
+  ]),
+  editandoCodigoOriginal: null
+};
+
+function persistirMostruarios() {
+  salvarStorage(STORAGE_KEYS.mostruarios, state.cadastros);
+}
+
+function persistirVendedoras() {
+  salvarStorage(STORAGE_KEYS.vendedoras, vendedorasState.lista);
+}
+
+function activate(targetId) {
+  const screenExiste = document.getElementById(targetId);
+  if (!screenExiste) return;
+
+  sections.forEach(section => {
+    section.classList.toggle('active', section.id === targetId);
+  });
+
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  document.querySelectorAll('.menu-slot').forEach(slot => {
+    slot.classList.remove('active');
+  });
+
+  const menuMap = {
+    home: null,
+    mostruario: 'mostruario',
+    'mostruario-incluir': 'mostruario',
+    vendedoras: 'vendedoras',
+    'vendedora-cadastro': 'vendedoras',
+    acerto: 'acerto',
+    estoque: 'estoque',
+    configuracoes: null,
+    logout: null
+  };
+
+  const menuAlvo = menuMap[targetId];
+
+  if (menuAlvo) {
+    const menuSlot = document.querySelector(`.menu-slot[data-target="${menuAlvo}"]`);
+    if (menuSlot) {
+      menuSlot.classList.add('active');
+    }
+  }
+
+  if (history.replaceState) {
+    history.replaceState(null, '', `#${targetId}`);
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const alvo = e.target.closest('[data-target]');
+  if (!alvo) return;
+
+  const targetId = alvo.dataset.target;
+  if (!targetId) return;
+
+  e.preventDefault();
+  activate(targetId);
+});
+
+const initial = location.hash.replace('#', '') || 'home';
+activate(document.getElementById(initial) ? initial : 'home');
+
+function aplicarMascaraData(input) {
+  input.addEventListener('input', (e) => {
+    let value = e.target.value.replace(/\D/g, '').slice(0, 8);
+
+    if (value.length > 2) value = value.slice(0, 2) + '/' + value.slice(2);
+    if (value.length > 5) value = value.slice(0, 5) + '/' + value.slice(5);
+
+    e.target.value = value;
+    sincronizarDraftCampos();
+  });
+}
+
+function aplicarMascaraCpf(input) {
+  input.addEventListener('input', (e) => {
+    let value = e.target.value.replace(/\D/g, '').slice(0, 11);
+
+    if (value.length > 3) value = value.slice(0, 3) + '.' + value.slice(3);
+    if (value.length > 7) value = value.slice(0, 7) + '.' + value.slice(7);
+    if (value.length > 11) value = value.slice(0, 11) + '-' + value.slice(11);
+
+    e.target.value = value.slice(0, 14);
+  });
+}
+
+function aplicarMascaraCelular(input) {
+  input.addEventListener('input', (e) => {
+    const digitos = e.target.value.replace(/\D/g, '').slice(0, 11);
+    let formatado = '';
+
+    if (digitos.length > 0) formatado = '(' + digitos.slice(0, 2);
+    if (digitos.length >= 3) formatado += ') ' + digitos.slice(2, 7);
+    if (digitos.length >= 8) formatado += '-' + digitos.slice(7, 11);
+
+    e.target.value = formatado;
+  });
+}
+
+aplicarMascaraData(dataMostruario);
+aplicarMascaraData(dataAcerto);
+aplicarMascaraCpf(vendedoraCpf);
+aplicarMascaraCelular(vendedoraCelular);
+
+function buscarVendedoraPorCodigo(codigo) {
+  return vendedorasState.lista.find(v => v.codigo.toLowerCase() === codigo.toLowerCase());
+}
+
+function preencherNomeVendedoraPorCodigo() {
+  const codigo = codigoVendedoraMostruario.value.trim();
+  const vendedora = buscarVendedoraPorCodigo(codigo);
+
+  if (vendedora) {
+    nomeVendedoraMostruario.value = vendedora.nome;
+    state.draft.codigoVendedora = vendedora.codigo;
+    state.draft.vendedora = vendedora.nome;
+  } else {
+    nomeVendedoraMostruario.value = '';
+    state.draft.codigoVendedora = codigo;
+    state.draft.vendedora = '';
+  }
+}
+
+function sincronizarDraftCampos() {
+  state.draft.numero = numeroMostruario.value.trim();
+  state.draft.codigoVendedora = codigoVendedoraMostruario.value.trim();
+  state.draft.vendedora = nomeVendedoraMostruario.value.trim();
+  state.draft.data = dataMostruario.value.trim();
+  state.draft.acerto = dataAcerto.value.trim();
+}
+
+[numeroMostruario, codigoVendedoraMostruario].forEach(input => {
+  input.addEventListener('input', () => {
+    preencherNomeVendedoraPorCodigo();
+    sincronizarDraftCampos();
+  });
+});
+
+function limparCamposProduto() {
+  codigoProduto.value = '';
+  descricaoProduto.value = '';
+  qtdProduto.value = '';
+  codigoProduto.focus();
+}
+
+function adicionarProduto() {
+  sincronizarDraftCampos();
+
+  const codigo = codigoProduto.value.trim();
+  const descricao = descricaoProduto.value.trim();
+  const qtd = qtdProduto.value.trim();
+
+  if (!state.draft.numero) {
+    alert('Digite primeiro o número do mostruário.');
+    numeroMostruario.focus();
+    return;
+  }
+
+  if (!state.draft.codigoVendedora || !state.draft.vendedora) {
+    alert('Digite um código de vendedora válido.');
+    codigoVendedoraMostruario.focus();
+    return;
+  }
+
+  if (!codigo || !descricao || !qtd) {
+    alert('Preencha código, descrição e quantidade do produto.');
+    return;
+  }
+
+  state.draft.produtos.push({ codigo, descricao, qtd });
+  renderListaProdutos();
+  limparCamposProduto();
+}
+
+qtdProduto.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    adicionarProduto();
+  }
+});
+
+function renderListaProdutos() {
+  if (!state.draft.produtos.length) {
+    listaProdutosContainer.innerHTML = `<div class="lista-vazia">Nenhum produto adicionado.</div>`;
+    return;
+  }
+
+  listaProdutosContainer.innerHTML = state.draft.produtos.map((produto, index) => `
+    <div class="lista-item">
+      <span class="produto-cod">${produto.codigo}</span>
+      <span class="produto-desc">${produto.descricao}</span>
+      <span class="produto-qtd">${produto.qtd}</span>
+      <div class="produto-acoes">
+        <button class="mini-btn" type="button" data-editar-produto="${index}">Editar qtd</button>
+        <button class="mini-btn danger" type="button" data-excluir-item="${index}">Excluir</button>
+        <button class="mini-btn" type="button" data-incluir="${index}">Incluir</button>
+      </div>
     </div>
+  `).join('');
 
-    <div class="bottom-actions">
-      <button class="icon-btn nav-btn" data-target="logout" title="Sair" type="button">
-        <img src="assets/icone_sair.svg" alt="Sair" class="icon-img">
-      </button>
+  document.querySelectorAll('[data-excluir-item]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const index = Number(btn.dataset.excluirItem);
+      state.draft.produtos.splice(index, 1);
+      renderListaProdutos();
+    });
+  });
 
-      <button class="icon-btn nav-btn" data-target="configuracoes" title="Configurações" type="button">
-        <img src="assets/icone_configuracoes.svg" alt="Configurações" class="icon-img">
-      </button>
-    </div>
-  </aside>
+  document.querySelectorAll('[data-editar-produto]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const index = Number(btn.dataset.editarProduto);
+      const atual = state.draft.produtos[index];
+      const novaQtd = prompt('Digite a nova quantidade:', atual.qtd);
 
-  <div class="rail">
-    <div class="menu-slot ring nav-btn" data-target="mostruario" title="Mostruário">
-      <button class="icon-btn" type="button" tabindex="-1">
-        <img src="assets/icone_anel.svg" alt="Mostruário" class="icon-img">
-      </button>
-      <div class="slide-label">MOSTRUÁRIO</div>
-    </div>
+      if (novaQtd === null) return;
+      if (!novaQtd.trim()) return;
 
-    <div class="menu-slot seller nav-btn" data-target="vendedoras" title="Vendedoras">
-      <button class="icon-btn" type="button" tabindex="-1">
-        <img src="assets/icone_vendedora.svg" alt="Vendedoras" class="icon-img">
-      </button>
-      <div class="slide-label">VENDEDORAS</div>
-    </div>
+      state.draft.produtos[index].qtd = novaQtd.trim();
+      renderListaProdutos();
+    });
+  });
 
-    <div class="menu-slot report nav-btn" data-target="acerto" title="Acerto">
-      <button class="icon-btn" type="button" tabindex="-1">
-        <img src="assets/icone_acerto.svg" alt="Acerto" class="icon-img">
-      </button>
-      <div class="slide-label">ACERTO</div>
-    </div>
+  document.querySelectorAll('[data-incluir]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      codigoProduto.focus();
+    });
+  });
+}
 
-    <div class="menu-slot box nav-btn" data-target="estoque" title="Cadastro Produto">
-      <button class="icon-btn" type="button" tabindex="-1">
-        <img src="assets/icone_cadastro_produto.svg" alt="Cadastro Produto" class="icon-img">
-      </button>
-      <div class="slide-label">CADASTRO PRODUTO</div>
-    </div>
-  </div>
+function filtrarCadastros() {
+  const filtro = filtroMostruario.value;
+  const termo = buscaMostruario.value.trim().toLowerCase();
 
-  <main class="content">
-    <div class="watermark">
-      <img src="assets/icone_wnbijouterias.svg" alt="WN Bijouterias">
-    </div>
+  if (!termo) return state.cadastros;
 
-    <!-- HOME -->
-    <section id="home" class="screen active">
-      <div class="hero">
-        <div class="card">
-          <h1>MAPA DE TELAS<br>WN BIJOUTERIAS</h1>
-          <p>
-            Dashboard em HTML inspirado no arquivo enviado, com navegação funcional e menu lateral interativo.
-          </p>
+  return state.cadastros.filter(item => {
+    const numero = (item.numero || '').toLowerCase();
+    const codigoVend = (item.codigoVendedora || '').toLowerCase();
+    const vendedora = (item.vendedora || '').toLowerCase();
+    const data = (item.data || '').toLowerCase();
+    const acerto = (item.acerto || '').toLowerCase();
 
-          <div class="chips">
-            <div class="chip">Tela Inicial</div>
-            <div class="chip">Mostruário</div>
-            <div class="chip">Vendedoras</div>
-            <div class="chip">Cadastro Produto</div>
-            <div class="chip">Acerto</div>
-            <div class="chip">Configurações</div>
-            <div class="chip">Sair</div>
-          </div>
+    if (filtro === 'numero') return numero.includes(termo);
+    if (filtro === 'codigoVendedora') return codigoVend.includes(termo);
+    if (filtro === 'vendedora') return vendedora.includes(termo);
+    if (filtro === 'data') return data.includes(termo);
+    if (filtro === 'acerto') return acerto.includes(termo);
 
-          <div class="actions">
-            <button class="btn primary nav-btn" data-target="mostruario" type="button">Abrir Mostruário</button>
-            <button class="btn light nav-btn" data-target="vendedoras" type="button">Vendedoras</button>
-          </div>
-        </div>
+    return (
+      numero.includes(termo) ||
+      codigoVend.includes(termo) ||
+      vendedora.includes(termo) ||
+      data.includes(termo) ||
+      acerto.includes(termo)
+    );
+  });
+}
 
-        <div class="card">
-          <h2>Fluxograma principal</h2>
+function carregarMostruarioParaEdicao(item) {
+  state.editandoNumeroOriginal = item.numero;
+  state.draft = {
+    numero: item.numero,
+    codigoVendedora: item.codigoVendedora,
+    vendedora: item.vendedora,
+    data: item.data,
+    acerto: item.acerto,
+    produtos: item.produtos.map(prod => ({ ...prod }))
+  };
 
-          <div class="flow">
-            <div class="flow-item">
-              <strong>Tela Inicial</strong>
-              <span>Mapa visual do sistema.</span>
-            </div>
+  preencherFormularioMostruario();
+  renderListaProdutos();
+  activate('mostruario-incluir');
+}
 
-            <div class="flow-item">
-              <strong>Login</strong>
-              <span>Acesso ao sistema.</span>
-            </div>
+function renderTabelaMostruarios() {
+  const cadastrosFiltrados = filtrarCadastros();
 
-            <div class="flow-item">
-              <strong>Módulos</strong>
-              <span>Mostruário, Vendedoras, Acerto e Cadastro Produto.</span>
-            </div>
+  if (!cadastrosFiltrados.length) {
+    mostruarioTabelaBody.innerHTML = `
+      <tr>
+        <td colspan="7" class="empty-table">Nenhum mostruário encontrado</td>
+      </tr>
+    `;
+    return;
+  }
 
-            <div class="flow-item">
-              <strong>Ações</strong>
-              <span>Configurações e saída do sistema.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+  mostruarioTabelaBody.innerHTML = cadastrosFiltrados.map((item) => `
+    <tr>
+      <td>${item.numero || '--'}</td>
+      <td>${item.codigoVendedora || '--'}</td>
+      <td>${item.vendedora || '--'}</td>
+      <td>${item.produtos.length}</td>
+      <td>${item.data || '--'}</td>
+      <td>${item.acerto || '--'}</td>
+      <td class="acoes-cell">
+        <button class="mini-btn" type="button" data-editar-mostruario="${item.numero}">Editar</button>
+        <button class="mini-btn danger" type="button" data-excluir-mostruario="${item.numero}">Excluir</button>
+      </td>
+    </tr>
+  `).join('');
 
-    <!-- MOSTRUÁRIO -->
-    <section id="mostruario" class="screen">
-      <div class="panel">
-        <div class="toolbar">
-          <h2 style="margin:0">MOSTRUÁRIO</h2>
+  document.querySelectorAll('[data-editar-mostruario]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const numero = btn.dataset.editarMostruario;
+      const item = state.cadastros.find(cadastro => cadastro.numero === numero);
+      if (!item) return;
+      carregarMostruarioParaEdicao(item);
+    });
+  });
 
-          <div class="toolbar-actions toolbar-actions-main">
-            <div class="search-filter-wrap">
-              <select id="filtroMostruario" class="search-select">
-                <option value="todos">Todos</option>
-                <option value="numero">Nº Mostruário</option>
-                <option value="codigoVendedora">Cód. Vendedora</option>
-                <option value="vendedora">Vendedora</option>
-                <option value="data">Data</option>
-                <option value="acerto">Data do acerto</option>
-              </select>
+  document.querySelectorAll('[data-excluir-mostruario]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const numero = btn.dataset.excluirMostruario;
+      const confirmar = confirm('Deseja excluir este mostruário?');
+      if (!confirmar) return;
 
-              <div class="search-box">
-                <img src="assets/icone_lupa.svg" alt="Pesquisar" class="search-icon">
-                <input
-                  type="text"
-                  id="buscaMostruario"
-                  placeholder="Pesquisar ou filtrar"
-                  class="search-input"
-                >
-              </div>
+      state.cadastros = state.cadastros.filter(item => item.numero !== numero);
+      persistirMostruarios();
+      renderTabelaMostruarios();
+    });
+  });
+}
 
-              <button class="btn light" type="button" id="btnPesquisarMostruario">
-                Pesquisar
-              </button>
-            </div>
+function filtrarVendedoras() {
+  const termo = buscaVendedora.value.toLowerCase();
+  const filtro = filtroVendedora.value;
 
-            <button class="btn blue" type="button" id="btnNovoMostruario">
-              NOVO MOSTRUÁRIO
-            </button>
-          </div>
-        </div>
+  return vendedorasState.lista.filter(v => {
+    const codigo = (v.codigo || '').toLowerCase();
+    const nome = (v.nome || '').toLowerCase();
+    const ultimo = (v.ultimo || '').toLowerCase();
+    const proximo = (v.proximo || '').toLowerCase();
 
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Mostruário</th>
-                <th>Cód. Vendedora</th>
-                <th>Vendedora</th>
-                <th>Qtd.</th>
-                <th>Data</th>
-                <th>Data do acerto</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
+    if (!termo) return true;
+    if (filtro === 'codigo') return codigo.includes(termo);
+    if (filtro === 'nome') return nome.includes(termo);
+    if (filtro === 'ultimo') return ultimo.includes(termo);
+    if (filtro === 'proximo') return proximo.includes(termo);
 
-            <tbody id="mostruarioTabelaBody">
-              <tr>
-                <td colspan="7" class="empty-table">Nenhum mostruário cadastrado</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+    return (
+      codigo.includes(termo) ||
+      nome.includes(termo) ||
+      ultimo.includes(termo) ||
+      proximo.includes(termo)
+    );
+  });
+}
 
-    <!-- NOVO MOSTRUÁRIO -->
-    <section id="mostruario-incluir" class="screen">
-      <div class="mostruario-page">
-        <div class="top-bar top-bar-mostruario">
-          MOSTRUÁRIO
-        </div>
+function carregarVendedoraParaEdicao(v) {
+  vendedorasState.editandoCodigoOriginal = v.codigo;
 
-        <div class="include-wrap">
-          <div class="include-top">
-            <div class="voltar nav-btn" data-target="mostruario">⟵ VOLTAR</div>
+  vendedoraCodigo.value = v.codigo || '';
+  vendedoraNome.value = v.nome || '';
+  vendedoraCpf.value = v.cpf || '';
+  vendedoraEndereco.value = v.endereco || '';
+  vendedoraNumero.value = v.numero || '';
+  vendedoraComplemento.value = v.complemento || '';
+  vendedoraBairro.value = v.bairro || '';
+  vendedoraCelular.value = v.celular || '';
 
-            <div class="top-actions">
-              <button class="btn primary" type="button" id="btnSalvarMostruario">Salvar</button>
-              <button class="btn light" type="button">Imprimir</button>
-            </div>
-          </div>
+  activate('vendedora-cadastro');
+}
 
-          <div class="include-grid">
-            <div class="field small">
-              <label>Número Mostruário:</label>
-              <input type="text" id="numeroMostruario" placeholder="00">
-            </div>
+function renderTabelaVendedoras() {
+  const lista = filtrarVendedoras();
 
-            <div class="field small">
-              <label>Código da Vendedora:</label>
-              <input type="text" id="codigoVendedoraMostruario" placeholder="001">
-            </div>
+  if (!lista.length) {
+    vendedoraTabelaBody.innerHTML = `
+      <tr>
+        <td colspan="5" class="empty-table">Nenhuma vendedora encontrada</td>
+      </tr>
+    `;
+    return;
+  }
 
-            <div class="field wide">
-              <label>Nome Vendedora:</label>
-              <input type="text" id="nomeVendedoraMostruario" placeholder="Nome completo" readonly>
-            </div>
+  vendedoraTabelaBody.innerHTML = lista.map(v => `
+    <tr>
+      <td>${v.codigo}</td>
+      <td>${v.nome}</td>
+      <td>${v.ultimo}</td>
+      <td>${v.proximo}</td>
+      <td class="acoes-cell">
+        <button class="mini-btn" type="button" data-editar-vendedora="${v.codigo}">Editar</button>
+        <button class="mini-btn danger" type="button" data-excluir-vendedora="${v.codigo}">Excluir</button>
+      </td>
+    </tr>
+  `).join('');
 
-            <div class="field small">
-              <label>Data:</label>
-              <input type="text" id="dataMostruario" placeholder="DD/MM/AAAA" maxlength="10">
-            </div>
+  document.querySelectorAll('[data-editar-vendedora]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const codigo = btn.dataset.editarVendedora;
+      const item = vendedorasState.lista.find(v => v.codigo === codigo);
+      if (!item) return;
+      carregarVendedoraParaEdicao(item);
+    });
+  });
 
-            <div class="field small">
-              <label>Data do acerto:</label>
-              <input type="text" id="dataAcerto" placeholder="DD/MM/AAAA" maxlength="10">
-            </div>
+  document.querySelectorAll('[data-excluir-vendedora]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const codigo = btn.dataset.excluirVendedora;
+      const item = vendedorasState.lista.find(v => v.codigo === codigo);
+      if (!item) return;
 
-            <div class="field small">
-              <label>Cód. do Produto:</label>
-              <input type="text" id="codigoProduto" placeholder="AA000">
-            </div>
+      const vinculada = state.cadastros.some(m => m.codigoVendedora === codigo);
 
-            <div class="field wide">
-              <label>Descrição do Produto:</label>
-              <input type="text" id="descricaoProduto" placeholder="Nome do produto">
-            </div>
+      let confirmar = false;
 
-            <div class="field qty-field">
-              <label>Qtd.:</label>
-              <input type="text" id="qtdProduto" placeholder="00000">
-              <span class="unit-inline">PEÇAS</span>
-            </div>
-          </div>
+      if (vinculada) {
+        confirmar = confirm(
+          `A vendedora "${item.nome}" está vinculada a mostruários.\n\nAo excluir, o vínculo será removido desses mostruários.\n\nDeseja continuar?`
+        );
+      } else {
+        confirmar = confirm(`Deseja excluir a vendedora "${item.nome}"?`);
+      }
 
-          <div class="lista-produtos">
-            <div class="lista-header">
-              <h3>Lista de Produtos:</h3>
+      if (!confirmar) return;
 
-              <div class="lista-acoes">
-                <button class="btn blue" type="button" id="btnAdicionarProduto">Adicionar Produto</button>
-              </div>
-            </div>
+      vendedorasState.lista = vendedorasState.lista.filter(v => v.codigo !== codigo);
 
-            <div id="listaProdutosContainer">
-              <div class="lista-vazia">Nenhum produto adicionado.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+      state.cadastros = state.cadastros.map(m => {
+        if (m.codigoVendedora === codigo) {
+          return {
+            ...m,
+            codigoVendedora: '',
+            vendedora: ''
+          };
+        }
+        return m;
+      });
 
-    <!-- VENDEDORAS -->
-    <section id="vendedoras" class="screen">
-      <div class="panel">
-        <div class="toolbar">
-          <h2 style="margin:0">VENDEDORAS</h2>
+      persistirVendedoras();
+      persistirMostruarios();
+      renderTabelaVendedoras();
+      renderTabelaMostruarios();
+    });
+  });
+}
 
-          <div class="toolbar-actions toolbar-actions-main">
-            <div class="search-filter-wrap">
-              <select id="filtroVendedora" class="search-select">
-                <option value="todos">Todos</option>
-                <option value="codigo">Código</option>
-                <option value="nome">Nome</option>
-                <option value="ultimo">Último acerto</option>
-                <option value="proximo">Próximo acerto</option>
-              </select>
+function preencherFormularioMostruario() {
+  numeroMostruario.value = state.draft.numero;
+  codigoVendedoraMostruario.value = state.draft.codigoVendedora;
+  nomeVendedoraMostruario.value = state.draft.vendedora;
+  dataMostruario.value = state.draft.data;
+  dataAcerto.value = state.draft.acerto;
+}
 
-              <div class="search-box">
-                <img src="assets/icone_lupa.svg" alt="Pesquisar" class="search-icon">
-                <input
-                  type="text"
-                  id="buscaVendedora"
-                  placeholder="Pesquisar ou filtrar"
-                  class="search-input"
-                >
-              </div>
+function resetDraft() {
+  state.editandoNumeroOriginal = null;
+  state.draft = {
+    numero: '',
+    codigoVendedora: '',
+    vendedora: '',
+    data: '',
+    acerto: '',
+    produtos: []
+  };
 
-              <button class="btn light" type="button" id="btnPesquisarVendedora">
-                Pesquisar
-              </button>
-            </div>
+  preencherFormularioMostruario();
+  limparCamposProduto();
+  renderListaProdutos();
+}
 
-            <button class="btn blue nav-btn" type="button" data-target="vendedora-cadastro">
-              NOVA VENDEDORA
-            </button>
-          </div>
-        </div>
+function limparFormularioVendedora() {
+  vendedorasState.editandoCodigoOriginal = null;
 
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Nome completo</th>
-                <th>Último acerto</th>
-                <th>Próximo acerto</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
+  vendedoraCodigo.value = '';
+  vendedoraNome.value = '';
+  vendedoraCpf.value = '';
+  vendedoraEndereco.value = '';
+  vendedoraNumero.value = '';
+  vendedoraComplemento.value = '';
+  vendedoraBairro.value = '';
+  vendedoraCelular.value = '';
+}
 
-            <tbody id="vendedoraTabelaBody">
-              <tr>
-                <td colspan="5" class="empty-table">Nenhuma vendedora cadastrada</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+btnNovoMostruario.addEventListener('click', () => {
+  const temConteudo =
+    state.draft.numero ||
+    state.draft.codigoVendedora ||
+    state.draft.vendedora ||
+    state.draft.data ||
+    state.draft.acerto ||
+    state.draft.produtos.length;
 
-    <!-- CADASTRO VENDEDORA -->
-    <section id="vendedora-cadastro" class="screen">
-      <div class="vendedora-page">
-        <div class="top-bar top-bar-vendedora">
-          VENDEDORA
-        </div>
+  if (temConteudo) {
+    const confirmar = confirm('Criar um novo mostruário e limpar a lista atual?');
+    if (!confirmar) return;
+  }
 
-        <div class="include-wrap">
-          <div class="include-top">
-            <div class="voltar nav-btn" data-target="vendedoras">⟵ VOLTAR</div>
+  resetDraft();
+  activate('mostruario-incluir');
+});
 
-            <div class="top-actions">
-              <button class="btn primary" type="button" id="btnSalvarVendedora">Salvar</button>
-            </div>
-          </div>
+btnAdicionarProduto.addEventListener('click', adicionarProduto);
+btnPesquisarMostruario.addEventListener('click', renderTabelaMostruarios);
+filtroMostruario.addEventListener('change', renderTabelaMostruarios);
+buscaMostruario.addEventListener('input', renderTabelaMostruarios);
 
-          <div class="vendedora-grid">
-            <div class="field small">
-              <label>Código da vendedora:</label>
-              <input type="text" id="vendedoraCodigo" placeholder="001">
-            </div>
+btnPesquisarVendedora.addEventListener('click', renderTabelaVendedoras);
+filtroVendedora.addEventListener('change', renderTabelaVendedoras);
+buscaVendedora.addEventListener('input', renderTabelaVendedoras);
 
-            <div class="field wide-2">
-              <label>Nome completo:</label>
-              <input type="text" id="vendedoraNome" placeholder="Nome completo">
-            </div>
+btnSalvarMostruario.addEventListener('click', () => {
+  sincronizarDraftCampos();
 
-            <div class="field small">
-              <label>CPF:</label>
-              <input type="text" id="vendedoraCpf" placeholder="000.000.000-00" maxlength="14">
-            </div>
+  if (!state.draft.numero) {
+    alert('Informe o número do mostruário.');
+    numeroMostruario.focus();
+    return;
+  }
 
-            <div class="field wide-2">
-              <label>Endereço completo:</label>
-              <input type="text" id="vendedoraEndereco" placeholder="Rua, avenida, etc.">
-            </div>
+  if (!state.draft.codigoVendedora || !state.draft.vendedora) {
+    alert('Informe um código de vendedora válido.');
+    codigoVendedoraMostruario.focus();
+    return;
+  }
 
-            <div class="field small">
-              <label>Número:</label>
-              <input type="text" id="vendedoraNumero" placeholder="123">
-            </div>
+  const cadastro = {
+    numero: state.draft.numero,
+    codigoVendedora: state.draft.codigoVendedora,
+    vendedora: state.draft.vendedora,
+    data: state.draft.data,
+    acerto: state.draft.acerto,
+    produtos: state.draft.produtos.map(prod => ({ ...prod }))
+  };
 
-            <div class="field small">
-              <label>Complemento:</label>
-              <input type="text" id="vendedoraComplemento" placeholder="Apto, casa, bloco">
-            </div>
+  const numeroDuplicado = state.cadastros.some(item =>
+    item.numero === cadastro.numero &&
+    item.numero !== state.editandoNumeroOriginal
+  );
 
-            <div class="field wide">
-              <label>Bairro:</label>
-              <input type="text" id="vendedoraBairro" placeholder="Bairro">
-            </div>
+  if (numeroDuplicado) {
+    alert('Já existe um mostruário com esse número.');
+    numeroMostruario.focus();
+    return;
+  }
 
-            <div class="field wide">
-              <label>Celular:</label>
-              <input type="text" id="vendedoraCelular" placeholder="(00) 00000-0000" maxlength="15">
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+  if (state.editandoNumeroOriginal) {
+    const indexExistente = state.cadastros.findIndex(item => item.numero === state.editandoNumeroOriginal);
+    if (indexExistente >= 0) {
+      state.cadastros[indexExistente] = cadastro;
+    }
+  } else {
+    state.cadastros.push(cadastro);
+  }
 
-    <!-- OUTRAS TELAS -->
-    <section id="acerto" class="screen">
-      <div class="card">
-        <div class="top-bar top-bar-acerto">ACERTO</div>
-        <p>Tela reservada para relatórios e conferência de acertos.</p>
-      </div>
-    </section>
+  persistirMostruarios();
+  renderTabelaMostruarios();
+  resetDraft();
+  activate('mostruario');
+});
 
-    <section id="estoque" class="screen">
-      <div class="card">
-        <div class="top-bar top-bar-estoque">CADASTRO PRODUTO</div>
-        <p>Tela reservada para cadastro e gestão de produtos.</p>
-      </div>
-    </section>
+btnSalvarVendedora.addEventListener('click', () => {
+  const codigo = vendedoraCodigo.value.trim();
+  const nome = vendedoraNome.value.trim();
+  const cpf = vendedoraCpf.value.trim();
+  const endereco = vendedoraEndereco.value.trim();
+  const numero = vendedoraNumero.value.trim();
+  const complemento = vendedoraComplemento.value.trim();
+  const bairro = vendedoraBairro.value.trim();
+  const celular = vendedoraCelular.value.trim();
 
-    <section id="configuracoes" class="screen">
-      <div class="card">
-        <h2>CONFIGURAÇÕES</h2>
-        <p>Tela reservada para preferências do sistema.</p>
-      </div>
-    </section>
+  if (!codigo) {
+    alert('Informe o código da vendedora.');
+    vendedoraCodigo.focus();
+    return;
+  }
 
-    <section id="logout" class="screen">
-      <div class="card small-card">
-        <h2>SAIR</h2>
-        <p>Você saiu da visualização atual.</p>
-        <button class="btn primary nav-btn" data-target="home" type="button">Voltar para início</button>
-      </div>
-    </section>
-  </main>
-</div>
+  if (!nome) {
+    alert('Informe o nome completo.');
+    vendedoraNome.focus();
+    return;
+  }
 
-<script src="script.js"></script>
-</body>
-</html>
+  const codigoDuplicado = vendedorasState.lista.some(v =>
+    v.codigo === codigo &&
+    v.codigo !== vendedorasState.editandoCodigoOriginal
+  );
+
+  if (codigoDuplicado) {
+    alert('Já existe uma vendedora com esse código.');
+    vendedoraCodigo.focus();
+    return;
+  }
+
+  const dadosAnteriores = vendedorasState.lista.find(v => v.codigo === vendedorasState.editandoCodigoOriginal);
+
+  const novaVendedora = {
+    codigo,
+    nome,
+    ultimo: dadosAnteriores?.ultimo || '--/--/----',
+    proximo: dadosAnteriores?.proximo || '--/--/----',
+    cpf,
+    endereco,
+    numero,
+    complemento,
+    bairro,
+    celular
+  };
+
+  if (vendedorasState.editandoCodigoOriginal) {
+    const indexExistente = vendedorasState.lista.findIndex(v => v.codigo === vendedorasState.editandoCodigoOriginal);
+    if (indexExistente >= 0) {
+      vendedorasState.lista[indexExistente] = novaVendedora;
+    }
+
+    state.cadastros = state.cadastros.map(item => {
+      if (item.codigoVendedora === vendedorasState.editandoCodigoOriginal) {
+        return {
+          ...item,
+          codigoVendedora: codigo,
+          vendedora: nome
+        };
+      }
+      return item;
+    });
+
+    persistirMostruarios();
+  } else {
+    vendedorasState.lista.push(novaVendedora);
+  }
+
+  persistirVendedoras();
+  renderTabelaVendedoras();
+  renderTabelaMostruarios();
+  limparFormularioVendedora();
+  activate('vendedoras');
+});
+
+renderListaProdutos();
+renderTabelaMostruarios();
+renderTabelaVendedoras();
