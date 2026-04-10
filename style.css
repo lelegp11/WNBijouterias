@@ -475,13 +475,13 @@ p{
 #mostruario .data-table td:nth-child(4){ width:12%; }
 
 #mostruario .data-table th:nth-child(5),
-#mostruario .data-table td:nth-child(5){ width:14%; }
+#mostruario .data-table td:nth-child(5){ width:16%; }
 
 #mostruario .data-table th:nth-child(6),
 #mostruario .data-table td:nth-child(6){ width:16%; }
 
 #mostruario .data-table th:nth-child(7),
-#mostruario .data-table td:nth-child(7){ width:14%; }
+#mostruario .data-table td:nth-child(7){ width:12%; }
 
 #vendedoras .data-table th:nth-child(1),
 #vendedoras .data-table td:nth-child(1){ width:12%; }
@@ -589,7 +589,7 @@ p{
 
 .include-grid{
   display:grid;
-  grid-template-columns:160px 160px 1fr 160px 160px;
+  grid-template-columns:160px 160px 1fr 200px 200px;
   gap:18px 26px;
   align-items:end;
   margin-bottom:22px;
