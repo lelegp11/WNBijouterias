@@ -533,7 +533,6 @@ p{
 }
 
 .top-bar{
-  background:#5f87df;
   color:#000;
   text-align:center;
   font-size:32px;
@@ -541,6 +540,22 @@ p{
   padding:14px 20px;
   letter-spacing:.5px;
   margin-bottom:18px;
+}
+
+.top-bar-mostruario{
+  background:rgba(125,167,234,.80);
+}
+
+.top-bar-vendedora{
+  background:rgba(126,212,233,.85);
+}
+
+.top-bar-acerto{
+  background:rgba(243,220,155,.92);
+}
+
+.top-bar-estoque{
+  background:rgba(228,145,193,.90);
 }
 
 .include-wrap{
@@ -694,6 +709,16 @@ p{
   margin-left:auto;
 }
 
+.menu-slot.active{
+  background:transparent;
+  box-shadow:none;
+}
+
+.menu-slot.active .slide-label{
+  opacity:0;
+  transform:translateX(-6px);
+}
+
 @media (max-width: 1200px){
   .include-grid{
     grid-template-columns:1fr 1fr;
@@ -745,34 +770,4 @@ p{
   .search-box{
     min-width:260px;
   }
-}
-.nav-btn.active .slide-label,
-.top-logo.active,
-.icon-btn.active {
-  opacity: 1;
-}
-
-.menu-slot.active.ring {
-  background: rgba(125,167,234,.80);
-  box-shadow: var(--shadow);
-}
-
-.menu-slot.active.seller {
-  background: rgba(126,212,233,.85);
-  box-shadow: var(--shadow);
-}
-
-.menu-slot.active.report {
-  background: rgba(243,220,155,.92);
-  box-shadow: var(--shadow);
-}
-
-.menu-slot.active.box {
-  background: rgba(228,145,193,.90);
-  box-shadow: var(--shadow);
-}
-
-.menu-slot.active .slide-label {
-  opacity: 1;
-  transform: translateX(0);
 }
