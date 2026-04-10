@@ -100,10 +100,6 @@ function activate(targetId) {
     section.classList.toggle('active', section.id === targetId);
   });
 
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-
   document.querySelectorAll('.menu-slot').forEach(slot => {
     slot.classList.remove('active');
   });
@@ -134,15 +130,13 @@ function activate(targetId) {
   }
 }
 
-document.addEventListener('click', (e) => {
-  const alvo = e.target.closest('[data-target]');
-  if (!alvo) return;
-
-  const targetId = alvo.dataset.target;
-  if (!targetId) return;
-
-  e.preventDefault();
-  activate(targetId);
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const targetId = btn.dataset.target;
+    if (!targetId) return;
+    e.preventDefault();
+    activate(targetId);
+  });
 });
 
 const initial = location.hash.replace('#', '') || 'home';
@@ -447,6 +441,10 @@ function carregarVendedoraParaEdicao(v) {
   vendedoraCelular.value = v.celular || '';
 
   activate('vendedora-cadastro');
+
+  setTimeout(() => {
+    vendedoraCodigo.focus();
+  }, 50);
 }
 
 function renderTabelaVendedoras() {
