@@ -1,418 +1,769 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WN Bijouterias</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="app">
-    <aside class="leftbar">
-      <div class="top-logo nav-btn" data-target="home" title="Ir para início">
-        <img src="assets/logo_venda_suite.svg" alt="Venda Suite" class="icon-img">
-      </div>
+:root{
+  --bg:#ececec;
+  --orange:#e0b676;
+  --rail:#d9d9d9;
+  --text:#141414;
+  --muted:#666;
+  --card:#f3f3f3;
+  --shadow:0 10px 24px rgba(0,0,0,.10);
+}
 
-      <div class="bottom-actions">
-        <button class="icon-btn nav-btn" data-target="logout" title="Sair" type="button">
-          <img src="assets/icone_sair.svg" alt="Sair" class="icon-img">
-        </button>
+*{
+  box-sizing:border-box;
+}
 
-        <button class="icon-btn nav-btn" data-target="configuracoes" title="Configurações" type="button">
-          <img src="assets/icone_configuracoes.svg" alt="Configurações" class="icon-img">
-        </button>
-      </div>
-    </aside>
+html,body{
+  margin:0;
+  padding:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow:hidden;
+}
 
-    <div class="rail">
-      <div class="menu-slot ring nav-btn" data-target="mostruario" title="Mostruário">
-        <button class="icon-btn" type="button" tabindex="-1">
-          <img src="assets/icone_anel.svg" alt="Mostruário" class="icon-img">
-        </button>
-        <div class="slide-label">MOSTRUÁRIO</div>
-      </div>
+.app{
+  display:grid;
+  grid-template-columns:92px 96px 1fr;
+  min-height:100vh;
+}
 
-      <div class="menu-slot seller nav-btn" data-target="vendedoras" title="Vendedoras">
-        <button class="icon-btn" type="button" tabindex="-1">
-          <img src="assets/icone_vendedora.svg" alt="Vendedoras" class="icon-img">
-        </button>
-        <div class="slide-label">VENDEDORAS</div>
-      </div>
+/* BARRA LARANJA */
+.leftbar{
+  background:var(--orange);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 0 16px;
+  position:relative;
+  z-index:30;
+}
 
-      <div class="menu-slot report nav-btn" data-target="acerto" title="Acerto">
-        <button class="icon-btn" type="button" tabindex="-1">
-          <img src="assets/icone_acerto.svg" alt="Acerto" class="icon-img">
-        </button>
-        <div class="slide-label">ACERTO</div>
-      </div>
+.top-logo{
+  width:58px;
+  height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:.2s;
+}
 
-      <div class="menu-slot box nav-btn" data-target="estoque" title="Cadastro Produto">
-        <button class="icon-btn" type="button" tabindex="-1">
-          <img src="assets/icone_cadastro_produto.svg" alt="Cadastro Produto" class="icon-img">
-        </button>
-        <div class="slide-label">CADASTRO PRODUTO</div>
-      </div>
-    </div>
+.top-logo:hover{
+  transform:scale(1.05);
+  opacity:.9;
+}
 
-    <main class="content">
-      <div class="watermark">
-        <img src="assets/icone_wnbijouterias.svg" alt="WN Bijouterias">
-      </div>
+.bottom-actions{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  align-items:center;
+}
 
-      <!-- HOME -->
-      <section id="home" class="screen active">
-        <div class="hero">
-          <div class="card">
-            <h1>MAPA DE TELAS<br>WN BIJOUTERIAS</h1>
-            <p>
-              Dashboard em HTML com navegação funcional e menu lateral interativo.
-            </p>
+.leftbar .icon-btn{
+  width:64px;
+  height:64px;
+}
 
-            <div class="chips">
-              <div class="chip">Tela Inicial</div>
-              <div class="chip">Mostruário</div>
-              <div class="chip">Vendedoras</div>
-              <div class="chip">Cadastro Produto</div>
-              <div class="chip">Acerto</div>
-              <div class="chip">Configurações</div>
-              <div class="chip">Sair</div>
-            </div>
+/* BARRA CINZA */
+.rail{
+  background:var(--rail);
+  position:relative;
+  z-index:40;
+  overflow:visible;
+}
 
-            <div class="actions">
-              <button class="btn primary nav-btn" data-target="mostruario" type="button">Abrir Mostruário</button>
-              <button class="btn light nav-btn" data-target="vendedoras" type="button">Vendedoras</button>
-            </div>
-          </div>
+/* MENU */
+.menu-slot{
+  position:absolute;
+  left:0;
+  width:96px;
+  height:84px;
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  z-index:45;
+  overflow:visible;
+  transition:background-color .22s ease, box-shadow .22s ease;
+  cursor:pointer;
+}
 
-          <div class="card">
-            <h2>Fluxograma principal</h2>
+.menu-slot.ring{top:278px;}
+.menu-slot.seller{top:362px;}
+.menu-slot.report{top:446px;}
+.menu-slot.box{top:530px;}
 
-            <div class="flow">
-              <div class="flow-item">
-                <strong>Tela Inicial</strong>
-                <span>Mapa visual do sistema.</span>
-              </div>
+.menu-slot.ring:hover{
+  background:rgba(125,167,234,.80);
+  box-shadow:var(--shadow);
+}
 
-              <div class="flow-item">
-                <strong>Login</strong>
-                <span>Acesso ao sistema.</span>
-              </div>
+.menu-slot.seller:hover{
+  background:rgba(126,212,233,.85);
+  box-shadow:var(--shadow);
+}
 
-              <div class="flow-item">
-                <strong>Módulos</strong>
-                <span>Mostruário, Vendedoras, Acerto e Cadastro Produto.</span>
-              </div>
+.menu-slot.report:hover{
+  background:rgba(243,220,155,.92);
+  box-shadow:var(--shadow);
+}
 
-              <div class="flow-item">
-                <strong>Ações</strong>
-                <span>Configurações e saída do sistema.</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+.menu-slot.box:hover{
+  background:rgba(228,145,193,.90);
+  box-shadow:var(--shadow);
+}
 
-      <!-- MOSTRUÁRIO -->
-      <section id="mostruario" class="screen">
-        <div class="panel">
-          <div class="top-bar top-bar-mostruario top-bar-lista">MOSTRUÁRIO</div>
+/* BOTÕES */
+.icon-btn{
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  flex-shrink:0;
+}
 
-          <div class="toolbar">
-            <div class="toolbar-actions toolbar-actions-main">
-              <div class="search-filter-wrap">
-                <select id="filtroMostruario" class="search-select">
-                  <option value="todos">Todos</option>
-                  <option value="numero">Nº Mostruário</option>
-                  <option value="codigoVendedora">Cód. Vendedora</option>
-                  <option value="vendedora">Vendedora</option>
-                  <option value="ultimoAcerto">Último Acerto</option>
-                  <option value="proximoAcerto">Próximo Acerto</option>
-                </select>
+.rail .icon-btn{
+  width:96px;
+  height:84px;
+  position:relative;
+  z-index:3;
+  pointer-events:none;
+}
 
-                <div class="search-box">
-                  <img src="assets/icone_lupa.svg" alt="Pesquisar" class="search-icon">
-                  <input
-                    type="text"
-                    id="buscaMostruario"
-                    placeholder="Pesquisar ou filtrar"
-                    class="search-input"
-                  >
-                </div>
+/* ÍCONES */
+.icon-img{
+  width:54px;
+  height:54px;
+  max-width:54px;
+  max-height:54px;
+  object-fit:contain;
+  object-position:center;
+  display:block;
+}
 
-                <button class="btn light" type="button" id="btnPesquisarMostruario">
-                  Pesquisar
-                </button>
-              </div>
+.top-logo .icon-img{
+  width:58px;
+  height:58px;
+  max-width:58px;
+  max-height:58px;
+}
 
-              <button class="btn blue" type="button" id="btnNovoMostruario">
-                NOVO MOSTRUÁRIO
-              </button>
-            </div>
-          </div>
+/* TEXTO MENU */
+.slide-label{
+  position:absolute;
+  left:96px;
+  top:0;
+  height:84px;
+  min-width:244px;
+  display:flex;
+  align-items:center;
+  padding:0 18px 0 14px;
+  font-size:18px;
+  font-weight:600;
+  color:#111;
+  text-transform:uppercase;
+  white-space:nowrap;
+  opacity:0;
+  transform:translateX(-8px);
+  transition:opacity .22s ease, transform .22s ease;
+  pointer-events:none;
+  z-index:2;
+}
 
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Mostruário</th>
-                  <th>Cód. Vendedora</th>
-                  <th>Vendedora</th>
-                  <th>Qtd.</th>
-                  <th>Último Acerto</th>
-                  <th>Próximo Acerto</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
+.menu-slot.ring:hover .slide-label{
+  opacity:1;
+  transform:translateX(0);
+  background:rgba(125,167,234,.80);
+}
 
-              <tbody id="mostruarioTabelaBody">
-                <tr>
-                  <td colspan="7" class="empty-table">Nenhum mostruário cadastrado</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
+.menu-slot.seller:hover .slide-label{
+  opacity:1;
+  transform:translateX(0);
+  background:rgba(126,212,233,.85);
+}
 
-      <!-- NOVO MOSTRUÁRIO -->
-      <section id="mostruario-incluir" class="screen">
-        <div class="mostruario-page">
-          <div class="top-bar top-bar-mostruario">
-            MOSTRUÁRIO
-          </div>
+.menu-slot.report:hover .slide-label{
+  opacity:1;
+  transform:translateX(0);
+  background:rgba(243,220,155,.92);
+}
 
-          <div class="include-wrap">
-            <div class="include-top">
-              <div class="voltar nav-btn" data-target="mostruario">⟵ VOLTAR</div>
+.menu-slot.box:hover .slide-label{
+  opacity:1;
+  transform:translateX(0);
+  background:rgba(228,145,193,.90);
+}
 
-              <div class="top-actions">
-                <button class="btn primary" type="button" id="btnSalvarMostruario">Salvar</button>
-                <button class="btn light" type="button">Imprimir</button>
-              </div>
-            </div>
+/* CONTEÚDO */
+.content{
+  position:relative;
+  overflow:auto;
+  padding:24px 28px;
+  z-index:1;
+}
 
-            <div class="include-grid">
-              <div class="field small">
-                <label>Número Mostruário:</label>
-                <input type="text" id="numeroMostruario" placeholder="00">
-              </div>
+.watermark{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:.18;
+  pointer-events:none;
+}
 
-              <div class="field small">
-                <label>Código da Vendedora:</label>
-                <input type="text" id="codigoVendedoraMostruario" placeholder="001">
-              </div>
+.watermark img{
+  width:500px;
+  max-width:82%;
+  height:auto;
+  object-fit:contain;
+}
 
-              <div class="field wide">
-                <label>Nome Vendedora:</label>
-                <input type="text" id="nomeVendedoraMostruario" placeholder="Nome completo" readonly>
-              </div>
+/* TELAS */
+.screen{
+  display:none;
+  max-width:1180px;
+  margin:0 auto;
+  position:relative;
+  z-index:2;
+}
 
-              <div class="field small">
-                <label>Último Acerto:</label>
-                <input type="text" id="dataUltimoAcertoMostruario" placeholder="DD/MM/AAAA" maxlength="10">
-              </div>
+.screen.active{
+  display:block;
+}
 
-              <div class="field small">
-                <label>Próximo Acerto:</label>
-                <input type="text" id="dataProximoAcertoMostruario" placeholder="DD/MM/AAAA" maxlength="10">
-              </div>
+.hero{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  align-items:start;
+}
 
-              <div class="field small">
-                <label>Cód. do Produto:</label>
-                <input type="text" id="codigoProduto" placeholder="AA000">
-              </div>
+.card,
+.panel{
+  background:var(--card);
+  border-radius:24px;
+  padding:24px;
+  box-shadow:var(--shadow);
+}
 
-              <div class="field wide">
-                <label>Descrição do Produto:</label>
-                <input type="text" id="descricaoProduto" placeholder="Nome do produto">
-              </div>
+.small-card{
+  max-width:500px;
+  margin:40px auto 0;
+}
 
-              <div class="field qty-field">
-                <label>Qtd.:</label>
-                <input type="text" id="qtdProduto" placeholder="00000">
-                <span class="unit-inline">PEÇAS</span>
-              </div>
-            </div>
+h1{
+  font-size:52px;
+  line-height:.95;
+  margin:0 0 18px;
+}
 
-            <div class="lista-produtos">
-              <div class="lista-header">
-                <h3>Lista de Produtos:</h3>
+h2{
+  font-size:34px;
+  margin:0 0 16px;
+}
 
-                <div class="lista-acoes">
-                  <button class="btn blue" type="button" id="btnAdicionarProduto">Adicionar Produto</button>
-                </div>
-              </div>
+h3{
+  margin:0 0 10px;
+  font-size:24px;
+}
 
-              <div id="listaProdutosContainer">
-                <div class="lista-vazia">Nenhum produto adicionado.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+p{
+  color:var(--muted);
+  margin:0 0 18px;
+  line-height:1.5;
+}
 
-      <!-- VENDEDORAS -->
-      <section id="vendedoras" class="screen">
-        <div class="panel">
-          <div class="top-bar top-bar-vendedora top-bar-lista">VENDEDORAS</div>
+.chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:24px;
+}
 
-          <div class="toolbar">
-            <div class="toolbar-actions toolbar-actions-main">
-              <div class="search-filter-wrap">
-                <select id="filtroVendedora" class="search-select">
-                  <option value="todos">Todos</option>
-                  <option value="codigo">Código</option>
-                  <option value="nome">Nome</option>
-                  <option value="ultimo">Último Acerto</option>
-                  <option value="proximo">Próximo Acerto</option>
-                </select>
+.chip{
+  border:1px solid #e1c08c;
+  padding:10px 16px;
+  border-radius:999px;
+  background:#efeae2;
+  font-weight:600;
+  font-size:15px;
+}
 
-                <div class="search-box">
-                  <img src="assets/icone_lupa.svg" alt="Pesquisar" class="search-icon">
-                  <input
-                    type="text"
-                    id="buscaVendedora"
-                    placeholder="Pesquisar ou filtrar"
-                    class="search-input"
-                  >
-                </div>
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
 
-                <button class="btn light" type="button" id="btnPesquisarVendedora">
-                  Pesquisar
-                </button>
-              </div>
+.btn{
+  padding:12px 18px;
+  border-radius:14px;
+  border:none;
+  cursor:pointer;
+  font-weight:bold;
+  box-shadow:0 6px 14px rgba(0,0,0,.08);
+}
 
-              <button class="btn blue nav-btn" type="button" data-target="vendedora-cadastro" id="btnNovaVendedora">
-                NOVA VENDEDORA
-              </button>
-            </div>
-          </div>
+.btn.primary{background:#a9b9e6;}
+.btn.light{background:#fff; border:1px solid #ddd;}
+.btn.blue{background:#a7c8ed;}
+.btn-vendedora{background:#9ecfe0;}
 
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Código</th>
-                  <th>Nome completo</th>
-                  <th>Último Acerto</th>
-                  <th>Próximo Acerto</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
+.flow{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
 
-              <tbody id="vendedoraTabelaBody">
-                <tr>
-                  <td colspan="5" class="empty-table">Nenhuma vendedora cadastrada</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
+.flow-item{
+  background:#efefef;
+  border-radius:20px;
+  border:1px solid rgba(0,0,0,.06);
+  padding:16px 18px;
+  position:relative;
+}
 
-      <!-- CADASTRO VENDEDORA -->
-      <section id="vendedora-cadastro" class="screen">
-        <div class="vendedora-page">
-          <div class="top-bar top-bar-vendedora">
-            VENDEDORA
-          </div>
+.flow-item strong{
+  display:block;
+  font-size:19px;
+  margin-bottom:6px;
+}
 
-          <div class="include-wrap">
-            <div class="include-top">
-              <div class="voltar nav-btn" data-target="vendedoras">⟵ VOLTAR</div>
+.flow-item span{
+  color:var(--muted);
+  font-size:15px;
+}
 
-              <div class="top-actions">
-                <button class="btn primary btn-vendedora" type="button" id="btnSalvarVendedora">Salvar</button>
-              </div>
-            </div>
+/* TOOLBAR */
+.toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
 
-            <div class="vendedora-grid">
-              <div class="field small">
-                <label>Código da vendedora:</label>
-                <input type="text" id="vendedoraCodigo" placeholder="001" autocomplete="off">
-              </div>
+.toolbar-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
 
-              <div class="field wide-2">
-                <label>Nome completo:</label>
-                <input type="text" id="vendedoraNome" placeholder="Nome completo" autocomplete="off">
-              </div>
+.toolbar-actions-main{
+  width:100%;
+  justify-content:space-between;
+}
 
-              <div class="field small">
-                <label>CPF:</label>
-                <input type="text" id="vendedoraCpf" placeholder="000.000.000-00" maxlength="14" autocomplete="off">
-              </div>
+.search-filter-wrap{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
 
-              <div class="field wide-2">
-                <label>Endereço completo:</label>
-                <input type="text" id="vendedoraEndereco" placeholder="Rua, avenida, etc." autocomplete="off">
-              </div>
+.search-select{
+  height:44px;
+  padding:0 12px;
+  border:1px solid rgba(0,0,0,.12);
+  border-radius:12px;
+  background:#fff;
+  font-size:14px;
+  outline:none;
+}
 
-              <div class="field small">
-                <label>Número:</label>
-                <input type="text" id="vendedoraNumero" placeholder="123" autocomplete="off">
-              </div>
+.search-box{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#fff;
+  border:1px solid rgba(0,0,0,.12);
+  border-radius:12px;
+  padding:0 14px;
+  min-width:320px;
+  height:44px;
+}
 
-              <div class="field small">
-                <label>Complemento:</label>
-                <input type="text" id="vendedoraComplemento" placeholder="Apto, casa, bloco" autocomplete="off">
-              </div>
+.search-icon{
+  width:18px;
+  height:18px;
+  object-fit:contain;
+  flex-shrink:0;
+}
 
-              <div class="field wide">
-                <label>Bairro:</label>
-                <input type="text" id="vendedoraBairro" placeholder="Bairro" autocomplete="off">
-              </div>
+.search-input{
+  border:0;
+  outline:none;
+  background:transparent;
+  width:100%;
+  font-size:14px;
+}
 
-              <div class="field wide">
-                <label>Celular:</label>
-                <input type="text" id="vendedoraCelular" placeholder="(00) 00000-0000" maxlength="15" autocomplete="off">
-              </div>
+.top-bar-lista{
+  margin-bottom:24px;
+}
 
-              <div class="field small">
-                <label>Último Acerto:</label>
-                <input type="text" id="vendedoraUltimoAcerto" placeholder="--/--/----" readonly>
-              </div>
+/* TABELAS */
+.table-wrap{
+  margin-top:18px;
+  border-radius:20px;
+  overflow:visible;
+}
 
-              <div class="field small">
-                <label>Próximo Acerto:</label>
-                <input type="text" id="vendedoraProximoAcerto" placeholder="--/--/----" readonly>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+.data-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0 12px;
+  table-layout:fixed;
+}
 
-      <!-- OUTRAS TELAS -->
-      <section id="acerto" class="screen">
-        <div class="card">
-          <div class="top-bar top-bar-acerto">ACERTO</div>
-          <p>Tela reservada para relatórios e conferência de acertos.</p>
-        </div>
-      </section>
+.data-table thead th{
+  background:#efefef;
+  font-weight:700;
+  color:#222;
+  font-size:15px;
+  padding:16px 18px;
+  text-align:center;
+  border:none;
+}
 
-      <section id="estoque" class="screen">
-        <div class="card">
-          <div class="top-bar top-bar-estoque">CADASTRO PRODUTO</div>
-          <p>Tela reservada para cadastro e gestão de produtos.</p>
-        </div>
-      </section>
+.data-table thead th:first-child{
+  border-top-left-radius:14px;
+  border-bottom-left-radius:14px;
+}
 
-      <section id="configuracoes" class="screen">
-        <div class="card">
-          <h2>CONFIGURAÇÕES</h2>
-          <p>Tela reservada para preferências do sistema.</p>
-        </div>
-      </section>
+.data-table thead th:last-child{
+  border-top-right-radius:14px;
+  border-bottom-right-radius:14px;
+}
 
-      <section id="logout" class="screen">
-        <div class="card small-card">
-          <h2>SAIR</h2>
-          <p>Você saiu da visualização atual.</p>
-          <button class="btn primary nav-btn" data-target="home" type="button">Voltar para início</button>
-        </div>
-      </section>
-    </main>
-  </div>
+.data-table tbody td{
+  background:#f3f3f3;
+  padding:16px 18px;
+  font-size:15px;
+  text-align:center;
+  border:none;
+}
 
-  <script src="script.js"></script>
-</body>
-</html>
+.data-table tbody td:first-child{
+  border-top-left-radius:12px;
+  border-bottom-left-radius:12px;
+}
+
+.data-table tbody td:last-child{
+  border-top-right-radius:12px;
+  border-bottom-right-radius:12px;
+}
+
+#mostruario .data-table th:nth-child(1),
+#mostruario .data-table td:nth-child(1){ width:12%; }
+
+#mostruario .data-table th:nth-child(2),
+#mostruario .data-table td:nth-child(2){ width:12%; }
+
+#mostruario .data-table th:nth-child(3),
+#mostruario .data-table td:nth-child(3){ width:20%; }
+
+#mostruario .data-table th:nth-child(4),
+#mostruario .data-table td:nth-child(4){ width:12%; }
+
+#mostruario .data-table th:nth-child(5),
+#mostruario .data-table td:nth-child(5){ width:16%; }
+
+#mostruario .data-table th:nth-child(6),
+#mostruario .data-table td:nth-child(6){ width:16%; }
+
+#mostruario .data-table th:nth-child(7),
+#mostruario .data-table td:nth-child(7){ width:12%; }
+
+#vendedoras .data-table th:nth-child(1),
+#vendedoras .data-table td:nth-child(1){ width:12%; }
+
+#vendedoras .data-table th:nth-child(2),
+#vendedoras .data-table td:nth-child(2){ width:32%; }
+
+#vendedoras .data-table th:nth-child(3),
+#vendedoras .data-table td:nth-child(3){ width:20%; }
+
+#vendedoras .data-table th:nth-child(4),
+#vendedoras .data-table td:nth-child(4){ width:20%; }
+
+#vendedoras .data-table th:nth-child(5),
+#vendedoras .data-table td:nth-child(5){ width:16%; }
+
+.empty-table{
+  text-align:center;
+  color:#777;
+  padding:24px !important;
+}
+
+.acoes-cell{
+  display:flex;
+  gap:8px;
+  flex-wrap:nowrap;
+  justify-content:center;
+  align-items:center;
+}
+
+.mini-btn{
+  border:none;
+  background:#e8eefc;
+  color:#233;
+  padding:8px 12px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  min-width:60px;
+}
+
+.mini-btn.danger{
+  background:#fdeaea;
+  color:#9a3131;
+}
+
+.mostruario-page,
+.vendedora-page{
+  width:100%;
+}
+
+.top-bar{
+  color:#000;
+  text-align:center;
+  font-size:32px;
+  font-weight:800;
+  padding:14px 20px;
+  letter-spacing:.5px;
+  margin-bottom:18px;
+  border-radius:18px;
+}
+
+.top-bar-mostruario{
+  background:rgba(125,167,234,.80);
+}
+
+.top-bar-vendedora{
+  background:rgba(126,212,233,.85);
+}
+
+.top-bar-acerto{
+  background:rgba(243,220,155,.92);
+}
+
+.top-bar-estoque{
+  background:rgba(228,145,193,.90);
+}
+
+.include-wrap{
+  padding:8px 24px 24px;
+}
+
+.include-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.voltar{
+  font-size:22px;
+  font-weight:800;
+  cursor:pointer;
+  color:#111;
+}
+
+.top-actions{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+}
+
+.include-grid{
+  display:grid;
+  grid-template-columns:160px 160px 1fr 200px 200px;
+  gap:18px 26px;
+  align-items:end;
+  margin-bottom:22px;
+}
+
+.vendedora-grid{
+  display:grid;
+  grid-template-columns:160px 1fr 220px;
+  gap:18px 26px;
+  align-items:end;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  position:relative;
+}
+
+.field label{
+  font-size:13px;
+  font-weight:700;
+  color:#111;
+}
+
+.field input{
+  width:100%;
+  border:none;
+  outline:none;
+  background:#ededed;
+  border-radius:6px;
+  padding:12px 14px;
+  font-size:18px;
+  color:#555;
+  box-shadow:none;
+  pointer-events:auto;
+  position:relative;
+  z-index:5;
+}
+
+.field input[readonly]{
+  background:#e6e6e6;
+}
+
+.field.small{
+  min-width:0;
+}
+
+.field.wide{
+  min-width:0;
+}
+
+.field.wide-2{
+  grid-column:span 2;
+}
+
+.qty-field{
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+}
+
+.unit-inline{
+  position:absolute;
+  right:-58px;
+  bottom:14px;
+  font-size:14px;
+  font-weight:700;
+  color:#111;
+}
+
+.lista-produtos{
+  margin-top:12px;
+}
+
+.lista-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.lista-header h3{
+  margin:0;
+}
+
+.lista-vazia{
+  background:#f6f6f6;
+  border-radius:8px;
+  padding:16px;
+  color:#666;
+  font-size:16px;
+}
+
+.lista-item{
+  display:grid;
+  grid-template-columns:160px 1fr 160px 290px;
+  gap:18px;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.produto-cod,
+.produto-desc,
+.produto-qtd{
+  background:#ededed;
+  border-radius:6px;
+  padding:12px 14px;
+  font-size:18px;
+  color:#555;
+}
+
+.produto-acoes{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.lista-acoes{
+  margin-top:0;
+  margin-left:auto;
+}
+
+@media (max-width: 1200px){
+  .include-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .vendedora-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .field.wide-2{
+    grid-column:span 2;
+  }
+
+  .lista-item{
+    grid-template-columns:1fr;
+  }
+
+  .produto-acoes{
+    justify-content:flex-start;
+  }
+
+  .unit-inline{
+    position:static;
+    margin-top:6px;
+  }
+}
+
+@media (max-width:1100px){
+  html,body{
+    overflow:auto;
+  }
+
+  .app{
+    min-width:1300px;
+  }
+
+  .hero{
+    grid-template-columns:1fr;
+  }
+
+  .toolbar-actions-main{
+    align-items:flex-start;
+  }
+
+  .search-filter-wrap{
+    width:100%;
+  }
+
+  .search-box{
+    min-width:260px;
+  }
+}
