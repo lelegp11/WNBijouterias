@@ -86,6 +86,7 @@ html,body{
   z-index:45;
   overflow:visible;
   transition:background-color .22s ease, box-shadow .22s ease;
+  cursor:pointer;
 }
 
 .menu-slot.ring{top:278px;}
@@ -130,6 +131,7 @@ html,body{
   height:84px;
   position:relative;
   z-index:3;
+  pointer-events:none;
 }
 
 /* ÍCONES */
@@ -435,65 +437,41 @@ p{
 
 /* LARGURAS MOSTRUÁRIO */
 #mostruario .data-table th:nth-child(1),
-#mostruario .data-table td:nth-child(1){
-  width:12%;
-}
+#mostruario .data-table td:nth-child(1){ width:12%; }
 
 #mostruario .data-table th:nth-child(2),
-#mostruario .data-table td:nth-child(2){
-  width:12%;
-}
+#mostruario .data-table td:nth-child(2){ width:12%; }
 
 #mostruario .data-table th:nth-child(3),
-#mostruario .data-table td:nth-child(3){
-  width:20%;
-}
+#mostruario .data-table td:nth-child(3){ width:20%; }
 
 #mostruario .data-table th:nth-child(4),
-#mostruario .data-table td:nth-child(4){
-  width:12%;
-}
+#mostruario .data-table td:nth-child(4){ width:12%; }
 
 #mostruario .data-table th:nth-child(5),
-#mostruario .data-table td:nth-child(5){
-  width:14%;
-}
+#mostruario .data-table td:nth-child(5){ width:14%; }
 
 #mostruario .data-table th:nth-child(6),
-#mostruario .data-table td:nth-child(6){
-  width:16%;
-}
+#mostruario .data-table td:nth-child(6){ width:16%; }
 
 #mostruario .data-table th:nth-child(7),
-#mostruario .data-table td:nth-child(7){
-  width:14%;
-}
+#mostruario .data-table td:nth-child(7){ width:14%; }
 
 /* LARGURAS VENDEDORAS */
 #vendedoras .data-table th:nth-child(1),
-#vendedoras .data-table td:nth-child(1){
-  width:12%;
-}
+#vendedoras .data-table td:nth-child(1){ width:12%; }
 
 #vendedoras .data-table th:nth-child(2),
-#vendedoras .data-table td:nth-child(2){
-  width:32%;
-}
+#vendedoras .data-table td:nth-child(2){ width:32%; }
 
 #vendedoras .data-table th:nth-child(3),
-#vendedoras .data-table td:nth-child(3){
-  width:20%;
-}
+#vendedoras .data-table td:nth-child(3){ width:20%; }
 
 #vendedoras .data-table th:nth-child(4),
-#vendedoras .data-table td:nth-child(4){
-  width:20%;
-}
+#vendedoras .data-table td:nth-child(4){ width:20%; }
 
 #vendedoras .data-table th:nth-child(5),
-#vendedoras .data-table td:nth-child(5){
-  width:16%;
-}
+#vendedoras .data-table td:nth-child(5){ width:16%; }
 
 .empty-table{
   text-align:center;
@@ -709,6 +687,7 @@ p{
   margin-left:auto;
 }
 
+/* MENU RECOLHIDO AO ENTRAR */
 .menu-slot.active{
   background:transparent;
   box-shadow:none;
