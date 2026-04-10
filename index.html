@@ -1,154 +1,74 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WN Bijouterias</title>
-<link rel="stylesheet" href="style.css">
-</head>
+const sections = [...document.querySelectorAll('.screen')];
 
-<body>
+function activate(id) {
+  sections.forEach(s => s.classList.toggle('active', s.id === id));
+}
 
-<div class="app">
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.nav-btn');
+  if (!btn) return;
+  activate(btn.dataset.target);
+});
 
-<!-- MENU -->
-<aside class="leftbar">
-  <div class="nav-btn" data-target="home">🏠</div>
-  <div class="nav-btn" data-target="mostruario">💍</div>
-  <div class="nav-btn" data-target="vendedoras">👩</div>
-  <div class="nav-btn" data-target="estoque">📦</div>
-  <div class="nav-btn" data-target="acerto">💰</div>
-</aside>
+/* STATES */
+let produtos = [
+  { codigo: 'P001', descricao: 'Anel', preco: 30 },
+  { codigo: 'P002', descricao: 'Brinco', preco: 20 }
+];
 
-<main class="content">
+let vendedoras = [];
+let mostruarios = [];
 
-<!-- HOME -->
-<section id="home" class="screen active">
-  <h1>WN BIJOUTERIAS</h1>
-</section>
+/* HELPERS */
+function buscarProduto(cod) {
+  return produtos.find(p => p.codigo === cod);
+}
 
-<!-- MOSTRUÁRIO -->
-<section id="mostruario" class="screen">
-  <h2>MOSTRUÁRIO</h2>
+/* MOSTRUÁRIO */
+const listaProdutosContainer = document.getElementById('listaProdutosContainer');
+const totalMostruarioValor = document.getElementById('totalMostruarioValor');
 
-  <button id="btnNovoMostruario">Novo</button>
+let draftProdutos = [];
 
-  <table>
-    <thead>
-      <tr>
-        <th>Nº</th>
-        <th>Vendedora</th>
-        <th>Total</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody id="mostruarioTabelaBody"></tbody>
-  </table>
-</section>
+document.getElementById('codigoProduto').addEventListener('input', e => {
+  const p = buscarProduto(e.target.value);
+  if (p) {
+    descricaoProduto.value = p.descricao;
+    precoProdutoMostruario.value = p.preco;
+  }
+});
 
-<!-- NOVO MOSTRUÁRIO -->
-<section id="mostruario-incluir" class="screen">
-  <h2>NOVO MOSTRUÁRIO</h2>
+document.getElementById('btnAdicionarProduto').onclick = () => {
+  const cod = codigoProduto.value;
+  const qtd = Number(qtdProduto.value);
 
-  <input id="numeroMostruario" placeholder="Número">
-  <input id="codigoVendedoraMostruario" placeholder="Cód vendedora">
-  <input id="nomeVendedoraMostruario" placeholder="Nome" readonly>
+  const p = buscarProduto(cod);
+  if (!p) return alert("Produto inválido");
 
-  <input id="dataUltimoAcertoMostruario" placeholder="Último Acerto">
-  <input id="dataProximoAcertoMostruario" placeholder="Próximo Acerto">
+  draftProdutos.push({ ...p, qtd });
 
-  <hr>
+  renderLista();
+};
 
-  <input id="codigoProduto" placeholder="Cod produto">
-  <input id="descricaoProduto" placeholder="Descrição" readonly>
-  <input id="precoProdutoMostruario" placeholder="Preço" readonly>
-  <input id="qtdProduto" placeholder="Qtd">
+function renderLista() {
+  let total = 0;
 
-  <button id="btnAdicionarProduto">Adicionar</button>
+  listaProdutosContainer.innerHTML = draftProdutos.map(p => {
+    total += p.preco * p.qtd;
+    return `<div>${p.descricao} - ${p.qtd}</div>`;
+  }).join('');
 
-  <div id="listaProdutosContainer"></div>
+  totalMostruarioValor.innerText = "R$ " + total;
+}
 
-  <h3>Total: <span id="totalMostruarioValor">R$ 0,00</span></h3>
+/* SALVAR MOSTRUARIO */
+document.getElementById('btnSalvarMostruario').onclick = () => {
+  mostruarios.push({
+    numero: numeroMostruario.value,
+    codigoVendedora: codigoVendedoraMostruario.value,
+    produtos: draftProdutos
+  });
 
-  <button id="btnSalvarMostruario">Salvar</button>
-</section>
-
-<!-- VENDEDORAS -->
-<section id="vendedoras" class="screen">
-  <h2>VENDEDORAS</h2>
-
-  <button class="nav-btn" data-target="vendedora-cadastro">Nova</button>
-
-  <table>
-    <tbody id="vendedoraTabelaBody"></tbody>
-  </table>
-</section>
-
-<!-- CADASTRO VENDEDORA -->
-<section id="vendedora-cadastro" class="screen">
-  <h2>VENDEDORA</h2>
-
-  <input id="vendedoraCodigo" placeholder="Código">
-  <input id="vendedoraNome" placeholder="Nome">
-  <input id="vendedoraUltimoAcerto" placeholder="Último Acerto">
-  <input id="vendedoraProximoAcerto" placeholder="Próximo Acerto">
-
-  <button id="btnSalvarVendedora">Salvar</button>
-</section>
-
-<!-- PRODUTOS -->
-<section id="estoque" class="screen">
-  <h2>PRODUTOS</h2>
-
-  <button id="btnNovoProduto">Novo Produto</button>
-
-  <table>
-    <tbody id="produtoTabelaBody"></tbody>
-  </table>
-</section>
-
-<!-- CADASTRO PRODUTO -->
-<section id="produto-cadastro" class="screen">
-  <h2>PRODUTO</h2>
-
-  <input id="produtoCodigo" placeholder="Código">
-  <input id="produtoDescricao" placeholder="Descrição">
-
-  <select id="produtoTipo">
-    <option value="">Selecione</option>
-    <option value="ouro">Ouro</option>
-    <option value="prata">Prata</option>
-  </select>
-
-  <input id="produtoPreco" placeholder="Preço">
-
-  <button id="btnSalvarProduto">Salvar</button>
-</section>
-
-<!-- ACERTO -->
-<section id="acerto" class="screen">
-  <h2>ACERTO</h2>
-
-  <input id="acertoNumeroMostruario" placeholder="Mostruário">
-  <input id="acertoCodigoVendedora" placeholder="Cod vendedora">
-  <input id="acertoNomeVendedora" placeholder="Nome" readonly>
-
-  <input id="acertoCodigoProduto" placeholder="Produto">
-  <input id="acertoDescricaoProduto" placeholder="Descrição" readonly>
-
-  <input id="acertoQtdRetirada" placeholder="Retirada" readonly>
-  <input id="acertoQtdDevolvida" placeholder="Devolvida">
-
-  <div id="acertoListaContainer"></div>
-
-  <h3>Total Peças: <span id="acertoTotalPecas">0</span></h3>
-  <h3>Total Valor: <span id="acertoTotalValor">R$ 0,00</span></h3>
-</section>
-
-</main>
-</div>
-
-<script src="script.js"></script>
-
-</body>
-</html>
+  alert("Salvo");
+  activate('mostruario');
+};
