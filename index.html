@@ -475,9 +475,64 @@
       </section>
 
       <section id="acerto" class="screen">
-        <div class="card">
+        <div class="panel">
           <div class="top-bar top-bar-acerto">ACERTO</div>
-          <p>Tela reservada para relatórios e conferência de acertos.</p>
+
+          <div class="include-wrap">
+            <div class="acerto-grid">
+              <div class="field small">
+                <label>Cód. da Vendedora:</label>
+                <input type="text" id="acertoCodigoVendedora" placeholder="001">
+              </div>
+
+              <div class="field wide">
+                <label>Nome da Vendedora:</label>
+                <input type="text" id="acertoNomeVendedora" placeholder="Nome completo" readonly>
+              </div>
+
+              <div class="field small">
+                <label>Cód. do Produto:</label>
+                <input type="text" id="acertoCodigoProduto" placeholder="P001">
+              </div>
+
+              <div class="field wide">
+                <label>Descrição do Produto:</label>
+                <input type="text" id="acertoDescricaoProduto" placeholder="Descrição do produto" readonly>
+              </div>
+
+              <div class="field small">
+                <label>Quantidade Retirada:</label>
+                <input type="text" id="acertoQtdRetirada" placeholder="0" readonly>
+              </div>
+
+              <div class="field small">
+                <label>Quantidade Devolvida:</label>
+                <input type="text" id="acertoQtdDevolvida" placeholder="0">
+              </div>
+            </div>
+
+            <div class="acerto-lista">
+              <div class="lista-header">
+                <h3>Itens do Acerto:</h3>
+              </div>
+
+              <div id="acertoListaContainer">
+                <div class="lista-vazia">Nenhum item lançado no acerto.</div>
+              </div>
+            </div>
+
+            <div class="acerto-resumo">
+              <div class="resumo-card">
+                <span>Total Vendido (peças)</span>
+                <strong id="acertoTotalPecas">0</strong>
+              </div>
+
+              <div class="resumo-card">
+                <span>Valor Total da Venda</span>
+                <strong id="acertoTotalValor">R$ 0,00</strong>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
