@@ -463,10 +463,10 @@ p{
 #mostruario .data-table td:nth-child(3){ width:20%; }
 
 #mostruario .data-table th:nth-child(4),
-#mostruario .data-table td:nth-child(4){ width:12%; }
+#mostruario .data-table td:nth-child(4){ width:14%; }
 
 #mostruario .data-table th:nth-child(5),
-#mostruario .data-table td:nth-child(5){ width:16%; }
+#mostruario .data-table td:nth-child(5){ width:14%; }
 
 #mostruario .data-table th:nth-child(6),
 #mostruario .data-table td:nth-child(6){ width:16%; }
@@ -599,10 +599,13 @@ p{
 
 .include-grid{
   display:grid;
-  grid-template-columns:160px 160px 1fr 200px 200px;
   gap:18px 26px;
   align-items:end;
   margin-bottom:22px;
+}
+
+.include-grid-mostruario{
+  grid-template-columns:160px 160px 1fr 180px 180px;
 }
 
 .vendedora-grid{
@@ -705,7 +708,7 @@ p{
 
 .lista-item{
   display:grid;
-  grid-template-columns:160px 1fr 160px 290px;
+  grid-template-columns:120px 1fr 140px 120px 220px;
   gap:18px;
   align-items:center;
   margin-bottom:10px;
@@ -713,6 +716,7 @@ p{
 
 .produto-cod,
 .produto-desc,
+.produto-preco,
 .produto-qtd{
   background:#ededed;
   border-radius:6px;
@@ -745,8 +749,24 @@ p{
   align-items:end;
 }
 
+.mostruario-total-box{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:12px;
+  margin:8px 0 20px;
+  font-size:20px;
+  font-weight:800;
+}
+
+.mostruario-total-box span{
+  background:#efefef;
+  border-radius:10px;
+  padding:10px 16px;
+}
+
 @media (max-width: 1200px){
-  .include-grid,
+  .include-grid-mostruario,
   .vendedora-grid,
   .produto-grid{
     grid-template-columns:1fr 1fr;
