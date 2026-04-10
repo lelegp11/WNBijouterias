@@ -141,7 +141,7 @@
                   <th>Mostruário</th>
                   <th>Cód. Vendedora</th>
                   <th>Vendedora</th>
-                  <th>Qtd.</th>
+                  <th>Valor Total</th>
                   <th>Último Acerto</th>
                   <th>Próximo Acerto</th>
                   <th>Ações</th>
@@ -171,7 +171,7 @@
               </div>
             </div>
 
-            <div class="include-grid">
+            <div class="include-grid include-grid-mostruario">
               <div class="field small">
                 <label>Número Mostruário:</label>
                 <input type="text" id="numeroMostruario" placeholder="00">
@@ -207,11 +207,21 @@
                 <input type="text" id="descricaoProduto" placeholder="Nome do produto" readonly>
               </div>
 
+              <div class="field small">
+                <label>Preço:</label>
+                <input type="text" id="precoProdutoMostruario" placeholder="0,00" readonly>
+              </div>
+
               <div class="field qty-field">
                 <label>Qtd.:</label>
                 <input type="text" id="qtdProduto" placeholder="00000">
                 <span class="unit-inline">PEÇAS</span>
               </div>
+            </div>
+
+            <div class="mostruario-total-box">
+              <strong>Total do Mostruário:</strong>
+              <span id="totalMostruarioValor">R$ 0,00</span>
             </div>
 
             <div class="lista-produtos">
