@@ -171,7 +171,8 @@ html,body{
   z-index:2;
 }
 
-.menu-slot:hover .slide-label{
+.menu-slot:hover .slide-label,
+.menu-slot.active .slide-label{
   opacity:1;
   transform:translateX(0);
 }
@@ -435,7 +436,6 @@ p{
   border-bottom-right-radius:12px;
 }
 
-/* LARGURAS MOSTRUÁRIO */
 #mostruario .data-table th:nth-child(1),
 #mostruario .data-table td:nth-child(1){ width:12%; }
 
@@ -457,7 +457,6 @@ p{
 #mostruario .data-table th:nth-child(7),
 #mostruario .data-table td:nth-child(7){ width:14%; }
 
-/* LARGURAS VENDEDORAS */
 #vendedoras .data-table th:nth-child(1),
 #vendedoras .data-table td:nth-child(1){ width:12%; }
 
@@ -600,6 +599,9 @@ p{
   font-size:18px;
   color:#555;
   box-shadow:none;
+  pointer-events:auto;
+  position:relative;
+  z-index:5;
 }
 
 .field input[readonly]{
@@ -687,15 +689,10 @@ p{
   margin-left:auto;
 }
 
-/* MENU RECOLHIDO AO ENTRAR */
+/* menu recolhido ao entrar, mas com label do item ativo visível */
 .menu-slot.active{
   background:transparent;
   box-shadow:none;
-}
-
-.menu-slot.active .slide-label{
-  opacity:0;
-  transform:translateX(-6px);
 }
 
 @media (max-width: 1200px){
