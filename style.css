@@ -302,10 +302,22 @@ p{
   box-shadow:0 6px 14px rgba(0,0,0,.08);
 }
 
-.btn.primary{background:#a9b9e6;}
-.btn.light{background:#fff;border:1px solid #ddd;}
-.btn.blue{background:#a7c8ed;}
-.btn-vendedora{background:#9ecfe0;}
+.btn.primary{
+  background:#a9b9e6;
+}
+
+.btn.light{
+  background:#fff;
+  border:1px solid #ddd;
+}
+
+.btn.blue{
+  background:#a7c8ed;
+}
+
+.btn-vendedora{
+  background:#9ecfe0;
+}
 
 .flow{
   display:flex;
@@ -453,58 +465,94 @@ p{
 }
 
 #mostruario .data-table th:nth-child(1),
-#mostruario .data-table td:nth-child(1){ width:12%; }
+#mostruario .data-table td:nth-child(1){
+  width:12%;
+}
 
 #mostruario .data-table th:nth-child(2),
-#mostruario .data-table td:nth-child(2){ width:12%; }
+#mostruario .data-table td:nth-child(2){
+  width:12%;
+}
 
 #mostruario .data-table th:nth-child(3),
-#mostruario .data-table td:nth-child(3){ width:20%; }
+#mostruario .data-table td:nth-child(3){
+  width:20%;
+}
 
 #mostruario .data-table th:nth-child(4),
-#mostruario .data-table td:nth-child(4){ width:14%; }
+#mostruario .data-table td:nth-child(4){
+  width:14%;
+}
 
 #mostruario .data-table th:nth-child(5),
-#mostruario .data-table td:nth-child(5){ width:14%; }
+#mostruario .data-table td:nth-child(5){
+  width:14%;
+}
 
 #mostruario .data-table th:nth-child(6),
-#mostruario .data-table td:nth-child(6){ width:16%; }
+#mostruario .data-table td:nth-child(6){
+  width:16%;
+}
 
 #mostruario .data-table th:nth-child(7),
-#mostruario .data-table td:nth-child(7){ width:12%; }
+#mostruario .data-table td:nth-child(7){
+  width:12%;
+}
 
 #vendedoras .data-table th:nth-child(1),
-#vendedoras .data-table td:nth-child(1){ width:12%; }
+#vendedoras .data-table td:nth-child(1){
+  width:12%;
+}
 
 #vendedoras .data-table th:nth-child(2),
-#vendedoras .data-table td:nth-child(2){ width:32%; }
+#vendedoras .data-table td:nth-child(2){
+  width:32%;
+}
 
 #vendedoras .data-table th:nth-child(3),
-#vendedoras .data-table td:nth-child(3){ width:20%; }
+#vendedoras .data-table td:nth-child(3){
+  width:20%;
+}
 
 #vendedoras .data-table th:nth-child(4),
-#vendedoras .data-table td:nth-child(4){ width:20%; }
+#vendedoras .data-table td:nth-child(4){
+  width:20%;
+}
 
 #vendedoras .data-table th:nth-child(5),
-#vendedoras .data-table td:nth-child(5){ width:16%; }
+#vendedoras .data-table td:nth-child(5){
+  width:16%;
+}
 
 #estoque .data-table th:nth-child(1),
-#estoque .data-table td:nth-child(1){ width:15%; }
+#estoque .data-table td:nth-child(1){
+  width:15%;
+}
 
 #estoque .data-table th:nth-child(2),
-#estoque .data-table td:nth-child(2){ width:27%; }
+#estoque .data-table td:nth-child(2){
+  width:27%;
+}
 
 #estoque .data-table th:nth-child(3),
-#estoque .data-table td:nth-child(3){ width:12%; }
+#estoque .data-table td:nth-child(3){
+  width:12%;
+}
 
 #estoque .data-table th:nth-child(4),
-#estoque .data-table td:nth-child(4){ width:14%; }
+#estoque .data-table td:nth-child(4){
+  width:14%;
+}
 
 #estoque .data-table th:nth-child(5),
-#estoque .data-table td:nth-child(5){ width:20%; }
+#estoque .data-table td:nth-child(5){
+  width:20%;
+}
 
 #estoque .data-table th:nth-child(6),
-#estoque .data-table td:nth-child(6){ width:12%; }
+#estoque .data-table td:nth-child(6){
+  width:12%;
+}
 
 .empty-table{
   text-align:center;
@@ -554,10 +602,21 @@ p{
   border-radius:18px;
 }
 
-.top-bar-mostruario{ background:rgba(125,167,234,.80); }
-.top-bar-vendedora{ background:rgba(126,212,233,.85); }
-.top-bar-acerto{ background:rgba(243,220,155,.92); }
-.top-bar-estoque{ background:rgba(228,145,193,.90); }
+.top-bar-mostruario{
+  background:rgba(125,167,234,.80);
+}
+
+.top-bar-vendedora{
+  background:rgba(126,212,233,.85);
+}
+
+.top-bar-acerto{
+  background:rgba(243,220,155,.92);
+}
+
+.top-bar-estoque{
+  background:rgba(228,145,193,.90);
+}
 
 .include-wrap{
   padding:8px 24px 24px;
