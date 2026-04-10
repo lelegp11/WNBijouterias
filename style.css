@@ -498,6 +498,21 @@ p{
 #vendedoras .data-table th:nth-child(5),
 #vendedoras .data-table td:nth-child(5){ width:16%; }
 
+#estoque .data-table th:nth-child(1),
+#estoque .data-table td:nth-child(1){ width:18%; }
+
+#estoque .data-table th:nth-child(2),
+#estoque .data-table td:nth-child(2){ width:36%; }
+
+#estoque .data-table th:nth-child(3),
+#estoque .data-table td:nth-child(3){ width:16%; }
+
+#estoque .data-table th:nth-child(4),
+#estoque .data-table td:nth-child(4){ width:18%; }
+
+#estoque .data-table th:nth-child(5),
+#estoque .data-table td:nth-child(5){ width:12%; }
+
 .empty-table{
   text-align:center;
   color:#777;
