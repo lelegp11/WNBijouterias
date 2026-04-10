@@ -117,9 +117,9 @@
     <!-- MOSTRUÁRIO -->
     <section id="mostruario" class="screen">
       <div class="panel">
-        <div class="toolbar">
-          <h2 style="margin:0">MOSTRUÁRIO</h2>
+        <div class="top-bar top-bar-mostruario top-bar-lista">MOSTRUÁRIO</div>
 
+        <div class="toolbar">
           <div class="toolbar-actions toolbar-actions-main">
             <div class="search-filter-wrap">
               <select id="filtroMostruario" class="search-select">
@@ -256,9 +256,9 @@
     <!-- VENDEDORAS -->
     <section id="vendedoras" class="screen">
       <div class="panel">
-        <div class="toolbar">
-          <h2 style="margin:0">VENDEDORAS</h2>
+        <div class="top-bar top-bar-vendedora top-bar-lista">VENDEDORAS</div>
 
+        <div class="toolbar">
           <div class="toolbar-actions toolbar-actions-main">
             <div class="search-filter-wrap">
               <select id="filtroVendedora" class="search-select">
@@ -284,7 +284,7 @@
               </button>
             </div>
 
-            <button class="btn blue nav-btn" type="button" data-target="vendedora-cadastro">
+            <button class="btn blue nav-btn" type="button" data-target="vendedora-cadastro" id="btnNovaVendedora">
               NOVA VENDEDORA
             </button>
           </div>
@@ -324,7 +324,7 @@
             <div class="voltar nav-btn" data-target="vendedoras">⟵ VOLTAR</div>
 
             <div class="top-actions">
-              <button class="btn primary" type="button" id="btnSalvarVendedora">Salvar</button>
+              <button class="btn primary btn-vendedora" type="button" id="btnSalvarVendedora">Salvar</button>
             </div>
           </div>
 
@@ -367,6 +367,16 @@
             <div class="field wide">
               <label>Celular:</label>
               <input type="text" id="vendedoraCelular" placeholder="(00) 00000-0000" maxlength="15" autocomplete="off">
+            </div>
+
+            <div class="field small">
+              <label>Último acerto:</label>
+              <input type="text" id="vendedoraUltimoAcerto" placeholder="--/--/----" readonly>
+            </div>
+
+            <div class="field small">
+              <label>Próximo acerto:</label>
+              <input type="text" id="vendedoraProximoAcerto" placeholder="--/--/----" readonly>
             </div>
           </div>
         </div>
