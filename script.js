@@ -3,8 +3,8 @@ const sections = [...document.querySelectorAll('.screen')];
 const numeroMostruario = document.getElementById('numeroMostruario');
 const codigoVendedoraMostruario = document.getElementById('codigoVendedoraMostruario');
 const nomeVendedoraMostruario = document.getElementById('nomeVendedoraMostruario');
-const dataMostruario = document.getElementById('dataMostruario');
-const dataAcerto = document.getElementById('dataAcerto');
+const dataUltimoAcertoMostruario = document.getElementById('dataUltimoAcertoMostruario');
+const dataProximoAcertoMostruario = document.getElementById('dataProximoAcertoMostruario');
 const codigoProduto = document.getElementById('codigoProduto');
 const descricaoProduto = document.getElementById('descricaoProduto');
 const qtdProduto = document.getElementById('qtdProduto');
@@ -62,8 +62,8 @@ const state = {
     numero: '',
     codigoVendedora: '',
     vendedora: '',
-    data: '',
-    acerto: '',
+    ultimoAcerto: '',
+    proximoAcerto: '',
     produtos: []
   },
   editandoNumeroOriginal: null
@@ -133,7 +133,6 @@ function activate(targetId) {
   }
 }
 
-/* CORREÇÃO DO MENU */
 document.addEventListener('click', (e) => {
   const nav = e.target.closest('.nav-btn');
   if (!nav) return;
@@ -149,6 +148,8 @@ const initial = location.hash.replace('#', '') || 'home';
 activate(document.getElementById(initial) ? initial : 'home');
 
 function aplicarMascaraData(input) {
+  if (!input) return;
+
   input.addEventListener('input', (e) => {
     let value = e.target.value.replace(/\D/g, '').slice(0, 8);
 
@@ -161,6 +162,8 @@ function aplicarMascaraData(input) {
 }
 
 function aplicarMascaraCpf(input) {
+  if (!input) return;
+
   input.addEventListener('input', (e) => {
     let value = e.target.value.replace(/\D/g, '').slice(0, 11);
 
@@ -173,6 +176,8 @@ function aplicarMascaraCpf(input) {
 }
 
 function aplicarMascaraCelular(input) {
+  if (!input) return;
+
   input.addEventListener('input', (e) => {
     const digitos = e.target.value.replace(/\D/g, '').slice(0, 11);
     let formatado = '';
@@ -185,75 +190,10 @@ function aplicarMascaraCelular(input) {
   });
 }
 
-aplicarMascaraData(dataMostruario);
-aplicarMascaraData(dataAcerto);
+aplicarMascaraData(dataUltimoAcertoMostruario);
+aplicarMascaraData(dataProximoAcertoMostruario);
 aplicarMascaraCpf(vendedoraCpf);
 aplicarMascaraCelular(vendedoraCelular);
-
-function parseDataBr(dataStr) {
-  if (!dataStr || !/^\d{2}\/\d{2}\/\d{4}$/.test(dataStr)) return null;
-  const [dia, mes, ano] = dataStr.split('/').map(Number);
-  const data = new Date(ano, mes - 1, dia);
-  if (
-    data.getFullYear() !== ano ||
-    data.getMonth() !== mes - 1 ||
-    data.getDate() !== dia
-  ) return null;
-  return data;
-}
-
-function calcularDatasAcertoPorVendedora(codigoVendedora) {
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
-
-  const mostruariosDaVendedora = state.cadastros.filter(
-    item => item.codigoVendedora === codigoVendedora && item.acerto
-  );
-
-  const datasValidas = mostruariosDaVendedora
-    .map(item => ({
-      texto: item.acerto,
-      data: parseDataBr(item.acerto)
-    }))
-    .filter(item => item.data instanceof Date);
-
-  if (!datasValidas.length) {
-    return {
-      ultimo: '--/--/----',
-      proximo: '--/--/----'
-    };
-  }
-
-  const ultimos = datasValidas.filter(item => item.data <= hoje);
-  const proximos = datasValidas.filter(item => item.data >= hoje);
-
-  ultimos.sort((a, b) => b.data - a.data);
-  proximos.sort((a, b) => a.data - b.data);
-
-  return {
-    ultimo: ultimos.length ? ultimos[0].texto : '--/--/----',
-    proximo: proximos.length ? proximos[0].texto : '--/--/----'
-  };
-}
-
-function atualizarDatasDeTodasVendedoras() {
-  vendedorasState.lista = vendedorasState.lista.map(v => {
-    const datas = calcularDatasAcertoPorVendedora(v.codigo);
-    return {
-      ...v,
-      ultimo: datas.ultimo,
-      proximo: datas.proximo
-    };
-  });
-
-  persistirVendedoras();
-}
-
-function atualizarCamposDatasCadastroVendedora(codigo) {
-  const datas = calcularDatasAcertoPorVendedora(codigo);
-  vendedoraUltimoAcerto.value = datas.ultimo;
-  vendedoraProximoAcerto.value = datas.proximo;
-}
 
 function buscarVendedoraPorCodigo(codigo) {
   return vendedorasState.lista.find(v => v.codigo.toLowerCase() === codigo.toLowerCase());
@@ -267,6 +207,18 @@ function preencherNomeVendedoraPorCodigo() {
     nomeVendedoraMostruario.value = vendedora.nome;
     state.draft.codigoVendedora = vendedora.codigo;
     state.draft.vendedora = vendedora.nome;
+
+    if (!dataUltimoAcertoMostruario.value) {
+      dataUltimoAcertoMostruario.value =
+        vendedora.ultimo && vendedora.ultimo !== '--/--/----' ? vendedora.ultimo : '';
+    }
+
+    if (!dataProximoAcertoMostruario.value) {
+      dataProximoAcertoMostruario.value =
+        vendedora.proximo && vendedora.proximo !== '--/--/----' ? vendedora.proximo : '';
+    }
+
+    sincronizarDraftCampos();
   } else {
     nomeVendedoraMostruario.value = '';
     state.draft.codigoVendedora = codigo;
@@ -278,8 +230,8 @@ function sincronizarDraftCampos() {
   state.draft.numero = numeroMostruario.value.trim();
   state.draft.codigoVendedora = codigoVendedoraMostruario.value.trim();
   state.draft.vendedora = nomeVendedoraMostruario.value.trim();
-  state.draft.data = dataMostruario.value.trim();
-  state.draft.acerto = dataAcerto.value.trim();
+  state.draft.ultimoAcerto = dataUltimoAcertoMostruario.value.trim();
+  state.draft.proximoAcerto = dataProximoAcertoMostruario.value.trim();
 }
 
 [numeroMostruario, codigoVendedoraMostruario].forEach(input => {
@@ -291,8 +243,11 @@ function sincronizarDraftCampos() {
 
 vendedoraCodigo.addEventListener('input', () => {
   const codigo = vendedoraCodigo.value.trim();
-  if (codigo) {
-    atualizarCamposDatasCadastroVendedora(codigo);
+  const vendedora = buscarVendedoraPorCodigo(codigo);
+
+  if (vendedora) {
+    vendedoraUltimoAcerto.value = vendedora.ultimo || '--/--/----';
+    vendedoraProximoAcerto.value = vendedora.proximo || '--/--/----';
   } else {
     vendedoraUltimoAcerto.value = '--/--/----';
     vendedoraProximoAcerto.value = '--/--/----';
@@ -400,21 +355,21 @@ function filtrarCadastros() {
     const numero = (item.numero || '').toLowerCase();
     const codigoVend = (item.codigoVendedora || '').toLowerCase();
     const vendedora = (item.vendedora || '').toLowerCase();
-    const data = (item.data || '').toLowerCase();
-    const acerto = (item.acerto || '').toLowerCase();
+    const ultimoAcerto = (item.ultimoAcerto || '').toLowerCase();
+    const proximoAcerto = (item.proximoAcerto || '').toLowerCase();
 
     if (filtro === 'numero') return numero.includes(termo);
     if (filtro === 'codigoVendedora') return codigoVend.includes(termo);
     if (filtro === 'vendedora') return vendedora.includes(termo);
-    if (filtro === 'data') return data.includes(termo);
-    if (filtro === 'acerto') return acerto.includes(termo);
+    if (filtro === 'data') return ultimoAcerto.includes(termo);
+    if (filtro === 'acerto') return proximoAcerto.includes(termo);
 
     return (
       numero.includes(termo) ||
       codigoVend.includes(termo) ||
       vendedora.includes(termo) ||
-      data.includes(termo) ||
-      acerto.includes(termo)
+      ultimoAcerto.includes(termo) ||
+      proximoAcerto.includes(termo)
     );
   });
 }
@@ -425,8 +380,8 @@ function carregarMostruarioParaEdicao(item) {
     numero: item.numero,
     codigoVendedora: item.codigoVendedora,
     vendedora: item.vendedora,
-    data: item.data,
-    acerto: item.acerto,
+    ultimoAcerto: item.ultimoAcerto || '',
+    proximoAcerto: item.proximoAcerto || '',
     produtos: item.produtos.map(prod => ({ ...prod }))
   };
 
@@ -453,8 +408,8 @@ function renderTabelaMostruarios() {
       <td>${item.codigoVendedora || '--'}</td>
       <td>${item.vendedora || '--'}</td>
       <td>${item.produtos.length}</td>
-      <td>${item.data || '--'}</td>
-      <td>${item.acerto || '--'}</td>
+      <td>${item.ultimoAcerto || '--'}</td>
+      <td>${item.proximoAcerto || '--'}</td>
       <td class="acoes-cell">
         <button class="mini-btn" type="button" data-editar-mostruario="${item.numero}">Editar</button>
         <button class="mini-btn danger" type="button" data-excluir-mostruario="${item.numero}">Excluir</button>
@@ -474,12 +429,34 @@ function renderTabelaMostruarios() {
   document.querySelectorAll('[data-excluir-mostruario]').forEach(btn => {
     btn.addEventListener('click', () => {
       const numero = btn.dataset.excluirMostruario;
+      const item = state.cadastros.find(cadastro => cadastro.numero === numero);
+      if (!item) return;
+
       const confirmar = confirm('Deseja excluir este mostruário?');
       if (!confirmar) return;
 
-      state.cadastros = state.cadastros.filter(item => item.numero !== numero);
+      state.cadastros = state.cadastros.filter(cadastro => cadastro.numero !== numero);
+
+      if (item.codigoVendedora) {
+        const outrosMostruarios = state.cadastros.filter(
+          cadastro => cadastro.codigoVendedora === item.codigoVendedora
+        );
+        const vendedora = vendedorasState.lista.find(v => v.codigo === item.codigoVendedora);
+
+        if (vendedora) {
+          if (outrosMostruarios.length) {
+            const maisRecente = outrosMostruarios[outrosMostruarios.length - 1];
+            vendedora.ultimo = maisRecente.ultimoAcerto || '--/--/----';
+            vendedora.proximo = maisRecente.proximoAcerto || '--/--/----';
+          } else {
+            vendedora.ultimo = '--/--/----';
+            vendedora.proximo = '--/--/----';
+          }
+        }
+      }
+
       persistirMostruarios();
-      atualizarDatasDeTodasVendedoras();
+      persistirVendedoras();
       renderTabelaMostruarios();
       renderTabelaVendedoras();
     });
@@ -522,8 +499,8 @@ function carregarVendedoraParaEdicao(v) {
   vendedoraComplemento.value = v.complemento || '';
   vendedoraBairro.value = v.bairro || '';
   vendedoraCelular.value = v.celular || '';
-
-  atualizarCamposDatasCadastroVendedora(v.codigo);
+  vendedoraUltimoAcerto.value = v.ultimo || '--/--/----';
+  vendedoraProximoAcerto.value = v.proximo || '--/--/----';
 
   activate('vendedora-cadastro');
 
@@ -612,8 +589,8 @@ function preencherFormularioMostruario() {
   numeroMostruario.value = state.draft.numero;
   codigoVendedoraMostruario.value = state.draft.codigoVendedora;
   nomeVendedoraMostruario.value = state.draft.vendedora;
-  dataMostruario.value = state.draft.data;
-  dataAcerto.value = state.draft.acerto;
+  dataUltimoAcertoMostruario.value = state.draft.ultimoAcerto;
+  dataProximoAcertoMostruario.value = state.draft.proximoAcerto;
 }
 
 function resetDraft() {
@@ -622,8 +599,8 @@ function resetDraft() {
     numero: '',
     codigoVendedora: '',
     vendedora: '',
-    data: '',
-    acerto: '',
+    ultimoAcerto: '',
+    proximoAcerto: '',
     produtos: []
   };
 
@@ -656,8 +633,8 @@ btnNovoMostruario.addEventListener('click', () => {
     state.draft.numero ||
     state.draft.codigoVendedora ||
     state.draft.vendedora ||
-    state.draft.data ||
-    state.draft.acerto ||
+    state.draft.ultimoAcerto ||
+    state.draft.proximoAcerto ||
     state.draft.produtos.length;
 
   if (temConteudo) {
@@ -697,8 +674,8 @@ btnSalvarMostruario.addEventListener('click', () => {
     numero: state.draft.numero,
     codigoVendedora: state.draft.codigoVendedora,
     vendedora: state.draft.vendedora,
-    data: state.draft.data,
-    acerto: state.draft.acerto,
+    ultimoAcerto: state.draft.ultimoAcerto,
+    proximoAcerto: state.draft.proximoAcerto,
     produtos: state.draft.produtos.map(prod => ({ ...prod }))
   };
 
@@ -714,7 +691,9 @@ btnSalvarMostruario.addEventListener('click', () => {
   }
 
   if (state.editandoNumeroOriginal) {
-    const indexExistente = state.cadastros.findIndex(item => item.numero === state.editandoNumeroOriginal);
+    const indexExistente = state.cadastros.findIndex(
+      item => item.numero === state.editandoNumeroOriginal
+    );
     if (indexExistente >= 0) {
       state.cadastros[indexExistente] = cadastro;
     }
@@ -722,8 +701,14 @@ btnSalvarMostruario.addEventListener('click', () => {
     state.cadastros.push(cadastro);
   }
 
+  const vendedora = vendedorasState.lista.find(v => v.codigo === cadastro.codigoVendedora);
+  if (vendedora) {
+    vendedora.ultimo = cadastro.ultimoAcerto || '--/--/----';
+    vendedora.proximo = cadastro.proximoAcerto || '--/--/----';
+  }
+
   persistirMostruarios();
-  atualizarDatasDeTodasVendedoras();
+  persistirVendedoras();
   renderTabelaMostruarios();
   renderTabelaVendedoras();
   resetDraft();
@@ -763,13 +748,11 @@ btnSalvarVendedora.addEventListener('click', () => {
     return;
   }
 
-  const datas = calcularDatasAcertoPorVendedora(codigo);
-
   const novaVendedora = {
     codigo,
     nome,
-    ultimo: datas.ultimo,
-    proximo: datas.proximo,
+    ultimo: vendedoraUltimoAcerto.value || '--/--/----',
+    proximo: vendedoraProximoAcerto.value || '--/--/----',
     cpf,
     endereco,
     numero,
@@ -779,7 +762,9 @@ btnSalvarVendedora.addEventListener('click', () => {
   };
 
   if (vendedorasState.editandoCodigoOriginal) {
-    const indexExistente = vendedorasState.lista.findIndex(v => v.codigo === vendedorasState.editandoCodigoOriginal);
+    const indexExistente = vendedorasState.lista.findIndex(
+      v => v.codigo === vendedorasState.editandoCodigoOriginal
+    );
     if (indexExistente >= 0) {
       vendedorasState.lista[indexExistente] = novaVendedora;
     }
@@ -789,14 +774,15 @@ btnSalvarVendedora.addEventListener('click', () => {
         return {
           ...item,
           codigoVendedora: codigo,
-          vendedora: nome
+          vendedora: nome,
+          ultimoAcerto: novaVendedora.ultimo,
+          proximoAcerto: novaVendedora.proximo
         };
       }
       return item;
     });
 
     persistirMostruarios();
-    atualizarDatasDeTodasVendedoras();
   } else {
     vendedorasState.lista.push(novaVendedora);
   }
@@ -808,7 +794,6 @@ btnSalvarVendedora.addEventListener('click', () => {
   activate('vendedoras');
 });
 
-atualizarDatasDeTodasVendedoras();
 renderListaProdutos();
 renderTabelaMostruarios();
 renderTabelaVendedoras();
