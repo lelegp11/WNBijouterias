@@ -199,17 +199,6 @@ html,body{
   background:rgba(228,145,193,.90);
 }
 
-/* item ativo continua recolhido */
-.menu-slot.active{
-  background:transparent;
-  box-shadow:none;
-}
-
-.menu-slot.active .slide-label{
-  opacity:0;
-  transform:translateX(-8px);
-}
-
 /* CONTEÚDO */
 .content{
   position:relative;
@@ -324,8 +313,8 @@ p{
 .btn.primary{background:#a9b9e6;}
 .btn.light{background:#fff; border:1px solid #ddd;}
 .btn.blue{background:#a7c8ed;}
+.btn-vendedora{background:#9ecfe0;}
 
-/* FLUXO GERAL */
 .flow{
   display:flex;
   flex-direction:column;
@@ -415,6 +404,10 @@ p{
   background:transparent;
   width:100%;
   font-size:14px;
+}
+
+.top-bar-lista{
+  margin-bottom:24px;
 }
 
 /* TABELAS */
@@ -536,7 +529,6 @@ p{
   color:#9a3131;
 }
 
-/* PÁGINAS DE CADASTRO */
 .mostruario-page,
 .vendedora-page{
   width:100%;
@@ -550,6 +542,7 @@ p{
   padding:14px 20px;
   letter-spacing:.5px;
   margin-bottom:18px;
+  border-radius:18px;
 }
 
 .top-bar-mostruario{
