@@ -61,6 +61,7 @@ const valorPrata = document.getElementById('valorPrata');
 const btnSalvarValoresMetais = document.getElementById('btnSalvarValoresMetais');
 
 /* ACERTO */
+const acertoNumeroMostruario = document.getElementById('acertoNumeroMostruario');
 const acertoCodigoVendedora = document.getElementById('acertoCodigoVendedora');
 const acertoNomeVendedora = document.getElementById('acertoNomeVendedora');
 const acertoCodigoProduto = document.getElementById('acertoCodigoProduto');
@@ -125,6 +126,50 @@ function somenteNumero(valor) {
   return Number(String(valor || '').replace(/\D/g, '')) || 0;
 }
 
+/* AUTO NEXT */
+function getFocusableInputs(container) {
+  return [...container.querySelectorAll('input, select, textarea')]
+    .filter(el => !el.readOnly && !el.disabled && el.type !== 'hidden' && el.offsetParent !== null);
+}
+
+function irParaProximoCampo(current) {
+  const screen = current.closest('.screen');
+  if (!screen) return;
+  const focusables = getFocusableInputs(screen);
+  const idx = focusables.indexOf(current);
+  if (idx >= 0 && idx < focusables.length - 1) {
+    focusables[idx + 1].focus();
+    focusables[idx + 1].select?.();
+  }
+}
+
+function setupAutoNext() {
+  document.querySelectorAll('[data-auto-next="true"]').forEach(el => {
+    if (el.tagName === 'SELECT') {
+      el.addEventListener('change', () => {
+        setTimeout(() => irParaProximoCampo(el), 30);
+      });
+      return;
+    }
+
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        irParaProximoCampo(el);
+      }
+    });
+
+    if (el.maxLength && Number(el.maxLength) > 0) {
+      el.addEventListener('input', () => {
+        const max = Number(el.maxLength);
+        if (el.value.length >= max) {
+          setTimeout(() => irParaProximoCampo(el), 30);
+        }
+      });
+    }
+  });
+}
+
 /* STATE */
 const state = {
   cadastros: carregarStorage(STORAGE_KEYS.mostruarios, []),
@@ -183,7 +228,8 @@ const metaisState = carregarStorage(STORAGE_KEYS.metais, {
 });
 
 const acertoState = {
-  itens: []
+  itens: [],
+  mostruarioAtual: null
 };
 
 /* PERSIST */
@@ -293,6 +339,10 @@ function buscarProdutoPorCodigo(codigo) {
   return produtosState.lista.find(p => p.codigo.toLowerCase() === codigo.toLowerCase());
 }
 
+function buscarMostruarioPorNumero(numero) {
+  return state.cadastros.find(m => String(m.numero).toLowerCase() === String(numero).toLowerCase());
+}
+
 function calcularTotalMostruario(produtos) {
   return produtos.reduce((total, item) => {
     return total + (somenteNumero(item.qtd) * converterPrecoParaNumero(item.preco));
@@ -301,25 +351,6 @@ function calcularTotalMostruario(produtos) {
 
 function atualizarTotalMostruarioNaTela() {
   totalMostruarioValor.textContent = formatarMoedaBR(calcularTotalMostruario(state.draft.produtos));
-}
-
-function buscarMostruariosDaVendedora(codigoVendedora) {
-  return state.cadastros.filter(m => m.codigoVendedora === codigoVendedora);
-}
-
-function quantidadeRetiradaProdutoVendedora(codigoVendedora, codigoProdutoBuscado) {
-  const mostruarios = buscarMostruariosDaVendedora(codigoVendedora);
-  let total = 0;
-
-  mostruarios.forEach(mostruario => {
-    mostruario.produtos.forEach(produto => {
-      if (produto.codigo === codigoProdutoBuscado) {
-        total += somenteNumero(produto.qtd);
-      }
-    });
-  });
-
-  return total;
 }
 
 /* MOSTRUÁRIO */
@@ -1134,31 +1165,57 @@ function limparAcertoCamposProduto() {
 }
 
 function limparAcerto() {
+  acertoNumeroMostruario.value = '';
   acertoCodigoVendedora.value = '';
   acertoNomeVendedora.value = '';
   limparAcertoCamposProduto();
   acertoState.itens = [];
+  acertoState.mostruarioAtual = null;
   renderListaAcerto();
 }
 
-function preencherVendedoraAcerto() {
-  const codigo = acertoCodigoVendedora.value.trim();
-  const vendedora = buscarVendedoraPorCodigo(codigo);
+function preencherMostruarioAcerto() {
+  const numero = acertoNumeroMostruario.value.trim();
+  const mostruario = buscarMostruarioPorNumero(numero);
 
-  if (vendedora) {
-    acertoNomeVendedora.value = vendedora.nome;
-  } else {
+  acertoState.itens = [];
+  renderListaAcerto();
+  limparAcertoCamposProduto();
+
+  if (!mostruario) {
+    acertoCodigoVendedora.value = '';
     acertoNomeVendedora.value = '';
+    acertoState.mostruarioAtual = null;
+    return;
   }
 
-  limparAcertoCamposProduto();
+  acertoState.mostruarioAtual = mostruario;
+  acertoCodigoVendedora.value = mostruario.codigoVendedora || '';
+  acertoNomeVendedora.value = mostruario.vendedora || '';
+}
+
+function quantidadeRetiradaNoMostruario(mostruario, codigoProdutoBuscado) {
+  if (!mostruario) return 0;
+
+  return mostruario.produtos.reduce((total, produto) => {
+    if (produto.codigo === codigoProdutoBuscado) {
+      return total + somenteNumero(produto.qtd);
+    }
+    return total;
+  }, 0);
 }
 
 function preencherProdutoAcerto() {
-  const codigoVendedora = acertoCodigoVendedora.value.trim();
   const codigoProd = acertoCodigoProduto.value.trim();
-  const produto = buscarProdutoPorCodigo(codigoProd);
+  const mostruario = acertoState.mostruarioAtual;
 
+  if (!mostruario) {
+    acertoDescricaoProduto.value = '';
+    acertoQtdRetirada.value = '';
+    return;
+  }
+
+  const produto = buscarProdutoPorCodigo(codigoProd);
   if (!produto) {
     acertoDescricaoProduto.value = '';
     acertoQtdRetirada.value = '';
@@ -1166,7 +1223,7 @@ function preencherProdutoAcerto() {
   }
 
   acertoDescricaoProduto.value = produto.descricao;
-  acertoQtdRetirada.value = String(quantidadeRetiradaProdutoVendedora(codigoVendedora, codigoProd));
+  acertoQtdRetirada.value = String(quantidadeRetiradaNoMostruario(mostruario, codigoProd));
 }
 
 function renderListaAcerto() {
@@ -1195,24 +1252,23 @@ function renderListaAcerto() {
   acertoTotalValor.textContent = formatarMoedaBR(totalValor);
 }
 
-acertoCodigoVendedora?.addEventListener('input', preencherVendedoraAcerto);
+acertoNumeroMostruario?.addEventListener('input', preencherMostruarioAcerto);
 acertoCodigoProduto?.addEventListener('input', preencherProdutoAcerto);
 
 acertoQtdDevolvida?.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter') return;
   e.preventDefault();
 
-  const codigoVendedora = acertoCodigoVendedora.value.trim();
-  const nomeVendedora = acertoNomeVendedora.value.trim();
+  const mostruario = acertoState.mostruarioAtual;
   const codigo = acertoCodigoProduto.value.trim();
   const descricao = acertoDescricaoProduto.value.trim();
   const retirada = Number(acertoQtdRetirada.value || 0);
   const devolvida = Number(acertoQtdDevolvida.value || 0);
   const produto = buscarProdutoPorCodigo(codigo);
 
-  if (!codigoVendedora || !nomeVendedora) {
-    alert('Informe um código de vendedora válido.');
-    acertoCodigoVendedora.focus();
+  if (!mostruario) {
+    alert('Informe um número de mostruário válido.');
+    acertoNumeroMostruario.focus();
     return;
   }
 
@@ -1223,7 +1279,7 @@ acertoQtdDevolvida?.addEventListener('keydown', (e) => {
   }
 
   if (retirada <= 0) {
-    alert('Esse produto não foi retirado para essa vendedora.');
+    alert('Esse produto não foi retirado nesse mostruário.');
     acertoCodigoProduto.focus();
     return;
   }
@@ -1237,14 +1293,13 @@ acertoQtdDevolvida?.addEventListener('keydown', (e) => {
   const vendida = retirada - devolvida;
   const valor = vendida * converterPrecoParaNumero(produto.preco);
 
-  acertoState.itens.push({
-    codigo,
-    descricao,
-    retirada,
-    devolvida,
-    vendida,
-    valor
-  });
+  const idxExistente = acertoState.itens.findIndex(item => item.codigo === codigo);
+
+  if (idxExistente >= 0) {
+    acertoState.itens[idxExistente] = { codigo, descricao, retirada, devolvida, vendida, valor };
+  } else {
+    acertoState.itens.push({ codigo, descricao, retirada, devolvida, vendida, valor });
+  }
 
   renderListaAcerto();
   limparAcertoCamposProduto();
@@ -1261,6 +1316,6 @@ renderTabelaMostruarios();
 renderTabelaVendedoras();
 renderTabelaProdutos();
 renderListaAcerto();
-
 persistirProdutos();
 persistirMetais();
+setupAutoNext();
