@@ -38,9 +38,16 @@ const vendedoraProximoAcerto = document.getElementById('vendedoraProximoAcerto')
 const btnSalvarVendedora = document.getElementById('btnSalvarVendedora');
 const btnNovaVendedora = document.getElementById('btnNovaVendedora');
 
+const filtroProduto = document.getElementById('filtroProduto');
+const buscaProduto = document.getElementById('buscaProduto');
+const btnPesquisarProduto = document.getElementById('btnPesquisarProduto');
+const btnNovoProduto = document.getElementById('btnNovoProduto');
+const produtoTabelaBody = document.getElementById('produtoTabelaBody');
+
 const STORAGE_KEYS = {
   mostruarios: 'wn_mostruarios',
-  vendedoras: 'wn_vendedoras'
+  vendedoras: 'wn_vendedoras',
+  produtos: 'wn_produtos'
 };
 
 function carregarStorage(chave, fallback = []) {
@@ -87,12 +94,33 @@ const vendedorasState = {
   editandoCodigoOriginal: null
 };
 
+const produtosState = {
+  lista: carregarStorage(STORAGE_KEYS.produtos, [
+    {
+      codigo: 'P001',
+      descricao: 'Anel Coração',
+      preco: '29,90',
+      dataInclusao: '10/04/2026'
+    },
+    {
+      codigo: 'P002',
+      descricao: 'Brinco Dourado',
+      preco: '35,00',
+      dataInclusao: '11/04/2026'
+    }
+  ])
+};
+
 function persistirMostruarios() {
   salvarStorage(STORAGE_KEYS.mostruarios, state.cadastros);
 }
 
 function persistirVendedoras() {
   salvarStorage(STORAGE_KEYS.vendedoras, vendedorasState.lista);
+}
+
+function persistirProdutos() {
+  salvarStorage(STORAGE_KEYS.produtos, produtosState.lista);
 }
 
 function activate(targetId) {
@@ -226,14 +254,14 @@ vendedoraCodigo.addEventListener('input', () => {
   }
 });
 
-function limparCamposProduto() {
+function limparCamposProdutoMostruario() {
   codigoProduto.value = '';
   descricaoProduto.value = '';
   qtdProduto.value = '';
   codigoProduto.focus();
 }
 
-function adicionarProduto() {
+function adicionarProdutoMostruario() {
   sincronizarDraftCampos();
 
   const codigo = codigoProduto.value.trim();
@@ -258,18 +286,18 @@ function adicionarProduto() {
   }
 
   state.draft.produtos.push({ codigo, descricao, qtd });
-  renderListaProdutos();
-  limparCamposProduto();
+  renderListaProdutosMostruario();
+  limparCamposProdutoMostruario();
 }
 
 qtdProduto.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
     e.preventDefault();
-    adicionarProduto();
+    adicionarProdutoMostruario();
   }
 });
 
-function renderListaProdutos() {
+function renderListaProdutosMostruario() {
   if (!state.draft.produtos.length) {
     listaProdutosContainer.innerHTML = `<div class="lista-vazia">Nenhum produto adicionado.</div>`;
     return;
@@ -281,23 +309,23 @@ function renderListaProdutos() {
       <span class="produto-desc">${produto.descricao}</span>
       <span class="produto-qtd">${produto.qtd}</span>
       <div class="produto-acoes">
-        <button class="mini-btn" type="button" data-editar-produto="${index}">Editar qtd</button>
-        <button class="mini-btn danger" type="button" data-excluir-item="${index}">Excluir</button>
+        <button class="mini-btn" type="button" data-editar-produto-mostruario="${index}">Editar qtd</button>
+        <button class="mini-btn danger" type="button" data-excluir-item-mostruario="${index}">Excluir</button>
       </div>
     </div>
   `).join('');
 
-  document.querySelectorAll('[data-excluir-item]').forEach(btn => {
+  document.querySelectorAll('[data-excluir-item-mostruario]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const index = Number(btn.dataset.excluirItem);
+      const index = Number(btn.dataset.excluirItemMostruario);
       state.draft.produtos.splice(index, 1);
-      renderListaProdutos();
+      renderListaProdutosMostruario();
     });
   });
 
-  document.querySelectorAll('[data-editar-produto]').forEach(btn => {
+  document.querySelectorAll('[data-editar-produto-mostruario]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const index = Number(btn.dataset.editarProduto);
+      const index = Number(btn.dataset.editarProdutoMostruario);
       const atual = state.draft.produtos[index];
       const novaQtd = prompt('Digite a nova quantidade:', atual.qtd);
 
@@ -305,7 +333,7 @@ function renderListaProdutos() {
       if (!novaQtd.trim()) return;
 
       state.draft.produtos[index].qtd = novaQtd.trim();
-      renderListaProdutos();
+      renderListaProdutosMostruario();
     });
   });
 }
@@ -383,7 +411,7 @@ function renderTabelaMostruarios() {
       };
 
       preencherFormularioMostruario();
-      renderListaProdutos();
+      renderListaProdutosMostruario();
       activate('mostruario-incluir');
     });
   });
@@ -535,6 +563,58 @@ function renderTabelaVendedoras() {
   });
 }
 
+function filtrarProdutos() {
+  const filtro = filtroProduto.value;
+  const termo = buscaProduto.value.trim().toLowerCase();
+
+  if (!termo) return produtosState.lista;
+
+  return produtosState.lista.filter(produto => {
+    const codigo = (produto.codigo || '').toLowerCase();
+    const descricao = (produto.descricao || '').toLowerCase();
+    const preco = (produto.preco || '').toLowerCase();
+    const dataInclusao = (produto.dataInclusao || '').toLowerCase();
+
+    if (filtro === 'codigo') return codigo.includes(termo);
+    if (filtro === 'descricao') return descricao.includes(termo);
+    if (filtro === 'preco') return preco.includes(termo);
+    if (filtro === 'dataInclusao') return dataInclusao.includes(termo);
+
+    return (
+      codigo.includes(termo) ||
+      descricao.includes(termo) ||
+      preco.includes(termo) ||
+      dataInclusao.includes(termo)
+    );
+  });
+}
+
+function renderTabelaProdutos() {
+  const lista = filtrarProdutos();
+
+  if (!lista.length) {
+    produtoTabelaBody.innerHTML = `
+      <tr>
+        <td colspan="5" class="empty-table">Nenhum produto encontrado</td>
+      </tr>
+    `;
+    return;
+  }
+
+  produtoTabelaBody.innerHTML = lista.map((produto) => `
+    <tr>
+      <td>${produto.codigo || '--'}</td>
+      <td>${produto.descricao || '--'}</td>
+      <td>R$ ${produto.preco || '--'}</td>
+      <td>${produto.dataInclusao || '--'}</td>
+      <td class="acoes-cell">
+        <button class="mini-btn" type="button">Editar</button>
+        <button class="mini-btn danger" type="button">Excluir</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
 function preencherFormularioMostruario() {
   numeroMostruario.value = state.draft.numero;
   codigoVendedoraMostruario.value = state.draft.codigoVendedora;
@@ -555,8 +635,8 @@ function resetDraft() {
   };
 
   preencherFormularioMostruario();
-  limparCamposProduto();
-  renderListaProdutos();
+  limparCamposProdutoMostruario();
+  renderListaProdutosMostruario();
 }
 
 function limparFormularioVendedora() {
@@ -594,7 +674,7 @@ btnNovoMostruario.addEventListener('click', () => {
   activate('mostruario-incluir');
 });
 
-btnAdicionarProduto.addEventListener('click', adicionarProduto);
+btnAdicionarProduto.addEventListener('click', adicionarProdutoMostruario);
 btnPesquisarMostruario.addEventListener('click', renderTabelaMostruarios);
 filtroMostruario.addEventListener('change', renderTabelaMostruarios);
 buscaMostruario.addEventListener('input', renderTabelaMostruarios);
@@ -602,6 +682,13 @@ buscaMostruario.addEventListener('input', renderTabelaMostruarios);
 btnPesquisarVendedora.addEventListener('click', renderTabelaVendedoras);
 filtroVendedora.addEventListener('change', renderTabelaVendedoras);
 buscaVendedora.addEventListener('input', renderTabelaVendedoras);
+
+btnPesquisarProduto?.addEventListener('click', renderTabelaProdutos);
+filtroProduto?.addEventListener('change', renderTabelaProdutos);
+buscaProduto?.addEventListener('input', renderTabelaProdutos);
+btnNovoProduto?.addEventListener('click', () => {
+  alert('Na próxima etapa vamos criar a tela de cadastro do produto.');
+});
 
 btnSalvarMostruario.addEventListener('click', () => {
   sincronizarDraftCampos();
@@ -742,6 +829,8 @@ btnSalvarVendedora.addEventListener('click', () => {
   activate('vendedoras');
 });
 
-renderListaProdutos();
+renderListaProdutosMostruario();
 renderTabelaMostruarios();
 renderTabelaVendedoras();
+renderTabelaProdutos();
+persistirProdutos();
