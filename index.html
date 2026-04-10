@@ -177,155 +177,213 @@
     </section>
 
     <!-- NOVO MOSTRUÁRIO -->
-    <!-- NOVO MOSTRUÁRIO -->
-<section id="mostruario-incluir" class="screen">
-  <div class="mostruario-page">
-    <div class="top-bar top-bar-mostruario">
-      MOSTRUÁRIO
-    </div>
+    <section id="mostruario-incluir" class="screen">
+      <div class="mostruario-page">
+        <div class="top-bar top-bar-mostruario">
+          MOSTRUÁRIO
+        </div>
 
-    <div class="include-wrap">
-      <div class="include-top">
-        <div class="voltar nav-btn" data-target="mostruario">⟵ VOLTAR</div>
+        <div class="include-wrap">
+          <div class="include-top">
+            <div class="voltar nav-btn" data-target="mostruario">⟵ VOLTAR</div>
 
-        <div class="top-actions">
-          <button class="btn primary" type="button" id="btnSalvarMostruario">Salvar</button>
-          <button class="btn light" type="button">Imprimir</button>
+            <div class="top-actions">
+              <button class="btn primary" type="button" id="btnSalvarMostruario">Salvar</button>
+              <button class="btn light" type="button">Imprimir</button>
+            </div>
+          </div>
+
+          <div class="include-grid">
+            <div class="field small">
+              <label>Número Mostruário:</label>
+              <input type="text" id="numeroMostruario" placeholder="00">
+            </div>
+
+            <div class="field small">
+              <label>Código da Vendedora:</label>
+              <input type="text" id="codigoVendedoraMostruario" placeholder="001">
+            </div>
+
+            <div class="field wide">
+              <label>Nome Vendedora:</label>
+              <input type="text" id="nomeVendedoraMostruario" placeholder="Nome completo" readonly>
+            </div>
+
+            <div class="field small">
+              <label>Data:</label>
+              <input type="text" id="dataMostruario" placeholder="DD/MM/AAAA" maxlength="10">
+            </div>
+
+            <div class="field small">
+              <label>Data do acerto:</label>
+              <input type="text" id="dataAcerto" placeholder="DD/MM/AAAA" maxlength="10">
+            </div>
+
+            <div class="field small">
+              <label>Cód. do Produto:</label>
+              <input type="text" id="codigoProduto" placeholder="AA000">
+            </div>
+
+            <div class="field wide">
+              <label>Descrição do Produto:</label>
+              <input type="text" id="descricaoProduto" placeholder="Nome do produto">
+            </div>
+
+            <div class="field qty-field">
+              <label>Qtd.:</label>
+              <input type="text" id="qtdProduto" placeholder="00000">
+              <span class="unit-inline">PEÇAS</span>
+            </div>
+          </div>
+
+          <div class="lista-produtos">
+            <div class="lista-header">
+              <h3>Lista de Produtos:</h3>
+
+              <div class="lista-acoes">
+                <button class="btn blue" type="button" id="btnAdicionarProduto">Adicionar Produto</button>
+              </div>
+            </div>
+
+            <div id="listaProdutosContainer">
+              <div class="lista-vazia">Nenhum produto adicionado.</div>
+            </div>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="include-grid">
-        <div class="field small">
-          <label>Número Mostruário:</label>
-          <input type="text" id="numeroMostruario" placeholder="00">
-        </div>
+    <!-- VENDEDORAS -->
+    <section id="vendedoras" class="screen">
+      <div class="panel">
+        <div class="toolbar">
+          <h2 style="margin:0">VENDEDORAS</h2>
 
-        <div class="field small">
-          <label>Código da Vendedora:</label>
-          <input type="text" id="codigoVendedoraMostruario" placeholder="001">
-        </div>
+          <div class="toolbar-actions toolbar-actions-main">
+            <div class="search-filter-wrap">
+              <select id="filtroVendedora" class="search-select">
+                <option value="todos">Todos</option>
+                <option value="codigo">Código</option>
+                <option value="nome">Nome</option>
+                <option value="ultimo">Último acerto</option>
+                <option value="proximo">Próximo acerto</option>
+              </select>
 
-        <div class="field wide">
-          <label>Nome Vendedora:</label>
-          <input type="text" id="nomeVendedoraMostruario" placeholder="Nome completo" readonly>
-        </div>
+              <div class="search-box">
+                <img src="assets/icone_lupa.svg" alt="Pesquisar" class="search-icon">
+                <input
+                  type="text"
+                  id="buscaVendedora"
+                  placeholder="Pesquisar ou filtrar"
+                  class="search-input"
+                >
+              </div>
 
-        <div class="field small">
-          <label>Data:</label>
-          <input type="text" id="dataMostruario" placeholder="DD/MM/AAAA" maxlength="10">
-        </div>
+              <button class="btn light" type="button" id="btnPesquisarVendedora">
+                Pesquisar
+              </button>
+            </div>
 
-        <div class="field small">
-          <label>Data do acerto:</label>
-          <input type="text" id="dataAcerto" placeholder="DD/MM/AAAA" maxlength="10">
-        </div>
-
-        <div class="field small">
-          <label>Cód. do Produto:</label>
-          <input type="text" id="codigoProduto" placeholder="AA000">
-        </div>
-
-        <div class="field wide">
-          <label>Descrição do Produto:</label>
-          <input type="text" id="descricaoProduto" placeholder="Nome do produto">
-        </div>
-
-        <div class="field qty-field">
-          <label>Qtd.:</label>
-          <input type="text" id="qtdProduto" placeholder="00000">
-          <span class="unit-inline">PEÇAS</span>
-        </div>
-      </div>
-
-      <div class="lista-produtos">
-        <div class="lista-header">
-          <h3>Lista de Produtos:</h3>
-
-          <div class="lista-acoes">
-            <button class="btn blue" type="button" id="btnAdicionarProduto">Adicionar Produto</button>
+            <button class="btn blue nav-btn" type="button" data-target="vendedora-cadastro">
+              NOVA VENDEDORA
+            </button>
           </div>
         </div>
 
-        <div id="listaProdutosContainer">
-          <div class="lista-vazia">Nenhum produto adicionado.</div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nome completo</th>
+                <th>Último acerto</th>
+                <th>Próximo acerto</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody id="vendedoraTabelaBody">
+              <tr>
+                <td colspan="5" class="empty-table">Nenhuma vendedora cadastrada</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- CADASTRO VENDEDORA -->
-<section id="vendedora-cadastro" class="screen">
-  <div class="vendedora-page">
-    <div class="top-bar top-bar-vendedora">
-      VENDEDORA
-    </div>
+    <!-- CADASTRO VENDEDORA -->
+    <section id="vendedora-cadastro" class="screen">
+      <div class="vendedora-page">
+        <div class="top-bar top-bar-vendedora">
+          VENDEDORA
+        </div>
 
-    <div class="include-wrap">
-      <div class="include-top">
-        <div class="voltar nav-btn" data-target="vendedoras">⟵ VOLTAR</div>
+        <div class="include-wrap">
+          <div class="include-top">
+            <div class="voltar nav-btn" data-target="vendedoras">⟵ VOLTAR</div>
 
-        <div class="top-actions">
-          <button class="btn primary" type="button" id="btnSalvarVendedora">Salvar</button>
+            <div class="top-actions">
+              <button class="btn primary" type="button" id="btnSalvarVendedora">Salvar</button>
+            </div>
+          </div>
+
+          <div class="vendedora-grid">
+            <div class="field small">
+              <label>Código da vendedora:</label>
+              <input type="text" id="vendedoraCodigo" placeholder="001">
+            </div>
+
+            <div class="field wide-2">
+              <label>Nome completo:</label>
+              <input type="text" id="vendedoraNome" placeholder="Nome completo">
+            </div>
+
+            <div class="field small">
+              <label>CPF:</label>
+              <input type="text" id="vendedoraCpf" placeholder="000.000.000-00" maxlength="14">
+            </div>
+
+            <div class="field wide-2">
+              <label>Endereço completo:</label>
+              <input type="text" id="vendedoraEndereco" placeholder="Rua, avenida, etc.">
+            </div>
+
+            <div class="field small">
+              <label>Número:</label>
+              <input type="text" id="vendedoraNumero" placeholder="123">
+            </div>
+
+            <div class="field small">
+              <label>Complemento:</label>
+              <input type="text" id="vendedoraComplemento" placeholder="Apto, casa, bloco">
+            </div>
+
+            <div class="field wide">
+              <label>Bairro:</label>
+              <input type="text" id="vendedoraBairro" placeholder="Bairro">
+            </div>
+
+            <div class="field wide">
+              <label>Celular:</label>
+              <input type="text" id="vendedoraCelular" placeholder="(00) 00000-0000" maxlength="15">
+            </div>
+          </div>
         </div>
       </div>
-
-      <div class="vendedora-grid">
-        <div class="field small">
-          <label>Código da vendedora:</label>
-          <input type="text" id="vendedoraCodigo" placeholder="001">
-        </div>
-
-        <div class="field wide-2">
-          <label>Nome completo:</label>
-          <input type="text" id="vendedoraNome" placeholder="Nome completo">
-        </div>
-
-        <div class="field small">
-          <label>CPF:</label>
-          <input type="text" id="vendedoraCpf" placeholder="000.000.000-00" maxlength="14">
-        </div>
-
-        <div class="field wide-2">
-          <label>Endereço completo:</label>
-          <input type="text" id="vendedoraEndereco" placeholder="Rua, avenida, etc.">
-        </div>
-
-        <div class="field small">
-          <label>Número:</label>
-          <input type="text" id="vendedoraNumero" placeholder="123">
-        </div>
-
-        <div class="field small">
-          <label>Complemento:</label>
-          <input type="text" id="vendedoraComplemento" placeholder="Apto, casa, bloco">
-        </div>
-
-        <div class="field wide">
-          <label>Bairro:</label>
-          <input type="text" id="vendedoraBairro" placeholder="Bairro">
-        </div>
-
-        <div class="field wide">
-          <label>Celular:</label>
-          <input type="text" id="vendedoraCelular" placeholder="(00) 00000-0000" maxlength="15">
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
     <!-- OUTRAS TELAS -->
     <section id="acerto" class="screen">
       <div class="card">
-        <h2>ACERTO</h2>
+        <div class="top-bar top-bar-acerto">ACERTO</div>
         <p>Tela reservada para relatórios e conferência de acertos.</p>
       </div>
     </section>
 
     <section id="estoque" class="screen">
       <div class="card">
-        <h2>CADASTRO PRODUTO</h2>
+        <div class="top-bar top-bar-estoque">CADASTRO PRODUTO</div>
         <p>Tela reservada para cadastro e gestão de produtos.</p>
       </div>
     </section>
