@@ -1,1380 +1,386 @@
-const sections = [...document.querySelectorAll('.screen')];
+/* ================= NAVEGAÇÃO ================= */
+const screens = document.querySelectorAll('.screen');
+const navButtons = document.querySelectorAll('.nav-btn');
 
-/* MOSTRUÁRIO */
-const numeroMostruario = document.getElementById('numeroMostruario');
-const codigoVendedoraMostruario = document.getElementById('codigoVendedoraMostruario');
-const nomeVendedoraMostruario = document.getElementById('nomeVendedoraMostruario');
-const dataUltimoAcertoMostruario = document.getElementById('dataUltimoAcertoMostruario');
-const dataProximoAcertoMostruario = document.getElementById('dataProximoAcertoMostruario');
-const codigoProduto = document.getElementById('codigoProduto');
-const descricaoProduto = document.getElementById('descricaoProduto');
-const precoProdutoMostruario = document.getElementById('precoProdutoMostruario');
-const qtdProduto = document.getElementById('qtdProduto');
-const totalMostruarioValor = document.getElementById('totalMostruarioValor');
+function showScreen(targetId){
+  screens.forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(targetId);
+  if(target) target.classList.add('active');
+}
 
-const btnAdicionarProduto = document.getElementById('btnAdicionarProduto');
-const btnSalvarMostruario = document.getElementById('btnSalvarMostruario');
-const btnNovoMostruario = document.getElementById('btnNovoMostruario');
-const btnImprimirMostruario = document.getElementById('btnImprimirMostruario');
+navButtons.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const target = btn.dataset.target;
+    if(target) showScreen(target);
+  });
+});
 
-const listaProdutosContainer = document.getElementById('listaProdutosContainer');
-const mostruarioTabelaBody = document.getElementById('mostruarioTabelaBody');
+/* ================= STORAGE ================= */
+const STORAGE = {
+  produtos: 'wn_produtos',
+  vendedoras: 'wn_vendedoras',
+  mostruarios: 'wn_mostruarios'
+};
 
-const filtroMostruario = document.getElementById('filtroMostruario');
-const buscaMostruario = document.getElementById('buscaMostruario');
-const btnPesquisarMostruario = document.getElementById('btnPesquisarMostruario');
+function getData(key, fallback=[]){
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : fallback;
+}
 
-/* VENDEDORAS */
-const filtroVendedora = document.getElementById('filtroVendedora');
-const buscaVendedora = document.getElementById('buscaVendedora');
-const btnPesquisarVendedora = document.getElementById('btnPesquisarVendedora');
-const vendedoraTabelaBody = document.getElementById('vendedoraTabelaBody');
+function setData(key, value){
+  localStorage.setItem(key, JSON.stringify(value));
+}
 
-const vendedoraCodigo = document.getElementById('vendedoraCodigo');
-const vendedoraNome = document.getElementById('vendedoraNome');
-const vendedoraCpf = document.getElementById('vendedoraCpf');
-const vendedoraEndereco = document.getElementById('vendedoraEndereco');
-const vendedoraNumero = document.getElementById('vendedoraNumero');
-const vendedoraComplemento = document.getElementById('vendedoraComplemento');
-const vendedoraBairro = document.getElementById('vendedoraBairro');
-const vendedoraCelular = document.getElementById('vendedoraCelular');
-const vendedoraUltimoAcerto = document.getElementById('vendedoraUltimoAcerto');
-const vendedoraProximoAcerto = document.getElementById('vendedoraProximoAcerto');
-const btnSalvarVendedora = document.getElementById('btnSalvarVendedora');
-const btnNovaVendedora = document.getElementById('btnNovaVendedora');
+/* ================= STATES ================= */
+let produtos = getData(STORAGE.produtos, []);
+let vendedoras = getData(STORAGE.vendedoras, []);
+let mostruarios = getData(STORAGE.mostruarios, []);
 
-/* PRODUTOS */
-const filtroProduto = document.getElementById('filtroProduto');
-const buscaProduto = document.getElementById('buscaProduto');
-const btnPesquisarProduto = document.getElementById('btnPesquisarProduto');
-const btnNovoProduto = document.getElementById('btnNovoProduto');
-const produtoTabelaBody = document.getElementById('produtoTabelaBody');
+/* ================= AUTO NEXT ================= */
+document.querySelectorAll('[data-auto-next="true"]').forEach(input=>{
+  input.addEventListener('input', ()=>{
+    const max = input.dataset.nextLength;
+    if(max && input.value.length >= max){
+      focusNext(input);
+    }
+  });
 
+  input.addEventListener('keydown', e=>{
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      focusNext(input);
+    }
+  });
+});
+
+function focusNext(el){
+  const inputs = [...document.querySelectorAll('[data-auto-next="true"]')];
+  const i = inputs.indexOf(el);
+  if(inputs[i+1]) inputs[i+1].focus();
+}
+
+/* ================= PRODUTOS ================= */
 const produtoCodigo = document.getElementById('produtoCodigo');
 const produtoDescricao = document.getElementById('produtoDescricao');
 const produtoTipo = document.getElementById('produtoTipo');
 const produtoPreco = document.getElementById('produtoPreco');
 const produtoData = document.getElementById('produtoData');
 const btnSalvarProduto = document.getElementById('btnSalvarProduto');
+const produtoTabelaBody = document.getElementById('produtoTabelaBody');
 
-const valorOuro = document.getElementById('valorOuro');
-const valorPrata = document.getElementById('valorPrata');
-const btnSalvarValoresMetais = document.getElementById('btnSalvarValoresMetais');
+function hoje(){
+  const d = new Date();
+  return d.toLocaleDateString('pt-BR');
+}
 
-/* ACERTO */
-const acertoNumeroMostruario = document.getElementById('acertoNumeroMostruario');
-const acertoCodigoVendedora = document.getElementById('acertoCodigoVendedora');
-const acertoNomeVendedora = document.getElementById('acertoNomeVendedora');
-const acertoCodigoProduto = document.getElementById('acertoCodigoProduto');
-const acertoDescricaoProduto = document.getElementById('acertoDescricaoProduto');
+function renderProdutos(){
+  if(!produtoTabelaBody) return;
+
+  if(!produtos.length){
+    produtoTabelaBody.innerHTML = `<tr><td colspan="6" class="empty-table">Nenhum produto cadastrado</td></tr>`;
+    return;
+  }
+
+  produtoTabelaBody.innerHTML = produtos.map((p,i)=>`
+    <tr>
+      <td>${p.codigo}</td>
+      <td>${p.descricao}</td>
+      <td>${p.tipo}</td>
+      <td>R$ ${p.preco}</td>
+      <td>${p.data}</td>
+      <td class="acoes-cell">
+        <button class="mini-btn" onclick="editarProduto(${i})">Editar</button>
+        <button class="mini-btn danger" onclick="excluirProduto(${i})">Excluir</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function editarProduto(i){
+  const p = produtos[i];
+  produtoCodigo.value = p.codigo;
+  produtoDescricao.value = p.descricao;
+  produtoTipo.value = p.tipo;
+  produtoPreco.value = p.preco;
+  produtoData.value = p.data;
+  showScreen('produto-cadastro');
+}
+
+function excluirProduto(i){
+  if(confirm('Excluir produto?')){
+    produtos.splice(i,1);
+    setData(STORAGE.produtos, produtos);
+    renderProdutos();
+  }
+}
+
+if(btnSalvarProduto){
+  btnSalvarProduto.onclick = ()=>{
+    const novo = {
+      codigo: produtoCodigo.value,
+      descricao: produtoDescricao.value,
+      tipo: produtoTipo.value,
+      preco: produtoPreco.value,
+      data: hoje()
+    };
+
+    const index = produtos.findIndex(p=>p.codigo === novo.codigo);
+    if(index >= 0){
+      produtos[index] = novo;
+    }else{
+      produtos.push(novo);
+    }
+
+    setData(STORAGE.produtos, produtos);
+    renderProdutos();
+    showScreen('estoque');
+  };
+}
+
+/* ================= VENDEDORAS ================= */
+const vendedoraCodigo = document.getElementById('vendedoraCodigo');
+const vendedoraNome = document.getElementById('vendedoraNome');
+const vendedoraUltimo = document.getElementById('vendedoraUltimoAcerto');
+const vendedoraProximo = document.getElementById('vendedoraProximoAcerto');
+const vendedoraTabelaBody = document.getElementById('vendedoraTabelaBody');
+const btnSalvarVendedora = document.getElementById('btnSalvarVendedora');
+
+function renderVendedoras(){
+  if(!vendedoraTabelaBody) return;
+
+  if(!vendedoras.length){
+    vendedoraTabelaBody.innerHTML = `<tr><td colspan="5" class="empty-table">Nenhuma vendedora</td></tr>`;
+    return;
+  }
+
+  vendedoraTabelaBody.innerHTML = vendedoras.map((v,i)=>`
+    <tr>
+      <td>${v.codigo}</td>
+      <td>${v.nome}</td>
+      <td>${v.ultimo || '--'}</td>
+      <td>${v.proximo || '--'}</td>
+      <td class="acoes-cell">
+        <button class="mini-btn" onclick="editarVendedora(${i})">Editar</button>
+        <button class="mini-btn danger" onclick="excluirVendedora(${i})">Excluir</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function editarVendedora(i){
+  const v = vendedoras[i];
+  vendedoraCodigo.value = v.codigo;
+  vendedoraNome.value = v.nome;
+  showScreen('vendedora-cadastro');
+}
+
+function excluirVendedora(i){
+  if(confirm('Excluir?')){
+    vendedoras.splice(i,1);
+    setData(STORAGE.vendedoras, vendedoras);
+    renderVendedoras();
+  }
+}
+
+if(btnSalvarVendedora){
+  btnSalvarVendedora.onclick = ()=>{
+    const novo = {
+      codigo: vendedoraCodigo.value,
+      nome: vendedoraNome.value,
+      ultimo: vendedoraUltimo?.value || '--',
+      proximo: vendedoraProximo?.value || '--'
+    };
+
+    const index = vendedoras.findIndex(v=>v.codigo === novo.codigo);
+    if(index >= 0){
+      vendedoras[index] = {...vendedoras[index], ...novo};
+    }else{
+      vendedoras.push(novo);
+    }
+
+    setData(STORAGE.vendedoras, vendedoras);
+    renderVendedoras();
+    showScreen('vendedoras');
+  };
+}
+
+/* ================= MOSTRUÁRIO ================= */
+const codigoProduto = document.getElementById('codigoProduto');
+const descricaoProduto = document.getElementById('descricaoProduto');
+const precoProdutoMostruario = document.getElementById('precoProdutoMostruario');
+const qtdProduto = document.getElementById('qtdProduto');
+const listaProdutosContainer = document.getElementById('listaProdutosContainer');
+const totalMostruarioValor = document.getElementById('totalMostruarioValor');
+const btnAdicionarProduto = document.getElementById('btnAdicionarProduto');
+const btnSalvarMostruario = document.getElementById('btnSalvarMostruario');
+
+let draftProdutos = [];
+
+codigoProduto?.addEventListener('input', ()=>{
+  const p = produtos.find(x=>x.codigo === codigoProduto.value);
+  if(p){
+    descricaoProduto.value = p.descricao;
+    precoProdutoMostruario.value = p.preco;
+  }
+});
+
+function renderLista(){
+  if(!listaProdutosContainer) return;
+
+  if(!draftProdutos.length){
+    listaProdutosContainer.innerHTML = `<div class="lista-vazia">Nenhum produto</div>`;
+    totalMostruarioValor.innerText = 'R$ 0,00';
+    return;
+  }
+
+  let total = 0;
+
+  listaProdutosContainer.innerHTML = draftProdutos.map((p,i)=>{
+    total += p.qtd * p.preco;
+    return `
+      <div class="lista-item">
+        <span>${p.codigo}</span>
+        <span>${p.descricao}</span>
+        <span>${p.qtd}</span>
+        <span>R$ ${p.preco}</span>
+        <div class="produto-acoes">
+          <button class="mini-btn danger" onclick="removerItem(${i})">Excluir</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  totalMostruarioValor.innerText = 'R$ ' + total.toFixed(2);
+}
+
+function removerItem(i){
+  draftProdutos.splice(i,1);
+  renderLista();
+}
+
+btnAdicionarProduto?.addEventListener('click', ()=>{
+  const p = produtos.find(x=>x.codigo === codigoProduto.value);
+  if(!p) return alert('Produto não encontrado');
+
+  draftProdutos.push({
+    codigo: p.codigo,
+    descricao: p.descricao,
+    preco: Number(p.preco),
+    qtd: Number(qtdProduto.value)
+  });
+
+  codigoProduto.value = '';
+  descricaoProduto.value = '';
+  qtdProduto.value = '';
+  renderLista();
+});
+
+btnSalvarMostruario?.addEventListener('click', ()=>{
+  const numero = document.getElementById('numeroMostruario').value;
+  const codigoVend = document.getElementById('codigoVendedoraMostruario').value;
+
+  const total = draftProdutos.reduce((s,p)=>s+(p.qtd*p.preco),0);
+
+  mostruarios.push({
+    numero,
+    codigoVend,
+    produtos: draftProdutos,
+    total
+  });
+
+  setData(STORAGE.mostruarios, mostruarios);
+  draftProdutos = [];
+  renderLista();
+  showScreen('mostruario');
+});
+
+/* ================= ACERTO ================= */
+const acertoNumero = document.getElementById('acertoNumeroMostruario');
+const acertoCodigoVend = document.getElementById('acertoCodigoVendedora');
+const acertoNomeVend = document.getElementById('acertoNomeVendedora');
+const acertoCodigoProd = document.getElementById('acertoCodigoProduto');
+const acertoDesc = document.getElementById('acertoDescricaoProduto');
 const acertoQtdRetirada = document.getElementById('acertoQtdRetirada');
-const acertoQtdDevolvida = document.getElementById('acertoQtdDevolvida');
+const acertoQtdDev = document.getElementById('acertoQtdDevolvida');
 const acertoListaContainer = document.getElementById('acertoListaContainer');
 const acertoTotalPecas = document.getElementById('acertoTotalPecas');
 const acertoTotalValor = document.getElementById('acertoTotalValor');
 
-/* STORAGE */
-const STORAGE_KEYS = {
-  mostruarios: 'wn_mostruarios',
-  vendedoras: 'wn_vendedoras',
-  produtos: 'wn_produtos',
-  metais: 'wn_metais'
-};
+let acertoItens = [];
+let mostruarioAtual = null;
 
-function carregarStorage(chave, fallback) {
-  try {
-    const salvo = localStorage.getItem(chave);
-    return salvo ? JSON.parse(salvo) : fallback;
-  } catch {
-    return fallback;
-  }
-}
+acertoNumero?.addEventListener('input', ()=>{
+  mostruarioAtual = mostruarios.find(m=>m.numero === acertoNumero.value);
 
-function salvarStorage(chave, valor) {
-  localStorage.setItem(chave, JSON.stringify(valor));
-}
+  if(!mostruarioAtual) return;
 
-/* UTILS */
-function dataHojeBr() {
-  const hoje = new Date();
-  const dia = String(hoje.getDate()).padStart(2, '0');
-  const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-  const ano = hoje.getFullYear();
-  return `${dia}/${mes}/${ano}`;
-}
+  const vend = vendedoras.find(v=>v.codigo === mostruarioAtual.codigoVend);
 
-function normalizarPreco(valor) {
-  return String(valor || '').replace(/\./g, '').replace(',', '.');
-}
-
-function formatarPreco(valor) {
-  const numero = Number(valor);
-  if (Number.isNaN(numero)) return '0,00';
-  return numero.toFixed(2).replace('.', ',');
-}
-
-function converterPrecoParaNumero(valor) {
-  const n = Number(normalizarPreco(valor));
-  return Number.isNaN(n) ? 0 : n;
-}
-
-function formatarMoedaBR(numero) {
-  const n = Number(numero || 0);
-  return `R$ ${n.toFixed(2).replace('.', ',')}`;
-}
-
-function somenteNumero(valor) {
-  return Number(String(valor || '').replace(/\D/g, '')) || 0;
-}
-
-function upperTrim(valor) {
-  return String(valor || '').trim().toUpperCase();
-}
-
-/* AUTO NEXT */
-function getFocusableInputs(container) {
-  return [...container.querySelectorAll('input, select, textarea')]
-    .filter(el => {
-      const isSearch =
-        el.classList.contains('search-input') ||
-        el.closest('.search-box') ||
-        el.closest('.search-filter-wrap');
-
-      return (
-        !el.readOnly &&
-        !el.disabled &&
-        el.type !== 'hidden' &&
-        el.offsetParent !== null &&
-        !isSearch
-      );
-    });
-}
-
-function irParaProximoCampo(current) {
-  const screen = current.closest('.screen');
-  if (!screen) return;
-
-  const focusables = getFocusableInputs(screen);
-  const idx = focusables.indexOf(current);
-
-  if (idx >= 0 && idx < focusables.length - 1) {
-    focusables[idx + 1].focus();
-    if (typeof focusables[idx + 1].select === 'function') {
-      focusables[idx + 1].select();
-    }
-  }
-}
-
-function setupAutoNext() {
-  document.querySelectorAll('[data-auto-next="true"]').forEach(el => {
-    if (el.tagName === 'SELECT') {
-      el.addEventListener('change', () => {
-        setTimeout(() => irParaProximoCampo(el), 30);
-      });
-      return;
-    }
-
-    el.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        irParaProximoCampo(el);
-      }
-    });
-
-    el.addEventListener('input', () => {
-      const nextLength = Number(el.dataset.nextLength || 0);
-      if (nextLength > 0 && el.value.length >= nextLength) {
-        setTimeout(() => irParaProximoCampo(el), 30);
-      }
-    });
-  });
-}
-
-/* MASKS */
-function aplicarMascaraData(input) {
-  if (!input) return;
-  input.addEventListener('input', (e) => {
-    let value = e.target.value.replace(/\D/g, '').slice(0, 8);
-    if (value.length > 2) value = value.slice(0, 2) + '/' + value.slice(2);
-    if (value.length > 5) value = value.slice(0, 5) + '/' + value.slice(5);
-    e.target.value = value;
-    sincronizarDraftCampos();
-  });
-}
-
-function aplicarMascaraCpf(input) {
-  if (!input) return;
-  input.addEventListener('input', (e) => {
-    let value = e.target.value.replace(/\D/g, '').slice(0, 11);
-    if (value.length > 3) value = value.slice(0, 3) + '.' + value.slice(3);
-    if (value.length > 6) value = value.slice(0, 7) + '.' + value.slice(7);
-    if (value.length > 10) value = value.slice(0, 11) + '-' + value.slice(11);
-    e.target.value = value.slice(0, 14);
-  });
-}
-
-function aplicarMascaraCelular(input) {
-  if (!input) return;
-  input.addEventListener('input', (e) => {
-    const digitos = e.target.value.replace(/\D/g, '').slice(0, 11);
-    let formatado = '';
-    if (digitos.length > 0) formatado = '(' + digitos.slice(0, 2);
-    if (digitos.length >= 3) formatado += ') ' + digitos.slice(2, 7);
-    if (digitos.length >= 8) formatado += '-' + digitos.slice(7, 11);
-    e.target.value = formatado;
-  });
-}
-
-function aplicarMascaraPreco(input) {
-  if (!input) return;
-  input.addEventListener('blur', () => {
-    if (!input.value.trim()) return;
-    input.value = formatarPreco(normalizarPreco(input.value));
-  });
-}
-
-aplicarMascaraData(dataUltimoAcertoMostruario);
-aplicarMascaraData(dataProximoAcertoMostruario);
-aplicarMascaraCpf(vendedoraCpf);
-aplicarMascaraCelular(vendedoraCelular);
-aplicarMascaraPreco(produtoPreco);
-aplicarMascaraPreco(valorOuro);
-aplicarMascaraPreco(valorPrata);
-
-/* STATE */
-const state = {
-  cadastros: carregarStorage(STORAGE_KEYS.mostruarios, []),
-  draft: {
-    numero: '',
-    codigoVendedora: '',
-    vendedora: '',
-    ultimoAcerto: '',
-    proximoAcerto: '',
-    produtos: []
-  },
-  editandoNumeroOriginal: null
-};
-
-const vendedorasState = {
-  lista: carregarStorage(STORAGE_KEYS.vendedoras, []),
-  editandoCodigoOriginal: null
-};
-
-const produtosState = {
-  lista: carregarStorage(STORAGE_KEYS.produtos, []),
-  editandoCodigoOriginal: null
-};
-
-const metaisState = carregarStorage(STORAGE_KEYS.metais, {
-  ouro: '0,00',
-  prata: '0,00'
+  acertoCodigoVend.value = vend?.codigo || '';
+  acertoNomeVend.value = vend?.nome || '';
 });
 
-const acertoState = {
-  itens: [],
-  mostruarioAtual: null
-};
+acertoCodigoProd?.addEventListener('input', ()=>{
+  if(!mostruarioAtual) return;
 
-if (!vendedorasState.lista.length) {
-  vendedorasState.lista = [
-    {
-      codigo: '001',
-      nome: 'Maria Silva',
-      ultimo: '--/--/----',
-      proximo: '--/--/----',
-      cpf: '',
-      endereco: '',
-      numero: '',
-      complemento: '',
-      bairro: '',
-      celular: ''
-    }
-  ];
-}
-
-if (!produtosState.lista.length) {
-  produtosState.lista = [
-    {
-      codigo: 'P001',
-      descricao: 'Anel Coração',
-      tipo: 'ouro',
-      preco: '29,90',
-      dataInclusao: dataHojeBr()
-    },
-    {
-      codigo: 'P002',
-      descricao: 'Brinco Dourado',
-      tipo: 'prata',
-      preco: '35,00',
-      dataInclusao: dataHojeBr()
-    }
-  ];
-}
-
-/* PERSIST */
-function persistirMostruarios() {
-  salvarStorage(STORAGE_KEYS.mostruarios, state.cadastros);
-}
-
-function persistirVendedoras() {
-  salvarStorage(STORAGE_KEYS.vendedoras, vendedorasState.lista);
-}
-
-function persistirProdutos() {
-  salvarStorage(STORAGE_KEYS.produtos, produtosState.lista);
-}
-
-function persistirMetais() {
-  salvarStorage(STORAGE_KEYS.metais, metaisState);
-}
-
-/* BUSCAS */
-function buscarVendedoraPorCodigo(codigo) {
-  return vendedorasState.lista.find(v => upperTrim(v.codigo) === upperTrim(codigo));
-}
-
-function buscarProdutoPorCodigo(codigo) {
-  return produtosState.lista.find(p => upperTrim(p.codigo) === upperTrim(codigo));
-}
-
-function buscarMostruarioPorNumero(numero) {
-  return state.cadastros.find(m => upperTrim(m.numero) === upperTrim(numero));
-}
-
-/* NAV */
-function activate(targetId) {
-  const existe = document.getElementById(targetId);
-  if (!existe) return;
-
-  sections.forEach(section => {
-    section.classList.toggle('active', section.id === targetId);
-  });
-
-  if (targetId === 'acerto') {
-    limparAcerto();
+  const item = mostruarioAtual.produtos.find(p=>p.codigo === acertoCodigoProd.value);
+  if(item){
+    acertoDesc.value = item.descricao;
+    acertoQtdRetirada.value = item.qtd;
   }
-
-  if (history.replaceState) {
-    history.replaceState(null, '', `#${targetId}`);
-  }
-}
-
-document.addEventListener('click', (e) => {
-  const nav = e.target.closest('.nav-btn');
-  if (!nav) return;
-
-  const targetId = nav.dataset.target;
-  if (!targetId) return;
-
-  e.preventDefault();
-  activate(targetId);
 });
 
-const initial = location.hash.replace('#', '') || 'home';
-activate(document.getElementById(initial) ? initial : 'home');
+acertoQtdDev?.addEventListener('keydown', e=>{
+  if(e.key === 'Enter'){
+    const retirada = Number(acertoQtdRetirada.value);
+    const devolvida = Number(acertoQtdDev.value);
+    const vendida = retirada - devolvida;
 
-/* MOSTRUÁRIO */
-function calcularTotalMostruario(produtos) {
-  return produtos.reduce((total, item) => {
-    return total + (somenteNumero(item.qtd) * converterPrecoParaNumero(item.preco));
-  }, 0);
-}
+    const produto = produtos.find(p=>p.codigo === acertoCodigoProd.value);
 
-function atualizarTotalMostruarioNaTela() {
-  totalMostruarioValor.textContent = formatarMoedaBR(calcularTotalMostruario(state.draft.produtos));
-}
+    acertoItens.push({
+      codigo: acertoCodigoProd.value,
+      descricao: acertoDesc.value,
+      retirada,
+      devolvida,
+      vendida,
+      valor: vendida * Number(produto?.preco || 0)
+    });
 
-function sincronizarDraftCampos() {
-  state.draft.numero = numeroMostruario.value.trim();
-  state.draft.codigoVendedora = codigoVendedoraMostruario.value.trim();
-  state.draft.vendedora = nomeVendedoraMostruario.value.trim();
-  state.draft.ultimoAcerto = dataUltimoAcertoMostruario.value.trim();
-  state.draft.proximoAcerto = dataProximoAcertoMostruario.value.trim();
-}
+    renderAcerto();
 
-function preencherNomeVendedoraPorCodigo() {
-  const codigo = codigoVendedoraMostruario.value.trim();
-  const vendedora = buscarVendedoraPorCodigo(codigo);
-
-  if (vendedora) {
-    nomeVendedoraMostruario.value = vendedora.nome;
-    if (!dataUltimoAcertoMostruario.value && vendedora.ultimo !== '--/--/----') {
-      dataUltimoAcertoMostruario.value = vendedora.ultimo;
-    }
-    if (!dataProximoAcertoMostruario.value && vendedora.proximo !== '--/--/----') {
-      dataProximoAcertoMostruario.value = vendedora.proximo;
-    }
-  } else {
-    nomeVendedoraMostruario.value = '';
+    acertoCodigoProd.value = '';
+    acertoQtdDev.value = '';
   }
-
-  sincronizarDraftCampos();
-}
-
-function preencherDadosProdutoPorCodigo() {
-  const codigo = codigoProduto.value.trim();
-  const produto = buscarProdutoPorCodigo(codigo);
-
-  if (produto) {
-    descricaoProduto.value = produto.descricao;
-    precoProdutoMostruario.value = produto.preco;
-  } else {
-    descricaoProduto.value = '';
-    precoProdutoMostruario.value = '';
-  }
-}
-
-[numeroMostruario, codigoVendedoraMostruario].forEach(input => {
-  input.addEventListener('input', preencherNomeVendedoraPorCodigo);
 });
 
-codigoProduto.addEventListener('input', preencherDadosProdutoPorCodigo);
+function renderAcerto(){
+  if(!acertoListaContainer) return;
 
-function limparCamposProdutoMostruario() {
-  codigoProduto.value = '';
-  descricaoProduto.value = '';
-  precoProdutoMostruario.value = '';
-  qtdProduto.value = '';
-  codigoProduto.focus();
-}
+  let totalPecas = 0;
+  let totalValor = 0;
 
-function renderListaProdutosMostruario() {
-  if (!state.draft.produtos.length) {
-    listaProdutosContainer.innerHTML = `<div class="lista-vazia">Nenhum produto adicionado.</div>`;
-    atualizarTotalMostruarioNaTela();
-    return;
-  }
+  acertoListaContainer.innerHTML = acertoItens.map(i=>{
+    totalPecas += i.vendida;
+    totalValor += i.valor;
 
-  listaProdutosContainer.innerHTML = state.draft.produtos.map((produto, index) => `
-    <div class="lista-item">
-      <span class="produto-cod">${produto.codigo}</span>
-      <span class="produto-desc">${produto.descricao}</span>
-      <span class="produto-preco">${formatarMoedaBR(converterPrecoParaNumero(produto.preco))}</span>
-      <span class="produto-qtd">${produto.qtd}</span>
-      <div class="produto-acoes">
-        <button class="mini-btn" type="button" data-editar-produto-mostruario="${index}">Editar qtd</button>
-        <button class="mini-btn danger" type="button" data-excluir-item-mostruario="${index}">Excluir</button>
+    return `
+      <div class="acerto-item">
+        <span>${i.codigo}</span>
+        <span>${i.descricao}</span>
+        <span>${i.retirada}</span>
+        <span>${i.devolvida}</span>
+        <span>${i.vendida}</span>
+        <span>R$ ${i.valor.toFixed(2)}</span>
       </div>
-    </div>
-  `).join('');
-
-  document.querySelectorAll('[data-excluir-item-mostruario]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const index = Number(btn.dataset.excluirItemMostruario);
-      state.draft.produtos.splice(index, 1);
-      renderListaProdutosMostruario();
-    });
-  });
-
-  document.querySelectorAll('[data-editar-produto-mostruario]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const index = Number(btn.dataset.editarProdutoMostruario);
-      const atual = state.draft.produtos[index];
-      const novaQtd = prompt('Digite a nova quantidade:', atual.qtd);
-
-      if (novaQtd === null) return;
-      if (!novaQtd.trim()) return;
-
-      state.draft.produtos[index].qtd = novaQtd.trim();
-      renderListaProdutosMostruario();
-    });
-  });
-
-  atualizarTotalMostruarioNaTela();
-}
-
-function adicionarProdutoMostruario() {
-  sincronizarDraftCampos();
-
-  const codigo = upperTrim(codigoProduto.value);
-  const descricao = descricaoProduto.value.trim();
-  const preco = precoProdutoMostruario.value.trim();
-  const qtd = qtdProduto.value.trim();
-
-  if (!state.draft.numero) {
-    alert('Informe o número do mostruário.');
-    numeroMostruario.focus();
-    return;
-  }
-
-  if (!state.draft.codigoVendedora || !state.draft.vendedora) {
-    alert('Informe um código de vendedora válido.');
-    codigoVendedoraMostruario.focus();
-    return;
-  }
-
-  if (!codigo) {
-    alert('Informe o código do produto.');
-    codigoProduto.focus();
-    return;
-  }
-
-  if (!descricao || !preco) {
-    alert('Produto não encontrado.');
-    codigoProduto.focus();
-    return;
-  }
-
-  if (!qtd) {
-    alert('Informe a quantidade.');
-    qtdProduto.focus();
-    return;
-  }
-
-  const indexExistente = state.draft.produtos.findIndex(p => upperTrim(p.codigo) === codigo);
-
-  if (indexExistente >= 0) {
-    state.draft.produtos[indexExistente].qtd =
-      String(somenteNumero(state.draft.produtos[indexExistente].qtd) + somenteNumero(qtd));
-  } else {
-    state.draft.produtos.push({
-      codigo,
-      descricao,
-      preco,
-      qtd
-    });
-  }
-
-  renderListaProdutosMostruario();
-  limparCamposProdutoMostruario();
-}
-
-qtdProduto.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    adicionarProdutoMostruario();
-  }
-});
-
-function preencherFormularioMostruario() {
-  numeroMostruario.value = state.draft.numero;
-  codigoVendedoraMostruario.value = state.draft.codigoVendedora;
-  nomeVendedoraMostruario.value = state.draft.vendedora;
-  dataUltimoAcertoMostruario.value = state.draft.ultimoAcerto;
-  dataProximoAcertoMostruario.value = state.draft.proximoAcerto;
-}
-
-function resetDraft() {
-  state.editandoNumeroOriginal = null;
-  state.draft = {
-    numero: '',
-    codigoVendedora: '',
-    vendedora: '',
-    ultimoAcerto: '',
-    proximoAcerto: '',
-    produtos: []
-  };
-
-  preencherFormularioMostruario();
-  limparCamposProdutoMostruario();
-  renderListaProdutosMostruario();
-}
-
-function filtrarCadastros() {
-  const filtro = filtroMostruario.value;
-  const termo = buscaMostruario.value.trim().toLowerCase();
-
-  if (!termo) return state.cadastros;
-
-  return state.cadastros.filter(item => {
-    const numero = String(item.numero || '').toLowerCase();
-    const codigoVend = String(item.codigoVendedora || '').toLowerCase();
-    const vendedora = String(item.vendedora || '').toLowerCase();
-    const ultimoAcerto = String(item.ultimoAcerto || '').toLowerCase();
-    const proximoAcerto = String(item.proximoAcerto || '').toLowerCase();
-
-    if (filtro === 'numero') return numero.includes(termo);
-    if (filtro === 'codigoVendedora') return codigoVend.includes(termo);
-    if (filtro === 'vendedora') return vendedora.includes(termo);
-    if (filtro === 'ultimoAcerto') return ultimoAcerto.includes(termo);
-    if (filtro === 'proximoAcerto') return proximoAcerto.includes(termo);
-
-    return (
-      numero.includes(termo) ||
-      codigoVend.includes(termo) ||
-      vendedora.includes(termo) ||
-      ultimoAcerto.includes(termo) ||
-      proximoAcerto.includes(termo)
-    );
-  });
-}
-
-function renderTabelaMostruarios() {
-  const lista = filtrarCadastros();
-
-  if (!lista.length) {
-    mostruarioTabelaBody.innerHTML = `
-      <tr>
-        <td colspan="7" class="empty-table">Nenhum mostruário encontrado</td>
-      </tr>
     `;
-    return;
-  }
+  }).join('');
 
-  mostruarioTabelaBody.innerHTML = lista.map(item => `
-    <tr>
-      <td>${item.numero || '--'}</td>
-      <td>${item.codigoVendedora || '--'}</td>
-      <td>${item.vendedora || '--'}</td>
-      <td>${formatarMoedaBR(item.total || 0)}</td>
-      <td>${item.ultimoAcerto || '--'}</td>
-      <td>${item.proximoAcerto || '--'}</td>
-      <td class="acoes-cell">
-        <button class="mini-btn" type="button" data-editar-mostruario="${item.numero}">Editar</button>
-        <button class="mini-btn danger" type="button" data-excluir-mostruario="${item.numero}">Excluir</button>
-      </td>
-    </tr>
-  `).join('');
-
-  document.querySelectorAll('[data-editar-mostruario]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const numero = btn.dataset.editarMostruario;
-      const item = state.cadastros.find(cadastro => upperTrim(cadastro.numero) === upperTrim(numero));
-      if (!item) return;
-
-      state.editandoNumeroOriginal = item.numero;
-      state.draft = {
-        numero: item.numero,
-        codigoVendedora: item.codigoVendedora,
-        vendedora: item.vendedora,
-        ultimoAcerto: item.ultimoAcerto || '',
-        proximoAcerto: item.proximoAcerto || '',
-        produtos: item.produtos.map(prod => ({ ...prod }))
-      };
-
-      preencherFormularioMostruario();
-      renderListaProdutosMostruario();
-      activate('mostruario-incluir');
-    });
-  });
-
-  document.querySelectorAll('[data-excluir-mostruario]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const numero = btn.dataset.excluirMostruario;
-      const item = state.cadastros.find(cadastro => upperTrim(cadastro.numero) === upperTrim(numero));
-      if (!item) return;
-
-      const confirmar = confirm('Deseja excluir este mostruário?');
-      if (!confirmar) return;
-
-      state.cadastros = state.cadastros.filter(cadastro => upperTrim(cadastro.numero) !== upperTrim(numero));
-
-      if (item.codigoVendedora) {
-        const vendedora = vendedorasState.lista.find(v => upperTrim(v.codigo) === upperTrim(item.codigoVendedora));
-        const restante = state.cadastros.filter(c => upperTrim(c.codigoVendedora) === upperTrim(item.codigoVendedora)).slice(-1)[0];
-
-        if (vendedora) {
-          vendedora.ultimo = restante?.ultimoAcerto || '--/--/----';
-          vendedora.proximo = restante?.proximoAcerto || '--/--/----';
-        }
-      }
-
-      persistirMostruarios();
-      persistirVendedoras();
-      renderTabelaMostruarios();
-      renderTabelaVendedoras();
-    });
-  });
+  acertoTotalPecas.innerText = totalPecas;
+  acertoTotalValor.innerText = 'R$ ' + totalValor.toFixed(2);
 }
 
-btnNovoMostruario.addEventListener('click', () => {
-  const temConteudo =
-    state.draft.numero ||
-    state.draft.codigoVendedora ||
-    state.draft.vendedora ||
-    state.draft.ultimoAcerto ||
-    state.draft.proximoAcerto ||
-    state.draft.produtos.length;
-
-  if (temConteudo) {
-    const confirmar = confirm('Criar um novo mostruário e limpar a lista atual?');
-    if (!confirmar) return;
-  }
-
-  resetDraft();
-  activate('mostruario-incluir');
-});
-
-btnAdicionarProduto.addEventListener('click', adicionarProdutoMostruario);
-
-btnSalvarMostruario.addEventListener('click', () => {
-  sincronizarDraftCampos();
-
-  if (!state.draft.numero) {
-    alert('Informe o número do mostruário.');
-    numeroMostruario.focus();
-    return;
-  }
-
-  if (!state.draft.codigoVendedora || !state.draft.vendedora) {
-    alert('Informe um código de vendedora válido.');
-    codigoVendedoraMostruario.focus();
-    return;
-  }
-
-  const total = calcularTotalMostruario(state.draft.produtos);
-
-  const cadastro = {
-    numero: state.draft.numero,
-    codigoVendedora: state.draft.codigoVendedora,
-    vendedora: state.draft.vendedora,
-    ultimoAcerto: state.draft.ultimoAcerto,
-    proximoAcerto: state.draft.proximoAcerto,
-    produtos: state.draft.produtos.map(prod => ({ ...prod })),
-    total
-  };
-
-  const numeroDuplicado = state.cadastros.some(item =>
-    upperTrim(item.numero) === upperTrim(cadastro.numero) &&
-    upperTrim(item.numero) !== upperTrim(state.editandoNumeroOriginal)
-  );
-
-  if (numeroDuplicado) {
-    alert('Já existe um mostruário com esse número.');
-    numeroMostruario.focus();
-    return;
-  }
-
-  if (state.editandoNumeroOriginal) {
-    const indexExistente = state.cadastros.findIndex(item => upperTrim(item.numero) === upperTrim(state.editandoNumeroOriginal));
-    if (indexExistente >= 0) {
-      state.cadastros[indexExistente] = cadastro;
-    }
-  } else {
-    state.cadastros.push(cadastro);
-  }
-
-  const vendedora = vendedorasState.lista.find(v => upperTrim(v.codigo) === upperTrim(cadastro.codigoVendedora));
-  if (vendedora) {
-    vendedora.ultimo = cadastro.ultimoAcerto || '--/--/----';
-    vendedora.proximo = cadastro.proximoAcerto || '--/--/----';
-  }
-
-  persistirMostruarios();
-  persistirVendedoras();
-  renderTabelaMostruarios();
-  renderTabelaVendedoras();
-  resetDraft();
-  activate('mostruario');
-});
-
-btnPesquisarMostruario.addEventListener('click', renderTabelaMostruarios);
-filtroMostruario.addEventListener('change', renderTabelaMostruarios);
-buscaMostruario.addEventListener('input', renderTabelaMostruarios);
-
-btnImprimirMostruario.addEventListener('click', () => {
-  window.print();
-});
-
-/* VENDEDORAS */
-function limparFormularioVendedora() {
-  vendedorasState.editandoCodigoOriginal = null;
-  vendedoraCodigo.value = '';
-  vendedoraNome.value = '';
-  vendedoraCpf.value = '';
-  vendedoraEndereco.value = '';
-  vendedoraNumero.value = '';
-  vendedoraComplemento.value = '';
-  vendedoraBairro.value = '';
-  vendedoraCelular.value = '';
-  vendedoraUltimoAcerto.value = '--/--/----';
-  vendedoraProximoAcerto.value = '--/--/----';
-}
-
-btnNovaVendedora.addEventListener('click', () => {
-  limparFormularioVendedora();
-});
-
-vendedoraCodigo.addEventListener('input', () => {
-  const codigo = vendedoraCodigo.value.trim();
-  const vendedora = buscarVendedoraPorCodigo(codigo);
-
-  if (vendedora) {
-    vendedoraUltimoAcerto.value = vendedora.ultimo || '--/--/----';
-    vendedoraProximoAcerto.value = vendedora.proximo || '--/--/----';
-  } else {
-    vendedoraUltimoAcerto.value = '--/--/----';
-    vendedoraProximoAcerto.value = '--/--/----';
-  }
-});
-
-function filtrarVendedoras() {
-  const termo = buscaVendedora.value.trim().toLowerCase();
-  const filtro = filtroVendedora.value;
-
-  return vendedorasState.lista.filter(v => {
-    const codigo = String(v.codigo || '').toLowerCase();
-    const nome = String(v.nome || '').toLowerCase();
-    const ultimo = String(v.ultimo || '').toLowerCase();
-    const proximo = String(v.proximo || '').toLowerCase();
-
-    if (!termo) return true;
-    if (filtro === 'codigo') return codigo.includes(termo);
-    if (filtro === 'nome') return nome.includes(termo);
-    if (filtro === 'ultimo') return ultimo.includes(termo);
-    if (filtro === 'proximo') return proximo.includes(termo);
-
-    return (
-      codigo.includes(termo) ||
-      nome.includes(termo) ||
-      ultimo.includes(termo) ||
-      proximo.includes(termo)
-    );
-  });
-}
-
-function renderTabelaVendedoras() {
-  const lista = filtrarVendedoras();
-
-  if (!lista.length) {
-    vendedoraTabelaBody.innerHTML = `
-      <tr>
-        <td colspan="5" class="empty-table">Nenhuma vendedora encontrada</td>
-      </tr>
-    `;
-    return;
-  }
-
-  vendedoraTabelaBody.innerHTML = lista.map(v => `
-    <tr>
-      <td>${v.codigo}</td>
-      <td>${v.nome}</td>
-      <td>${v.ultimo || '--/--/----'}</td>
-      <td>${v.proximo || '--/--/----'}</td>
-      <td class="acoes-cell">
-        <button class="mini-btn" type="button" data-editar-vendedora="${v.codigo}">Editar</button>
-        <button class="mini-btn danger" type="button" data-excluir-vendedora="${v.codigo}">Excluir</button>
-      </td>
-    </tr>
-  `).join('');
-
-  document.querySelectorAll('[data-editar-vendedora]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const codigo = btn.dataset.editarVendedora;
-      const item = vendedorasState.lista.find(v => upperTrim(v.codigo) === upperTrim(codigo));
-      if (!item) return;
-
-      vendedorasState.editandoCodigoOriginal = item.codigo;
-      vendedoraCodigo.value = item.codigo || '';
-      vendedoraNome.value = item.nome || '';
-      vendedoraCpf.value = item.cpf || '';
-      vendedoraEndereco.value = item.endereco || '';
-      vendedoraNumero.value = item.numero || '';
-      vendedoraComplemento.value = item.complemento || '';
-      vendedoraBairro.value = item.bairro || '';
-      vendedoraCelular.value = item.celular || '';
-      vendedoraUltimoAcerto.value = item.ultimo || '--/--/----';
-      vendedoraProximoAcerto.value = item.proximo || '--/--/----';
-
-      activate('vendedora-cadastro');
-      setTimeout(() => vendedoraCodigo.focus(), 50);
-    });
-  });
-
-  document.querySelectorAll('[data-excluir-vendedora]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const codigo = btn.dataset.excluirVendedora;
-      const item = vendedorasState.lista.find(v => upperTrim(v.codigo) === upperTrim(codigo));
-      if (!item) return;
-
-      const vinculada = state.cadastros.some(m => upperTrim(m.codigoVendedora) === upperTrim(codigo));
-      const confirmar = vinculada
-        ? confirm(`A vendedora "${item.nome}" está vinculada a mostruários.\n\nAo excluir, o vínculo será removido.\n\nDeseja continuar?`)
-        : confirm(`Deseja excluir a vendedora "${item.nome}"?`);
-
-      if (!confirmar) return;
-
-      vendedorasState.lista = vendedorasState.lista.filter(v => upperTrim(v.codigo) !== upperTrim(codigo));
-
-      state.cadastros = state.cadastros.map(m => {
-        if (upperTrim(m.codigoVendedora) === upperTrim(codigo)) {
-          return { ...m, codigoVendedora: '', vendedora: '' };
-        }
-        return m;
-      });
-
-      persistirVendedoras();
-      persistirMostruarios();
-      renderTabelaVendedoras();
-      renderTabelaMostruarios();
-      limparFormularioVendedora();
-    });
-  });
-}
-
-btnSalvarVendedora.addEventListener('click', () => {
-  const codigo = upperTrim(vendedoraCodigo.value);
-  const nome = vendedoraNome.value.trim();
-  const cpf = vendedoraCpf.value.trim();
-  const endereco = vendedoraEndereco.value.trim();
-  const numero = vendedoraNumero.value.trim();
-  const complemento = vendedoraComplemento.value.trim();
-  const bairro = vendedoraBairro.value.trim();
-  const celular = vendedoraCelular.value.trim();
-
-  if (!codigo) {
-    alert('Informe o código da vendedora.');
-    vendedoraCodigo.focus();
-    return;
-  }
-
-  if (!nome) {
-    alert('Informe o nome completo.');
-    vendedoraNome.focus();
-    return;
-  }
-
-  const codigoDuplicado = vendedorasState.lista.some(v =>
-    upperTrim(v.codigo) === codigo &&
-    upperTrim(v.codigo) !== upperTrim(vendedorasState.editandoCodigoOriginal)
-  );
-
-  if (codigoDuplicado) {
-    alert('Já existe uma vendedora com esse código.');
-    vendedoraCodigo.focus();
-    return;
-  }
-
-  const novaVendedora = {
-    codigo,
-    nome,
-    ultimo: vendedoraUltimoAcerto.value || '--/--/----',
-    proximo: vendedoraProximoAcerto.value || '--/--/----',
-    cpf,
-    endereco,
-    numero,
-    complemento,
-    bairro,
-    celular
-  };
-
-  if (vendedorasState.editandoCodigoOriginal) {
-    const indexExistente = vendedorasState.lista.findIndex(v => upperTrim(v.codigo) === upperTrim(vendedorasState.editandoCodigoOriginal));
-    if (indexExistente >= 0) {
-      vendedorasState.lista[indexExistente] = novaVendedora;
-    }
-
-    state.cadastros = state.cadastros.map(item => {
-      if (upperTrim(item.codigoVendedora) === upperTrim(vendedorasState.editandoCodigoOriginal)) {
-        return {
-          ...item,
-          codigoVendedora: codigo,
-          vendedora: nome,
-          ultimoAcerto: novaVendedora.ultimo,
-          proximoAcerto: novaVendedora.proximo
-        };
-      }
-      return item;
-    });
-
-    persistirMostruarios();
-  } else {
-    vendedorasState.lista.push(novaVendedora);
-  }
-
-  persistirVendedoras();
-  renderTabelaVendedoras();
-  renderTabelaMostruarios();
-  limparFormularioVendedora();
-  activate('vendedoras');
-});
-
-btnPesquisarVendedora.addEventListener('click', renderTabelaVendedoras);
-filtroVendedora.addEventListener('change', renderTabelaVendedoras);
-buscaVendedora.addEventListener('input', renderTabelaVendedoras);
-
-/* PRODUTOS */
-function limparFormularioProduto() {
-  produtosState.editandoCodigoOriginal = null;
-  produtoCodigo.value = '';
-  produtoDescricao.value = '';
-  produtoTipo.value = '';
-  produtoPreco.value = '';
-  produtoData.value = dataHojeBr();
-}
-
-btnNovoProduto.addEventListener('click', () => {
-  limparFormularioProduto();
-  activate('produto-cadastro');
-});
-
-function aplicarPrecoPorTipoSelecionado() {
-  if (produtoTipo.value === 'ouro') {
-    produtoPreco.value = metaisState.ouro || '0,00';
-  } else if (produtoTipo.value === 'prata') {
-    produtoPreco.value = metaisState.prata || '0,00';
-  }
-}
-
-produtoTipo.addEventListener('change', aplicarPrecoPorTipoSelecionado);
-
-function atualizarProdutosPorMetal(tipo, novoValor) {
-  produtosState.lista = produtosState.lista.map(produto => {
-    if (produto.tipo === tipo) {
-      return {
-        ...produto,
-        preco: novoValor,
-        dataInclusao: dataHojeBr()
-      };
-    }
-    return produto;
-  });
-
-  persistirProdutos();
-  renderTabelaProdutos();
-}
-
-btnSalvarValoresMetais.addEventListener('click', () => {
-  metaisState.ouro = valorOuro.value.trim() ? formatarPreco(normalizarPreco(valorOuro.value)) : '0,00';
-  metaisState.prata = valorPrata.value.trim() ? formatarPreco(normalizarPreco(valorPrata.value)) : '0,00';
-
-  valorOuro.value = metaisState.ouro;
-  valorPrata.value = metaisState.prata;
-
-  persistirMetais();
-  atualizarProdutosPorMetal('ouro', metaisState.ouro);
-  atualizarProdutosPorMetal('prata', metaisState.prata);
-
-  alert('Valores do ouro e da prata atualizados com sucesso.');
-});
-
-function filtrarProdutos() {
-  const filtro = filtroProduto.value;
-  const termo = buscaProduto.value.trim().toLowerCase();
-
-  if (!termo) return produtosState.lista;
-
-  return produtosState.lista.filter(produto => {
-    const codigo = String(produto.codigo || '').toLowerCase();
-    const descricao = String(produto.descricao || '').toLowerCase();
-    const tipo = String(produto.tipo || '').toLowerCase();
-    const preco = String(produto.preco || '').toLowerCase();
-    const dataInclusao = String(produto.dataInclusao || '').toLowerCase();
-
-    if (filtro === 'codigo') return codigo.includes(termo);
-    if (filtro === 'descricao') return descricao.includes(termo);
-    if (filtro === 'tipo') return tipo.includes(termo);
-    if (filtro === 'preco') return preco.includes(termo);
-    if (filtro === 'dataInclusao') return dataInclusao.includes(termo);
-
-    return (
-      codigo.includes(termo) ||
-      descricao.includes(termo) ||
-      tipo.includes(termo) ||
-      preco.includes(termo) ||
-      dataInclusao.includes(termo)
-    );
-  });
-}
-
-function renderTabelaProdutos() {
-  const lista = filtrarProdutos();
-
-  if (!lista.length) {
-    produtoTabelaBody.innerHTML = `
-      <tr>
-        <td colspan="6" class="empty-table">Nenhum produto encontrado</td>
-      </tr>
-    `;
-    return;
-  }
-
-  produtoTabelaBody.innerHTML = lista.map(produto => `
-    <tr>
-      <td>${produto.codigo || '--'}</td>
-      <td>${produto.descricao || '--'}</td>
-      <td>${produto.tipo ? produto.tipo.charAt(0).toUpperCase() + produto.tipo.slice(1) : '--'}</td>
-      <td>${formatarMoedaBR(converterPrecoParaNumero(produto.preco))}</td>
-      <td>${produto.dataInclusao || '--'}</td>
-      <td class="acoes-cell">
-        <button class="mini-btn" type="button" data-editar-produto="${produto.codigo}">Editar</button>
-        <button class="mini-btn danger" type="button" data-excluir-produto="${produto.codigo}">Excluir</button>
-      </td>
-    </tr>
-  `).join('');
-
-  document.querySelectorAll('[data-editar-produto]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const codigo = btn.dataset.editarProduto;
-      const produto = produtosState.lista.find(p => upperTrim(p.codigo) === upperTrim(codigo));
-      if (!produto) return;
-
-      produtosState.editandoCodigoOriginal = produto.codigo;
-      produtoCodigo.value = produto.codigo;
-      produtoDescricao.value = produto.descricao;
-      produtoTipo.value = produto.tipo;
-      produtoPreco.value = produto.preco;
-      produtoData.value = produto.dataInclusao;
-
-      activate('produto-cadastro');
-    });
-  });
-
-  document.querySelectorAll('[data-excluir-produto]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const codigo = btn.dataset.excluirProduto;
-      const produto = produtosState.lista.find(p => upperTrim(p.codigo) === upperTrim(codigo));
-      if (!produto) return;
-
-      const confirmar = confirm(`Deseja excluir o produto "${produto.descricao}"?`);
-      if (!confirmar) return;
-
-      produtosState.lista = produtosState.lista.filter(p => upperTrim(p.codigo) !== upperTrim(codigo));
-      persistirProdutos();
-      renderTabelaProdutos();
-    });
-  });
-}
-
-btnSalvarProduto.addEventListener('click', () => {
-  const codigo = upperTrim(produtoCodigo.value);
-  const descricao = produtoDescricao.value.trim();
-  const tipo = produtoTipo.value;
-  const preco = produtoPreco.value.trim() ? formatarPreco(normalizarPreco(produtoPreco.value)) : '';
-  const data = dataHojeBr();
-
-  if (!codigo) {
-    alert('Informe o código do produto.');
-    produtoCodigo.focus();
-    return;
-  }
-
-  if (!descricao) {
-    alert('Informe a descrição do produto.');
-    produtoDescricao.focus();
-    return;
-  }
-
-  if (!tipo) {
-    alert('Selecione Ouro ou Prata.');
-    produtoTipo.focus();
-    return;
-  }
-
-  if (!preco) {
-    alert('Informe o preço do produto.');
-    produtoPreco.focus();
-    return;
-  }
-
-  const codigoDuplicado = produtosState.lista.some(p =>
-    upperTrim(p.codigo) === codigo &&
-    upperTrim(p.codigo) !== upperTrim(produtosState.editandoCodigoOriginal)
-  );
-
-  if (codigoDuplicado) {
-    alert('Já existe um produto com esse código.');
-    produtoCodigo.focus();
-    return;
-  }
-
-  const novoProduto = {
-    codigo,
-    descricao,
-    tipo,
-    preco,
-    dataInclusao: data
-  };
-
-  if (produtosState.editandoCodigoOriginal) {
-    const indexExistente = produtosState.lista.findIndex(p => upperTrim(p.codigo) === upperTrim(produtosState.editandoCodigoOriginal));
-    if (indexExistente >= 0) {
-      produtosState.lista[indexExistente] = novoProduto;
-    }
-  } else {
-    produtosState.lista.push(novoProduto);
-  }
-
-  persistirProdutos();
-  renderTabelaProdutos();
-  limparFormularioProduto();
-  activate('estoque');
-});
-
-btnPesquisarProduto.addEventListener('click', renderTabelaProdutos);
-filtroProduto.addEventListener('change', renderTabelaProdutos);
-buscaProduto.addEventListener('input', renderTabelaProdutos);
-
-/* ACERTO */
-function limparAcertoCamposProduto() {
-  acertoCodigoProduto.value = '';
-  acertoDescricaoProduto.value = '';
-  acertoQtdRetirada.value = '';
-  acertoQtdDevolvida.value = '';
-}
-
-function limparAcerto() {
-  acertoNumeroMostruario.value = '';
-  acertoCodigoVendedora.value = '';
-  acertoNomeVendedora.value = '';
-  limparAcertoCamposProduto();
-  acertoState.itens = [];
-  acertoState.mostruarioAtual = null;
-  renderListaAcerto();
-}
-
-function preencherMostruarioAcerto() {
-  const numero = acertoNumeroMostruario.value.trim();
-  const mostruario = buscarMostruarioPorNumero(numero);
-
-  acertoState.itens = [];
-  renderListaAcerto();
-  limparAcertoCamposProduto();
-
-  if (!mostruario) {
-    acertoCodigoVendedora.value = '';
-    acertoNomeVendedora.value = '';
-    acertoState.mostruarioAtual = null;
-    return;
-  }
-
-  acertoState.mostruarioAtual = mostruario;
-  acertoCodigoVendedora.value = mostruario.codigoVendedora || '';
-  acertoNomeVendedora.value = mostruario.vendedora || '';
-}
-
-function quantidadeRetiradaNoMostruario(mostruario, codigoProdutoBuscado) {
-  if (!mostruario) return 0;
-
-  return mostruario.produtos.reduce((total, produto) => {
-    if (upperTrim(produto.codigo) === upperTrim(codigoProdutoBuscado)) {
-      return total + somenteNumero(produto.qtd);
-    }
-    return total;
-  }, 0);
-}
-
-function preencherProdutoAcerto() {
-  const codigoProd = acertoCodigoProduto.value.trim();
-  const mostruario = acertoState.mostruarioAtual;
-
-  if (!mostruario) {
-    acertoDescricaoProduto.value = '';
-    acertoQtdRetirada.value = '';
-    return;
-  }
-
-  const produtoNoCadastro = buscarProdutoPorCodigo(codigoProd);
-  const produtoNoMostruario = mostruario.produtos.find(p => upperTrim(p.codigo) === upperTrim(codigoProd));
-
-  if (!produtoNoCadastro || !produtoNoMostruario) {
-    acertoDescricaoProduto.value = '';
-    acertoQtdRetirada.value = '';
-    return;
-  }
-
-  acertoDescricaoProduto.value = produtoNoCadastro.descricao;
-  acertoQtdRetirada.value = String(quantidadeRetiradaNoMostruario(mostruario, codigoProd));
-}
-
-function renderListaAcerto() {
-  if (!acertoState.itens.length) {
-    acertoListaContainer.innerHTML = `<div class="lista-vazia">Nenhum item lançado no acerto.</div>`;
-    acertoTotalPecas.textContent = '0';
-    acertoTotalValor.textContent = 'R$ 0,00';
-    return;
-  }
-
-  acertoListaContainer.innerHTML = acertoState.itens.map(item => `
-    <div class="acerto-item">
-      <span class="acerto-col">${item.codigo}</span>
-      <span class="acerto-col">${item.descricao}</span>
-      <span class="acerto-col">${item.retirada}</span>
-      <span class="acerto-col">${item.devolvida}</span>
-      <span class="acerto-col">${item.vendida}</span>
-      <span class="acerto-col">${formatarMoedaBR(item.valor)}</span>
-    </div>
-  `).join('');
-
-  const totalPecas = acertoState.itens.reduce((acc, item) => acc + item.vendida, 0);
-  const totalValor = acertoState.itens.reduce((acc, item) => acc + item.valor, 0);
-
-  acertoTotalPecas.textContent = String(totalPecas);
-  acertoTotalValor.textContent = formatarMoedaBR(totalValor);
-}
-
-acertoNumeroMostruario.addEventListener('input', preencherMostruarioAcerto);
-acertoCodigoProduto.addEventListener('input', preencherProdutoAcerto);
-
-acertoQtdDevolvida.addEventListener('keydown', (e) => {
-  if (e.key !== 'Enter') return;
-  e.preventDefault();
-
-  const mostruario = acertoState.mostruarioAtual;
-  const codigo = upperTrim(acertoCodigoProduto.value);
-  const descricao = acertoDescricaoProduto.value.trim();
-  const retirada = Number(acertoQtdRetirada.value || 0);
-  const devolvida = Number(acertoQtdDevolvida.value || 0);
-  const produto = buscarProdutoPorCodigo(codigo);
-
-  if (!mostruario) {
-    alert('Informe um número de mostruário válido.');
-    acertoNumeroMostruario.focus();
-    return;
-  }
-
-  if (!codigo || !descricao || !produto) {
-    alert('Informe um código de produto válido.');
-    acertoCodigoProduto.focus();
-    return;
-  }
-
-  if (retirada <= 0) {
-    alert('Esse produto não foi retirado nesse mostruário.');
-    acertoCodigoProduto.focus();
-    return;
-  }
-
-  if (devolvida < 0 || devolvida > retirada) {
-    alert('A quantidade devolvida deve estar entre 0 e a quantidade retirada.');
-    acertoQtdDevolvida.focus();
-    return;
-  }
-
-  const vendida = retirada - devolvida;
-  const valor = vendida * converterPrecoParaNumero(produto.preco);
-
-  const idxExistente = acertoState.itens.findIndex(item => upperTrim(item.codigo) === codigo);
-
-  if (idxExistente >= 0) {
-    acertoState.itens[idxExistente] = {
-      codigo,
-      descricao,
-      retirada,
-      devolvida,
-      vendida,
-      valor
-    };
-  } else {
-    acertoState.itens.push({
-      codigo,
-      descricao,
-      retirada,
-      devolvida,
-      vendida,
-      valor
-    });
-  }
-
-  renderListaAcerto();
-  limparAcertoCamposProduto();
-  acertoCodigoProduto.focus();
-});
-
-/* INIT */
-valorOuro.value = metaisState.ouro || '0,00';
-valorPrata.value = metaisState.prata || '0,00';
-produtoData.value = dataHojeBr();
-
-renderListaProdutosMostruario();
-renderTabelaMostruarios();
-renderTabelaVendedoras();
-renderTabelaProdutos();
-renderListaAcerto();
-
-persistirProdutos();
-persistirVendedoras();
-persistirMostruarios();
-persistirMetais();
-
-setupAutoNext();
+/* ================= INIT ================= */
+renderProdutos();
+renderVendedoras();
+renderLista();
