@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WN Bijouterias</title>
-  <script type="module" crossorigin src="./assets/index-B8pPR6-A.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-D4wWA5HQ.css">
+  <script type="module" crossorigin src="./assets/index-BYUM4N37.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BwSjAizL.css">
 </head>
 <body>
   <div class="app">
@@ -42,6 +42,14 @@
       <section id="mostruario" class="screen">
         <div class="panel">
           <div class="top-bar top-bar-mostruario top-bar-lista">MOSTRUÁRIO</div>
+          <div class="mostruario-abas">
+            <button type="button" class="aba-mostruario aba-ativa" data-aba="disponivel">
+              Disponíveis (<span id="badgeMostruarioDisponivel">0</span>)
+            </button>
+            <button type="button" class="aba-mostruario" data-aba="alocado">
+              Alocados (<span id="badgeMostruarioAlocado">0</span>)
+            </button>
+          </div>
           <div class="toolbar"><div class="toolbar-actions toolbar-actions-main"><div class="search-filter-wrap"><select id="filtroMostruario" class="search-select"><option value="todos">Todos</option><option value="numero">Nº Mostruário</option><option value="codigoVendedora">Cód. Vendedora</option><option value="vendedora">Vendedora</option><option value="ultimoAcerto">Último Acerto</option><option value="proximoAcerto">Próximo Acerto</option></select><div class="search-box"><img src="assets/icone_lupa.svg" alt="Pesquisar" class="search-icon"><input type="text" id="buscaMostruario" placeholder="Pesquisar ou filtrar" class="search-input"></div><button class="btn light" type="button" id="btnPesquisarMostruario">Pesquisar</button></div><button class="btn blue" type="button" id="btnNovoMostruario">NOVO MOSTRUÁRIO</button></div></div>
           <div class="table-wrap"><table class="data-table"><thead><tr><th>Mostruário</th><th>Cód. Vendedora</th><th>Vendedora</th><th>Valor Total</th><th>Último Acerto</th><th>Próximo Acerto</th><th>Ações</th></tr></thead><tbody id="mostruarioTabelaBody"><tr><td colspan="7" class="empty-table">Carregando...</td></tr></tbody></table></div>
         </div>
@@ -52,11 +60,11 @@
           <input type="hidden" id="mostruarioId">
           <div class="include-grid include-grid-mostruario">
             <div class="field small"><label>Número Mostruário:</label><input type="text" id="numeroMostruario" placeholder="00" data-auto-next="true" data-next-length="2"></div>
-            <div class="field small"><label>Código da Vendedora:</label><input type="text" id="codigoVendedoraMostruario" placeholder="001" data-auto-next="true" data-next-length="3"></div>
-            <div class="field wide"><label>Nome Vendedora:</label><input type="text" id="nomeVendedoraMostruario" placeholder="Nome completo" readonly></div>
-            <div class="field small"><label>Último Acerto:</label><input type="date" id="dataUltimoAcertoMostruario" data-auto-next="true" data-next-length="10"></div>
-            <div class="field small"><label>Próximo Acerto:</label><input type="date" id="dataProximoAcertoMostruario" data-auto-next="true" data-next-length="10"></div>
-            <div class="field small"><label>Cód. do Produto:</label><input type="text" id="codigoProduto" placeholder="BR033" maxlength="5" minlength="5" autocomplete="off" data-uppercase="true" data-auto-next="true" data-next-length="5"></div>
+            <div class="field small field-autocomplete">
+              <label>Cód. do Produto:</label>
+              <input type="text" id="codigoProduto" placeholder="BR033" maxlength="10" autocomplete="off" data-uppercase="true">
+              <div id="dropdownSugestoesProduto" class="autocomplete-dropdown" style="display:none;"></div>
+            </div>
             <div class="field wide"><label>Descrição do Produto:</label><input type="text" id="descricaoProduto" placeholder="Nome do produto" readonly></div>
             <div class="field small"><label>Preço:</label><input type="text" id="precoProdutoMostruario" placeholder="0,00" readonly></div>
             <div class="field qty-field"><label>Qtd.:</label><input type="text" id="qtdProduto" placeholder="00000"><span class="unit-inline">PEÇAS</span></div>
@@ -83,12 +91,51 @@
       </section>
 
       <section id="acerto" class="screen">
-        <div class="panel"><div class="top-bar top-bar-acerto">ACERTO</div><div class="include-wrap"><div class="acerto-grid acerto-grid-topo"><div class="field small"><label>Número do Mostruário:</label><input type="text" id="acertoNumeroMostruario" placeholder="001" data-auto-next="true" data-next-length="2"></div><div class="field small"><label>Cód. da Vendedora:</label><input type="text" id="acertoCodigoVendedora" placeholder="001" readonly></div><div class="field wide"><label>Nome da Vendedora:</label><input type="text" id="acertoNomeVendedora" placeholder="Nome completo" readonly></div></div><div class="acerto-grid acerto-grid-baixo"><div class="field small"><label>Cód. do Produto:</label><input type="text" id="acertoCodigoProduto" placeholder="BR033" maxlength="5" minlength="5" autocomplete="off" data-uppercase="true" data-auto-next="true" data-next-length="5"></div><div class="field wide"><label>Descrição do Produto:</label><input type="text" id="acertoDescricaoProduto" placeholder="Descrição do produto" readonly></div><div class="field small"><label>Quantidade Retirada:</label><input type="text" id="acertoQtdRetirada" placeholder="0" readonly></div><div class="field small"><label>Quantidade Devolvida:</label><input type="text" id="acertoQtdDevolvida" placeholder="0" data-auto-next="true"></div></div><div class="acerto-lista"><div class="lista-header"><h3>Itens do Acerto:</h3></div><div class="acerto-head"><span>Código</span><span>Descrição</span><span>Retirada</span><span>Devolvida</span><span>Vendida</span><span>Valor</span></div><div id="acertoListaContainer"><div class="lista-vazia">Nenhum item lançado no acerto.</div></div></div><div class="acerto-resumo"><div class="resumo-card"><span>Total Vendido (peças)</span><strong id="acertoTotalPecas">0</strong></div><div class="resumo-card"><span>Valor Total da Venda</span><strong id="acertoTotalValor">R$ 0,00</strong></div></div></div></div>
+        <div class="panel"><div class="top-bar top-bar-acerto">ACERTO</div><div class="include-wrap"><div class="acerto-grid acerto-grid-topo"><div class="field small"><label>Número do Mostruário:</label><input type="text" id="acertoNumeroMostruario" placeholder="001" data-auto-next="true" data-next-length="2"></div><div class="field small"><label>Cód. da Vendedora:</label><input type="text" id="acertoCodigoVendedora" placeholder="001" readonly></div><div class="field wide"><label>Nome da Vendedora:</label><input type="text" id="acertoNomeVendedora" placeholder="Nome completo" readonly></div></div><div class="acerto-grid acerto-grid-baixo">
+  <div class="field small field-autocomplete">
+    <label>Cód. do Produto:</label>
+    <input type="text" id="acertoCodigoProduto" placeholder="BR033" maxlength="10" autocomplete="off" data-uppercase="true">
+    <div id="dropdownSugestoesAcertoProduto" class="autocomplete-dropdown" style="display:none;"></div>
+  </div><div class="field wide"><label>Descrição do Produto:</label><input type="text" id="acertoDescricaoProduto" placeholder="Descrição do produto" readonly></div><div class="field small"><label>Quantidade Retirada:</label><input type="text" id="acertoQtdRetirada" placeholder="0" readonly></div><div class="field small"><label>Quantidade Devolvida:</label><input type="text" id="acertoQtdDevolvida" placeholder="0" data-auto-next="true"></div></div><div class="acerto-lista"><div class="lista-header"><h3>Itens do Acerto:</h3></div><div class="acerto-head"><span>Código</span><span>Descrição</span><span>Retirada</span><span>Devolvida</span><span>Vendida</span><span>Valor</span></div><div id="acertoListaContainer"><div class="lista-vazia">Nenhum item lançado no acerto.</div></div></div><div class="acerto-resumo"><div class="resumo-card"><span>Total Vendido (peças)</span><strong id="acertoTotalPecas">0</strong></div><div class="resumo-card"><span>Valor Total da Venda</span><strong id="acertoTotalValor">R$ 0,00</strong></div></div></div></div>
       </section>
 
       <section id="configuracoes" class="screen"><div class="card"><h2>CONFIGURAÇÕES</h2><p>Configure as variáveis do Supabase no arquivo <strong>.env</strong>.</p><p id="supabaseStatus"></p></div></section>
       <section id="logout" class="screen"><div class="card small-card"><h2>SAIR</h2><p>Você saiu da visualização atual.</p><button class="btn primary nav-btn" data-target="home" type="button">Voltar para início</button></div></section>
     </main>
   </div>
+
+  <!-- Modal Alocar Vendedora -->
+  <div id="modalAlocar" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Alocar Mostruário Nº <span id="modalAlocarNumero">--</span></h3>
+        <button type="button" class="modal-close" id="btnFecharModalAlocar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="modalAlocarMostruarioId">
+        <div class="field">
+          <label>Código da Vendedora: <span class="required-star">*</span></label>
+          <input type="text" id="modalAlocarCodigoVendedora" placeholder="001" autocomplete="off" data-auto-next="true" data-next-length="3">
+        </div>
+        <div class="field">
+          <label>Nome da Vendedora:</label>
+          <input type="text" id="modalAlocarNomeVendedora" placeholder="Vendedora não encontrada" readonly>
+        </div>
+        <div class="field">
+          <label>Último Acerto: <span class="required-star">*</span></label>
+          <input type="date" id="modalAlocarDataUltimoAcerto" required data-auto-next="true" data-next-length="10">
+        </div>
+        <div class="field">
+          <label>Próximo Acerto: <span class="required-star">*</span></label>
+          <input type="date" id="modalAlocarDataProximoAcerto" required data-auto-next="true" data-next-length="10">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn light" id="btnCancelarModalAlocar">Cancelar</button>
+        <button type="button" class="btn blue" id="btnConfirmarModalAlocar">Confirmar Alocação</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
