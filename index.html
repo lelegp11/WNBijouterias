@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WN Bijouterias</title>
-  <script type="module" crossorigin src="./assets/index-DJCK23kp.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-BwSjAizL.css">
+  <script type="module" crossorigin src="./assets/index-O22Ubo7N.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CgNwVZo8.css">
 </head>
 <body>
   <div class="app">
@@ -56,7 +56,7 @@
       </section>
 
       <section id="mostruario-incluir" class="screen">
-        <div class="mostruario-page"><div class="top-bar top-bar-mostruario">MOSTRUÁRIO</div><div class="include-wrap"><div class="include-top"><div class="voltar nav-btn" data-target="mostruario">⟵ VOLTAR</div><div class="top-actions"><button class="btn primary" type="button" id="btnSalvarMostruario">Salvar</button><button class="btn light" type="button" id="btnImprimirMostruario">Imprimir</button></div></div>
+        <div class="mostruario-page"><div class="top-bar top-bar-mostruario">MOSTRUÁRIO</div><div class="include-wrap"><div class="include-top"><div class="voltar nav-btn" data-target="mostruario">⟵ VOLTAR</div><div class="top-actions"><button class="btn primary" type="button" id="btnSalvarMostruario">Salvar</button></div></div>
           <input type="hidden" id="mostruarioId">
           <div class="include-grid include-grid-mostruario">
             <div class="field small"><label>Número Mostruário:</label><input type="text" id="numeroMostruario" placeholder="00" data-auto-next="true" data-next-length="2"></div>
@@ -91,14 +91,17 @@
       </section>
 
       <section id="acerto" class="screen">
-        <div class="panel"><div class="top-bar top-bar-acerto">ACERTO</div><div class="include-wrap"><div class="acerto-grid acerto-grid-topo"><div class="field small"><label>Número do Mostruário:</label><input type="text" id="acertoNumeroMostruario" placeholder="001" data-auto-next="true" data-next-length="2"></div><div class="field small"><label>Cód. da Vendedora:</label><input type="text" id="acertoCodigoVendedora" placeholder="001" readonly></div><div class="field wide"><label>Nome da Vendedora:</label><input type="text" id="acertoNomeVendedora" placeholder="Nome completo" readonly></div></div><div class="acerto-grid acerto-grid-baixo">
-  <div class="field small field-autocomplete">
-    <label>Cód. do Produto:</label>
-    <input type="text" id="acertoCodigoProduto" placeholder="BR033" maxlength="10" autocomplete="off" data-uppercase="true">
-    <div id="dropdownSugestoesAcertoProduto" class="autocomplete-dropdown" style="display:none;"></div>
-  </div><div class="field wide"><label>Descrição do Produto:</label><input type="text" id="acertoDescricaoProduto" placeholder="Descrição do produto" readonly></div><div class="field small"><label>Quantidade Retirada:</label><input type="text" id="acertoQtdRetirada" placeholder="0" readonly></div><div class="field small"><label>Quantidade Devolvida:</label><input type="text" id="acertoQtdDevolvida" placeholder="0" data-auto-next="true"></div></div><div class="acerto-lista"><div class="lista-header"><h3>Itens do Acerto:</h3></div><div class="acerto-head"><span>Código</span><span>Descrição</span><span>Retirada</span><span>Devolvida</span><span>Vendida</span><span>Valor</span></div><div id="acertoListaContainer"><div class="lista-vazia">Nenhum item lançado no acerto.</div></div></div><div class="acerto-resumo"><div class="resumo-card"><span>Total Vendido (peças)</span><strong id="acertoTotalPecas">0</strong></div><div class="resumo-card"><span>Valor Total da Venda</span><strong id="acertoTotalValor">R$ 0,00</strong></div></div></div></div>
+        <div class="panel"><div class="top-bar top-bar-acerto">ACERTO</div><div class="include-wrap">
+          <div class="acerto-grid acerto-grid-topo">
+            <div class="field small"><label>Cód. da Vendedora:</label><input type="text" id="acertoCodigoVendedora" placeholder="001" maxlength="3" inputmode="numeric" autocomplete="off"></div>
+            <div class="field wide"><label>Nome da Vendedora:</label><input type="text" id="acertoNomeVendedora" readonly></div>
+            <div class="field wide"><label>Mostruário alocado:</label><select id="acertoSelectMostruario" class="field-select"><option value="">Selecione</option></select></div>
+          </div>
+          <div class="acerto-lista"><div class="lista-header"><h3>Itens do Acerto:</h3></div><div class="acerto-head"><span>Código</span><span>Descrição</span><span>Retirada</span><span>Devolvida</span><span>Vendida</span><span>Valor</span></div><div id="acertoListaContainer"><div class="lista-vazia">Selecione um mostruário.</div></div></div>
+          <div class="acerto-resumo"><div class="resumo-card"><span>Total Vendido (peças)</span><strong id="acertoTotalPecas">0</strong></div><div class="resumo-card"><span>Valor Total da Venda</span><strong id="acertoTotalValor">R$ 0,00</strong></div><div class="resumo-card"><span>Comissão (%)</span><input type="number" id="acertoComissao" min="0" max="100" value="50"></div><div class="resumo-card"><span>Valor a Receber</span><strong id="acertoValorReceber">R$ 0,00</strong></div><div class="field"><label>Pagamento</label><select id="acertoPagamento" class="field-select"><option>Pix</option><option>Dinheiro</option></select></div></div>
+          <div class="include-top"><span></span><div class="top-actions"><button class="btn primary" type="button" id="btnSalvarAcerto">Salvar</button><button class="btn light" type="button" id="btnImprimirAcerto">Imprimir relatório</button></div></div>
+        </div></div>
       </section>
-
       <section id="configuracoes" class="screen"><div class="card"><h2>CONFIGURAÇÕES</h2><p>Configure as variáveis do Supabase no arquivo <strong>.env</strong>.</p><p id="supabaseStatus"></p></div></section>
       <section id="logout" class="screen"><div class="card small-card"><h2>SAIR</h2><p>Você saiu da visualização atual.</p><button class="btn primary nav-btn" data-target="home" type="button">Voltar para início</button></div></section>
     </main>
