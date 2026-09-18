@@ -4,15 +4,36 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WN Bijouterias</title>
-  <script type="module" crossorigin src="./assets/index-DYimibkz.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-DPxxbuLV.css">
+  <script type="module" crossorigin src="./assets/index-BtFB49xb.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DE_HkPu9.css">
 </head>
 <body>
-  <div class="app">
+  <section id="authGate" class="auth-gate">
+    <form id="loginForm" class="login-card">
+      <img src="assets/logo_venda_suite.svg" alt="WN Bijouterias" class="login-logo">
+      <h1>Bem-vindo</h1>
+      <p>Entre com seu e-mail e senha para acessar o sistema.</p>
+      <div class="field"><label for="loginEmail">E-mail</label><input id="loginEmail" type="email" autocomplete="email" required></div>
+      <div class="field"><label for="loginSenha">Senha</label><input id="loginSenha" type="password" autocomplete="current-password" required></div>
+      <div id="loginMensagem" class="auth-message" role="alert"></div>
+      <button id="btnEntrar" class="btn primary" type="submit">Entrar</button>
+    </form>
+    <form id="primeiroAcessoForm" class="login-card" hidden>
+      <img src="assets/logo_venda_suite.svg" alt="WN Bijouterias" class="login-logo">
+      <h1>Crie sua senha</h1>
+      <p>Finalize seu convite definindo a senha dos próximos acessos.</p>
+      <div class="field"><label for="novaSenha">Nova senha</label><input id="novaSenha" type="password" minlength="8" autocomplete="new-password" required></div>
+      <div class="field"><label for="confirmarSenha">Confirmar senha</label><input id="confirmarSenha" type="password" minlength="8" autocomplete="new-password" required></div>
+      <div id="primeiroAcessoMensagem" class="auth-message" role="alert"></div>
+      <button class="btn primary" type="submit">Salvar senha e entrar</button>
+    </form>
+  </section>
+
+  <div id="appShell" class="app auth-pending">
     <aside class="leftbar">
       <div class="top-logo nav-btn" data-target="home" title="Ir para início"><img src="assets/logo_venda_suite.svg" alt="WN Bijouterias" class="icon-img" /></div>
       <div class="bottom-actions">
-        <button class="icon-btn nav-btn" data-target="logout" title="Sair" type="button"><img src="assets/icone_sair.svg" alt="Sair" class="icon-img" /></button>
+        <button class="icon-btn" id="btnLogout" title="Sair" type="button"><img src="assets/icone_sair.svg" alt="Sair" class="icon-img" /></button>
         <button class="icon-btn nav-btn" data-target="configuracoes" title="Configurações" type="button"><img src="assets/icone_configuracoes.svg" alt="Configurações" class="icon-img" /></button>
       </div>
     </aside>
@@ -102,8 +123,7 @@
           <div class="include-top"><span></span><div class="top-actions"><button class="btn primary" type="button" id="btnSalvarAcerto">Salvar</button><button class="btn light" type="button" id="btnImprimirAcerto">Imprimir relatório</button></div></div>
         </div></div>
       </section>
-      <section id="configuracoes" class="screen"><div class="card"><h2>CONFIGURAÇÕES</h2><p>Configure as variáveis do Supabase no arquivo <strong>.env</strong>.</p><p id="supabaseStatus"></p></div></section>
-      <section id="logout" class="screen"><div class="card small-card"><h2>SAIR</h2><p>Você saiu da visualização atual.</p><button class="btn primary nav-btn" data-target="home" type="button">Voltar para início</button></div></section>
+      <section id="configuracoes" class="screen"><div class="card"><h2>USUÁRIOS E ACESSOS</h2><p id="supabaseStatus"></p><p>Usuário atual: <strong id="usuarioAtualEmail">—</strong> · Perfil: <strong id="usuarioAtualPerfil">—</strong></p><div id="adminUsuarios" hidden><form id="conviteForm" class="invite-form"><div class="field"><label for="conviteEmail">Convidar novo usuário</label><input id="conviteEmail" type="email" placeholder="usuario@exemplo.com" required></div><button class="btn primary" type="submit">Enviar convite</button></form><div id="conviteMensagem" class="auth-message" role="status"></div><div class="table-wrap"><table class="data-table"><thead><tr><th>E-mail</th><th>Perfil</th><th>Cadastro</th></tr></thead><tbody id="usuariosTabelaBody"></tbody></table></div></div></div></section>
     </main>
   </div>
 
@@ -139,6 +159,6 @@
       </div>
     </div>
   </div>
-
+
 </body>
 </html>
