@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VendaSuite</title>
-  <script type="module" crossorigin src="./assets/index-_c_n0ZMu.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-xys1SK-6.css">
+  <script type="module" crossorigin src="./assets/index-O2CoSRla.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DxMWBPCL.css">
 </head>
 <body>
   <section id="authGate" class="auth-gate">
@@ -118,8 +118,9 @@
             <div class="field wide"><label>Nome da Vendedora:</label><input type="text" id="acertoNomeVendedora" readonly></div>
             <div class="field wide"><label>Mostruário alocado:</label><select id="acertoSelectMostruario" class="field-select"><option value="">Selecione</option></select></div>
           </div>
+          <div class="acerto-devolucao-rapida field"><label for="acertoCodigoDevolucao">Código do produto devolvido:</label><input type="text" id="acertoCodigoDevolucao" placeholder="Digite o código e pressione Enter" autocomplete="off" autocapitalize="characters" disabled><small id="acertoCodigoDevolucaoMensagem" class="acerto-devolucao-mensagem" aria-live="polite"></small></div>
           <div class="acerto-lista"><div class="lista-header"><h3>Itens do Acerto:</h3></div><div class="acerto-head"><span>Código</span><span>Descrição</span><span>Retirada</span><span>Devolvida</span><span>Vendida</span><span>Valor</span></div><div id="acertoListaContainer"><div class="lista-vazia">Selecione um mostruário.</div></div></div>
-          <div class="acerto-resumo"><div class="resumo-card"><span>Total Vendido (peças)</span><strong id="acertoTotalPecas">0</strong></div><div class="resumo-card"><span>Valor Total da Venda</span><strong id="acertoTotalValor">R$ 0,00</strong></div><div class="resumo-card"><span>Comissão (%)</span><input type="number" id="acertoComissao" min="0" max="100" value="50"></div><div class="resumo-card"><span>Valor a Receber</span><strong id="acertoValorReceber">R$ 0,00</strong></div><div class="field"><label>Pagamento</label><select id="acertoPagamento" class="field-select"><option>Pix</option><option>Dinheiro</option></select></div></div>
+          <div class="acerto-resumo"><div class="resumo-card"><span>Quantidade Devolvida</span><strong id="acertoTotalDevolvidas">0</strong></div><div class="resumo-card"><span>Quantidade Vendida</span><strong id="acertoTotalPecas">0</strong></div><div class="resumo-card"><span>Valor Total da Venda</span><strong id="acertoTotalValor">R$ 0,00</strong></div><div class="resumo-card"><span>Comissão (%)</span><input type="number" id="acertoComissao" min="0" max="100" value="50"></div><div class="resumo-card"><span>Valor a Receber</span><strong id="acertoValorReceber">R$ 0,00</strong></div><div class="field"><label>Pagamento</label><select id="acertoPagamento" class="field-select"><option>Pix</option><option>Dinheiro</option></select></div></div>
           <div class="include-top"><span></span><div class="top-actions"><button class="btn primary" type="button" id="btnSalvarAcerto">Salvar</button><button class="btn light" type="button" id="btnImprimirAcerto">Imprimir relatório</button></div></div>
         </div></div>
       </section>
